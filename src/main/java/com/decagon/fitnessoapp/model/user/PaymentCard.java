@@ -6,37 +6,32 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
 @Entity
-public class Address {
+public class PaymentCard {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
 
-    @NotNull
-    @Column(name = "street_detail")
-    private String streetDetail;
+    @Column(name = "account_name")
+    private String accountName;
 
     @NotNull
-    private String state;
+    @Column(name = "card_number", unique = true)
+    private Long cardNumber;
 
-    @NotNull
-    private String city;
+    @Column(name = "expiring_date")
+    private String expiringDate;
 
-    @Column(name = "zip_code")
-    private String zipCode;
+    @Column(name = "cvv_number")
+    private Integer cvvNumber;
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "person_id", referencedColumnName = "id")
-    private List<Person> person;
-
-    @NotNull
-    private String country;
-
+    private Person person;
 }

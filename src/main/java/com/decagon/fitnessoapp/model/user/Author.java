@@ -1,4 +1,4 @@
-package com.decagon.fitnessoapp.model.blog;
+package com.decagon.fitnessoapp.model.user;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -10,19 +10,18 @@ import javax.persistence.*;
 @NoArgsConstructor
 @Data
 @Entity
-public class Newsletter {
-
+public class Author {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "full_name")
-    private String fullName;
+    @Column(name = "author_name")
+    private String authorName;
 
-    private String content;
+    private String image;
 
-    private String email;
+    private String contact;
 
-    private boolean subscribe;
+    private String biography;
 }
