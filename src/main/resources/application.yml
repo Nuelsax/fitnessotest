@@ -1,0 +1,9 @@
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: false
+  datasource:
+    password: Thewipper.
+    url: jdbc:postgresql://localhost:8080/fitnes
+    username: postgres
