@@ -12,21 +12,21 @@ import java.util.stream.Collectors;
 
 public class PersonDetails implements UserDetails {
 
-
-    private String userName;
+    private String name;
     private String password;
     private boolean active;
     private List<GrantedAuthority> authorities;
 
-    public PersonDetails(Person person){
-        this.userName = person.getUserName();
+    public PersonDetails(Person person) {
+        this.name = person.getUserName();
         this.password = person.getPassword();
+        //this.active = student.isActive();
         this.authorities = Arrays.stream(person.getRole().toString().split(","))
                 .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toList());
     }
 
-    public PersonDetails(){
+    public PersonDetails() {
 
     }
 
@@ -42,7 +42,7 @@ public class PersonDetails implements UserDetails {
 
     @Override
     public String getUsername() {
-        return userName;
+        return name;
     }
 
     @Override
