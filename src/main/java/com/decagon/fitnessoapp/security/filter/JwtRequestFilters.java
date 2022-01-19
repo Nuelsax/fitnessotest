@@ -21,7 +21,6 @@ public class JwtRequestFilters extends OncePerRequestFilter {
 
     PersonDetailsService userService;
 
-
     JwtUtils jwtTokenUtils;
 
     @Autowired
