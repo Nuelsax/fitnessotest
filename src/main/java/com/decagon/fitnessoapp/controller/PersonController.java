@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletResponse;
 
 @RestController
+@RequestMapping("/person")
 public class PersonController {
     private final PersonDetailsService personDetailsService;
     private final AuthenticationManager authenticationManager;
@@ -25,7 +26,7 @@ public class PersonController {
         this.jwtUtils = jwtUtils;
     }
 
-    @RequestMapping(value = "/login", method = RequestMethod.POST)
+    @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@RequestBody AuthRequest req, HttpServletResponse response) throws Exception {
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(req.getUsername(), req.getPassword()));

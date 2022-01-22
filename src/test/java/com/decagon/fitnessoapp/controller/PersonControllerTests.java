@@ -61,7 +61,7 @@ class PersonControllerTests {
         req.setUsername("chike");
         req.setPassword("12345");
         String content = (new ObjectMapper()).writeValueAsString(req);
-        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.post("/login")
+        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.post("/person/login")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(content);
         MockMvcBuilders.standaloneSetup(this.personController)
