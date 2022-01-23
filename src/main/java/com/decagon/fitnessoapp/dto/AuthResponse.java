@@ -1,4 +1,4 @@
-package com.decagon.fitnessoapp.dtos;
+package com.decagon.fitnessoapp.dto;
 
 import lombok.Getter;
 import lombok.Setter;

@@ -1,13 +1,12 @@
 package com.decagon.fitnessoapp.controller;
 
-import com.decagon.fitnessoapp.dtos.AuthRequest;
+import com.decagon.fitnessoapp.dto.AuthRequest;
 import com.decagon.fitnessoapp.model.user.Person;
 import com.decagon.fitnessoapp.model.user.Role;
 import com.decagon.fitnessoapp.security.JwtUtils;
 import com.decagon.fitnessoapp.security.PersonDetails;
 import com.decagon.fitnessoapp.security.PersonDetailsService;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +14,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.TestingAuthenticationToken;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
@@ -23,7 +21,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import java.util.ArrayList;
 import java.util.Date;
 
 import static org.mockito.ArgumentMatchers.any;
