@@ -1,0 +1,60 @@
+package com.decagon.fitnessoapp.service.serviceImplementation;
+
+import com.decagon.fitnessoapp.model.user.Person;
+import com.decagon.fitnessoapp.model.user.VerificationToken;
+import com.decagon.fitnessoapp.repository.PersonRepository;
+import com.decagon.fitnessoapp.repository.VerificationTokenRepository;
+import com.decagon.fitnessoapp.service.VerificationService;
+import lombok.AllArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
+import java.util.Optional;
+import java.util.UUID;
+
+@Service
+@AllArgsConstructor
+public class VerificationTokenServiceImpl implements VerificationService {
+
+    private final VerificationTokenRepository verificationTokenRepository;
+    public final PersonRepository personRepository;
+
+    public String saveVerificationToken(Person person){
+        final String token = UUID.randomUUID().toString();
+        VerificationToken verificationToken = new VerificationToken(
+                token, LocalDateTime.now(), LocalDateTime.now().plusHours(24), person);
+        verificationTokenRepository.save(verificationToken);
+        return token;
+    }
+
+    public Optional<VerificationToken> getToken(String token){
+        return verificationTokenRepository.findByTokenCode(token);
+    }
+
+    public void setConfirmedAt(String token){
+        verificationTokenRepository.findByTokenCode(token).ifPresent((confirm) ->
+                        confirm.setConfirmedAt(LocalDateTime.now()));
+    }
+
+    @Transactional
+    public String confirmToken(String token){
+        VerificationToken verificationToken = getToken(token)
+                .orElseThrow(() -> new IllegalStateException("token not found"));
+
+        if(verificationToken.getConfirmedAt() != null){
+            throw new IllegalStateException("email already confirmed");
+        }
+
+        LocalDateTime expiresAt = verificationToken.getExpiresAt();
+
+        if(expiresAt.isBefore(LocalDateTime.now())){
+            throw new IllegalStateException("token expired");
+        }
+
+        setConfirmedAt(token);
+        personRepository.findByEmail(verificationToken.getPerson().getEmail()).ifPresent((person) ->
+                person.setVerifyEmail(true));
+        return "Email verified";
+    }
+}

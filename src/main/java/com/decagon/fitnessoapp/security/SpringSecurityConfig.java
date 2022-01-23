@@ -4,6 +4,7 @@ import com.decagon.fitnessoapp.model.user.Role;
 import com.decagon.fitnessoapp.security.filter.JwtRequestFilters;
 import com.decagon.fitnessoapp.utils.Api_Uri;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -68,4 +69,6 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     GrantedAuthorityDefaults grantedAuthorityDefaults() {
         return new GrantedAuthorityDefaults("");
     }
+
+
 }
