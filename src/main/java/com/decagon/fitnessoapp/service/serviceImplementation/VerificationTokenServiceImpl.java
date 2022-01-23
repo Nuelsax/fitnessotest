@@ -1,5 +1,6 @@
 package com.decagon.fitnessoapp.service.serviceImplementation;
 
+import com.decagon.fitnessoapp.exception.CustomServiceExceptions;
 import com.decagon.fitnessoapp.model.user.Person;
 import com.decagon.fitnessoapp.model.user.VerificationToken;
 import com.decagon.fitnessoapp.repository.PersonRepository;
@@ -40,16 +41,16 @@ public class VerificationTokenServiceImpl implements VerificationService {
     @Transactional
     public String confirmToken(String token){
         VerificationToken verificationToken = getToken(token)
-                .orElseThrow(() -> new IllegalStateException("token not found"));
+                .orElseThrow(() -> new CustomServiceExceptions("token not found"));
 
         if(verificationToken.getConfirmedAt() != null){
-            throw new IllegalStateException("email already confirmed");
+            throw new CustomServiceExceptions("email already confirmed");
         }
 
         LocalDateTime expiresAt = verificationToken.getExpiresAt();
 
         if(expiresAt.isBefore(LocalDateTime.now())){
-            throw new IllegalStateException("token expired");
+            throw new CustomServiceExceptions("token expired");
         }
 
         setConfirmedAt(token);

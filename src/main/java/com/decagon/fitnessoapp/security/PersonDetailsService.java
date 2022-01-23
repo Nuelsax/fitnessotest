@@ -1,6 +1,7 @@
 package com.decagon.fitnessoapp.security;
 
 import com.decagon.fitnessoapp.dto.PersonDto;
+import com.decagon.fitnessoapp.exception.CustomServiceExceptions;
 import com.decagon.fitnessoapp.model.user.Person;
 import com.decagon.fitnessoapp.model.user.Role;
 import com.decagon.fitnessoapp.repository.PersonRepository;
@@ -62,12 +63,12 @@ public class PersonDetailsService implements UserDetailsService, PersonService{
 
         boolean isValidEmail = emailValidator.test(personDto.getEmail());
         if(!isValidEmail){
-            throw new IllegalStateException("Not valid email");
+            throw new CustomServiceExceptions("Not valid email");
         }
 
         boolean userExists = personRepository.findByEmail(personDto.getEmail()).isPresent();
         if(userExists){
-            throw  new IllegalStateException("email taken");
+            throw  new CustomServiceExceptions("email taken");
         }
 
         Person person = new Person();
@@ -81,7 +82,7 @@ public class PersonDetailsService implements UserDetailsService, PersonService{
 
     public void sendingEmail(PersonDto personDto){
         Person person = personRepository.findByEmail(personDto.getEmail())
-                .orElseThrow(() -> new IllegalArgumentException("Email not registered"));
+                .orElseThrow(() -> new CustomServiceExceptions("Email not registered"));
         String token = verificationTokenService.saveVerificationToken(person);
         String link = env.getProperty("website.address")+ env.getProperty("server.port") + "/person/confirm?token=" + token;
         emailSender.send(person.getEmail(), buildEmail(person.getFirstName(), link));
