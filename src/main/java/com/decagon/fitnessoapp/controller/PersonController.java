@@ -1,21 +1,35 @@
 package com.decagon.fitnessoapp.controller;
 
-import com.decagon.fitnessoapp.dtos.AuthRequest;
-import com.decagon.fitnessoapp.dtos.AuthResponse;
-import com.decagon.fitnessoapp.security.JwtUtils;
-import com.decagon.fitnessoapp.security.PersonDetails;
-import com.decagon.fitnessoapp.security.PersonDetailsService;
-import org.springframework.http.HttpStatus;
+import com.decagon.fitnessoapp.dto.PersonDto;
+import com.decagon.fitnessoapp.service.VerificationService;
+import com.decagon.fitnessoapp.service.serviceImplementation.VerificationTokenServiceImpl;
+import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
+import com.decagon.fitnessoapp.service.PersonService;
 
-import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/person")
+@AllArgsConstructor
 public class PersonController {
+
+    private final PersonService personService;
+    public final VerificationService verificationTokenService;
+
+    @PostMapping("/register")
+    public ResponseEntity<?> register(@Valid @RequestBody PersonDto personDto){
+        return ResponseEntity.ok(personService.register(personDto));
+    }
+
+    @GetMapping("/confirm")
+    public String confirm(@RequestParam("token") String token){
+        return verificationTokenService.confirmToken(token);
+    }
+
+
     private final PersonDetailsService personDetailsService;
     private final AuthenticationManager authenticationManager;
     private final JwtUtils jwtUtils;
