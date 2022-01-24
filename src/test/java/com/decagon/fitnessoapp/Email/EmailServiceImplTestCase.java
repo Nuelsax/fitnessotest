@@ -15,12 +15,12 @@ public class EmailServiceImplTestCase {
     public void sendMessage() throws MailjetSocketTimeoutException, MailjetException{
         String email ="chika@decagon.dev";
         String text ="how are you doing?";
-        String Cname ="chika";
+        String subject ="Greetings from team fitnesso";
         EmailServiceImpl emailService;
         emailService = mock(EmailServiceImpl.class);
-        doNothing().when(emailService).sendMessage(email,text,Cname);
-        emailService.sendMessage(email,text,Cname);
-        verify(emailService,times(1)).sendMessage(email,text,Cname);
+        doNothing().when(emailService).sendMessage(email,text,subject);
+        emailService.sendMessage(email,text,subject);
+        verify(emailService,times(1)).sendMessage(email,text,subject);
 
     }
 }

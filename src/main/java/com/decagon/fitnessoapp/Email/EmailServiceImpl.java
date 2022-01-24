@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
 @Async
 public class EmailServiceImpl implements EmailService{
 
-    public void sendMessage(String email, String text, String Cname) throws MailjetException, MailjetSocketTimeoutException {
+    public void sendMessage(String email, String text, String subject) throws MailjetException, MailjetSocketTimeoutException {
         MailjetClient client;
         MailjetRequest request;
         MailjetResponse response;
@@ -30,9 +30,8 @@ public class EmailServiceImpl implements EmailService{
                 .put("Name", "team@fitnesso.com"))
                 .put(Emailv31.Message.TO, new JSONArray()
                 .put(new JSONObject()
-                .put("Email", email)
-                .put("Name", Cname)))
-                .put(Emailv31.Message.SUBJECT, "Greetings from fitnesso")
+                .put("Email", email)))
+                .put(Emailv31.Message.SUBJECT, subject)
                 .put(Emailv31.Message.HTMLPART, text)));
         response = client.post(request);
         System.out.println(response.getStatus());
