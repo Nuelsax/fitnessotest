@@ -16,6 +16,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
@@ -28,7 +29,6 @@ public class PersonDetailsService implements UserDetailsService, PersonService{
     private final PersonRepository personRepository;
     private final EmailValidator emailValidator;
     private final ModelMapper modelMapper;
-    private final Environment env;
     private final EmailSender emailSender;
     @Value("${website.address}")
     private String website;
@@ -43,7 +43,6 @@ public class PersonDetailsService implements UserDetailsService, PersonService{
         this.personRepository = personRepository;
         this.emailValidator = emailValidator;
         this.modelMapper = modelMapper;
-        this.env = env;
         this.emailSender = emailSender;
     }
 
@@ -76,16 +75,51 @@ public class PersonDetailsService implements UserDetailsService, PersonService{
 
         final String encodedPassword = bCryptPasswordEncoder.encode(personDto.getPassword());
         person.setPassword(encodedPassword);
+        personRepository.save(person);
         sendingEmail(personDto);
-        return null;
+        return person;
     }
 
     public void sendingEmail(PersonDto personDto){
         Person person = personRepository.findByEmail(personDto.getEmail())
                 .orElseThrow(() -> new CustomServiceExceptions("Email not registered"));
         String token = verificationTokenService.saveVerificationToken(person);
-        String link = env.getProperty("website.address")+ env.getProperty("server.port") + "/person/confirm?token=" + token;
-        emailSender.send(person.getEmail(), buildEmail(person.getFirstName(), link));
+        String link = "http://"+ website + ":" + port + "/person/confirm?token=" + token;
+        String subject = "Confirm your email";
+        emailSender.send(subject, person.getEmail(), buildEmail(person.getFirstName(), link));
+    }
+
+    public void updateResetPasswordToken(String token, String email) throws CustomServiceExceptions{
+        Person person = personRepository.findByEmail(email).get();
+        if (person != null){
+            person.setResetPasswordToken(token);
+            personRepository.save(person);
+        } else{
+            throw new CustomServiceExceptions("Could not find any user with the email " + email);
+        }
+
+        String resetPasswordLink = "http://"+ website + ":" + port + "/reset_password?token=" + token;
+        String subject = "Here's the link to reset your password";
+        String content = "<p>Hello,</p>"
+                + "<p>You have requested to reset your password.</p>"
+                + "<p>Click the link below to change your password:</p>"
+                + "<p><a href=\"" + resetPasswordLink + "\">Change my password</a></p>"
+                + "<br>"
+                + "<p> Ignore this email if you do remember your password, "
+                + "or you have not made the request.</p>";
+        emailSender.send(subject, person.getEmail(), resetPasswordLink);
+    }
+
+    public Person getByResetPasswordToken(String token){
+        return personRepository.findByResetPasswordToken(token).get();
+    }
+
+    public void updatePassword(Person person, String newPassword){
+        String encodedPassword = bCryptPasswordEncoder.encode(newPassword);
+        person.setPassword(encodedPassword);
+
+        person.setResetPasswordToken(null);
+        personRepository.save(person);
     }
 
 

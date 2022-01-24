@@ -18,7 +18,7 @@ public class EmailService implements EmailSender{
 
     @Override
     @Async
-    public void send(String to, String email) {
+    public void send(String subject, String to, String email) {
         try {
             MimeMessage mimeMailMessage = mailSender.createMimeMessage();
 
@@ -27,7 +27,7 @@ public class EmailService implements EmailSender{
             helper.setFrom("lanre.olowo@yahoo.com");
             helper.setTo(to);
             helper.setText(email, true);
-            helper.setSubject("Confirm your email");
+            helper.setSubject(subject);
 
             mailSender.send(mimeMailMessage);
 
@@ -36,4 +36,6 @@ public class EmailService implements EmailSender{
             throw new IllegalStateException("failed to send");
         }
     }
+
+
 }
