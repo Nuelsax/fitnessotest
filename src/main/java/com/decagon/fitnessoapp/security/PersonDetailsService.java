@@ -30,7 +30,7 @@ public class PersonDetailsService implements UserDetailsService, PersonService{
     private final ModelMapper modelMapper;
     private final Environment env;
     private final EmailSender emailSender;
-    @Value("${website.address}")
+    @Value("${website.address.auth}")
     private String website;
 
     @Value("${server.port}")
@@ -76,15 +76,17 @@ public class PersonDetailsService implements UserDetailsService, PersonService{
 
         final String encodedPassword = bCryptPasswordEncoder.encode(personDto.getPassword());
         person.setPassword(encodedPassword);
+        personRepository.save(person);
         sendingEmail(personDto);
-        return null;
+        return personRepository.save(person);
     }
 
     public void sendingEmail(PersonDto personDto){
         Person person = personRepository.findByEmail(personDto.getEmail())
                 .orElseThrow(() -> new CustomServiceExceptions("Email not registered"));
         String token = verificationTokenService.saveVerificationToken(person);
-        String link = env.getProperty("website.address")+ env.getProperty("server.port") + "/person/confirm?token=" + token;
+//        String link = env.getProperty("website.address")+ env.getProperty("server.port") + "/person/confirm?token=" + token;
+        String link = website + ":" + port + "/person/confirm?token=" + token;
         emailSender.send(person.getEmail(), buildEmail(person.getFirstName(), link));
     }
 
