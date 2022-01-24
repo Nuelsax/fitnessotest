@@ -2,6 +2,8 @@ package com.decagon.fitnessoapp.security;
 
 import com.decagon.fitnessoapp.dto.PersonDto;
 import com.decagon.fitnessoapp.exception.CustomServiceExceptions;
+import com.decagon.fitnessoapp.model.dto.ChangePassword;
+import com.decagon.fitnessoapp.model.dto.UpdatePersonDetails;
 import com.decagon.fitnessoapp.model.user.Person;
 import com.decagon.fitnessoapp.model.user.Role;
 import com.decagon.fitnessoapp.repository.PersonRepository;
@@ -56,6 +58,7 @@ public class PersonDetailsService implements UserDetailsService, PersonService{
 
         return person.map(PersonDetails::new).get();
     }
+
 
 
     public Person register(PersonDto personDto) {

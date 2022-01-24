@@ -1,5 +1,12 @@
 package com.decagon.fitnessoapp.controller;
 
+import com.decagon.fitnessoapp.model.dto.ChangePassword;
+import com.decagon.fitnessoapp.model.dto.UpdatePersonDetails;
+import com.decagon.fitnessoapp.service.PersonService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 import com.decagon.fitnessoapp.dto.*;
 import com.decagon.fitnessoapp.model.user.Person;
 import com.decagon.fitnessoapp.security.JwtUtils;
@@ -35,59 +42,74 @@ public class PersonController {
     private final AuthenticationManager authenticationManager;
     private final JwtUtils jwtUtils;
 
-    @PostMapping("/register")
-    public ResponseEntity<?> register(@Valid @RequestBody PersonDto personDto){
-        return ResponseEntity.ok(personService.register(personDto));
-    }
 
-    @GetMapping("/confirm")
-    public String confirm(@RequestParam("token") String token){
-        return verificationTokenService.confirmToken(token);
-    }
-
-    @PostMapping("/login")
-    public ResponseEntity<AuthResponse> login(@RequestBody AuthRequest req, HttpServletResponse response) throws Exception {
-        try {
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(req.getUsername(), req.getPassword()));
-        } catch (Exception e) {
-            throw new Exception("incorrect username or password!");
+        @PutMapping("/profile/edit/personinfo")
+        public void editUserDetails(@RequestBody UpdatePersonDetails updatePersonDetails) {
+            personService.updateUserDetails(updatePersonDetails);
         }
 
-        final PersonDetails person = personDetailsService.loadUserByUsername(req.getUsername());
-        final String jwt = jwtUtils.generateToken(person);
-        final AuthResponse res = new AuthResponse();
-        res.setToken(jwt);
-        response.addHeader("Authorization", "Bearer " + jwt);
-        return new ResponseEntity(res, HttpStatus.CREATED);
-    }
-
-    @PostMapping("/forgot_password")
-    public ResponseEntity<String> processForgotPassword(@RequestBody Person person) {
-        String email = person.getEmail();
-        String token = RandomString.make(64);
-
-        personDetailsService.updateResetPasswordToken(token, email);
-        return new ResponseEntity<>("forgot_password_form", HttpStatus.ACCEPTED);
-
-    }
-    @GetMapping("/reset_password")
-    public ResponseEntity<String> showResetPasswordForm(@Param(value = "token") String token){
-        Person person = personDetailsService.getByResetPasswordToken(token);
-        if (person == null){
-            return new ResponseEntity("invalid_token", HttpStatus.BAD_REQUEST);
+        @PutMapping("/profile/edit/password")
+        public void editUserPassword(@RequestBody ChangePassword changePassword) {
+            personService.updatePassword(changePassword);
         }
-        return new ResponseEntity("reset_password_form", HttpStatus.ACCEPTED);
-    }
 
-    @PostMapping("/reset_password")
-    public ResponseEntity<String> processResetPassword(@RequestBody Person person, @Param(value = "token") String token, HttpServletRequest request){
-        String password = person.getPassword();
-        Person person1 = personDetailsService.getByResetPasswordToken(token);
-        if (person1 == null){
-            return new ResponseEntity("invalid_token", HttpStatus.BAD_REQUEST);
-        }else{
-            personDetailsService.updatePassword(person1, password);
+
+        @PostMapping("/register")
+        public ResponseEntity<?> register (@Valid @RequestBody PersonDto personDto){
+            return ResponseEntity.ok(personService.register(personDto));
         }
-        return new ResponseEntity("You have successfully changed your password. ", HttpStatus.CREATED);
-    }
+
+        @GetMapping("/confirm")
+        public String confirm (@RequestParam("token") String token){
+            return verificationTokenService.confirmToken(token);
+        }
+
+        @PostMapping("/login")
+        public ResponseEntity<AuthResponse> login (@RequestBody AuthRequest req, HttpServletResponse response) throws
+        Exception {
+            try {
+                authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(req.getUsername(), req.getPassword()));
+            } catch (Exception e) {
+                throw new Exception("incorrect username or password!");
+            }
+
+            final PersonDetails person = personDetailsService.loadUserByUsername(req.getUsername());
+            final String jwt = jwtUtils.generateToken(person);
+            final AuthResponse res = new AuthResponse();
+            res.setToken(jwt);
+            response.addHeader("Authorization", "Bearer " + jwt);
+            return new ResponseEntity(res, HttpStatus.CREATED);
+        }
+
+        @PostMapping("/forgot_password")
+        public ResponseEntity<String> processForgotPassword (@RequestBody Person person){
+            String email = person.getEmail();
+            String token = RandomString.make(64);
+
+            personDetailsService.updateResetPasswordToken(token, email);
+            return new ResponseEntity<>("forgot_password_form", HttpStatus.ACCEPTED);
+
+        }
+        @GetMapping("/reset_password")
+        public ResponseEntity<String> showResetPasswordForm (@Param(value = "token") String token){
+            Person person = personDetailsService.getByResetPasswordToken(token);
+            if (person == null) {
+                return new ResponseEntity("invalid_token", HttpStatus.BAD_REQUEST);
+            }
+            return new ResponseEntity("reset_password_form", HttpStatus.ACCEPTED);
+        }
+
+        @PostMapping("/reset_password")
+        public ResponseEntity<String> processResetPassword (@RequestBody Person person, @Param(value = "token") String
+        token, HttpServletRequest request){
+            String password = person.getPassword();
+            Person person1 = personDetailsService.getByResetPasswordToken(token);
+            if (person1 == null) {
+                return new ResponseEntity("invalid_token", HttpStatus.BAD_REQUEST);
+            } else {
+                personDetailsService.updatePassword(person1, password);
+            }
+            return new ResponseEntity("You have successfully changed your password. ", HttpStatus.CREATED);
+        }
 }
+
