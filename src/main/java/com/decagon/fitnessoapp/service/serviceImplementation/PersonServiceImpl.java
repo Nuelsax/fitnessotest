@@ -1,5 +1,6 @@
 package com.decagon.fitnessoapp.service.serviceImplementation;
 
+import com.decagon.fitnessoapp.dto.PersonDto;
 import com.decagon.fitnessoapp.exceptions.PersonNotFoundException;
 import com.decagon.fitnessoapp.model.dto.ChangePassword;
 import com.decagon.fitnessoapp.model.dto.UpdatePersonDetails;
