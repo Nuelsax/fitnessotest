@@ -28,7 +28,6 @@ public class PersonDetailsService implements UserDetailsService, PersonService{
     private final PersonRepository personRepository;
     private final EmailValidator emailValidator;
     private final ModelMapper modelMapper;
-//    private final Environment env;
     private final EmailSender emailSender;
     @Value("${website.address}")
     private String website;
@@ -43,7 +42,6 @@ public class PersonDetailsService implements UserDetailsService, PersonService{
         this.personRepository = personRepository;
         this.emailValidator = emailValidator;
         this.modelMapper = modelMapper;
-//        this.env = env;
         this.emailSender = emailSender;
     }
 
@@ -85,7 +83,6 @@ public class PersonDetailsService implements UserDetailsService, PersonService{
         Person person = personRepository.findByEmail(personDto.getEmail())
                 .orElseThrow(() -> new CustomServiceExceptions("Email not registered"));
         String token = verificationTokenService.saveVerificationToken(person);
-//        String link = env.getProperty("website.address")+ env.getProperty("server.port") + "/person/confirm?token=" + token;
         String link = "http://" + website + ":" + port + "/person/confirm?token=" + token;
         emailSender.send(person.getEmail(), buildEmail(person.getFirstName(), link));
     }
