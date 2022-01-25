@@ -1,9 +1,10 @@
 package com.decagon.fitnessoapp.controller;
 
-import com.decagon.fitnessoapp.model.dto.ChangePassword;
-import com.decagon.fitnessoapp.model.dto.UpdatePersonDetails;
+import com.decagon.fitnessoapp.dto.ChangePassword;
+import com.decagon.fitnessoapp.dto.UpdatePersonDetails;
 import com.decagon.fitnessoapp.service.PersonService;
-import lombok.RequiredArgsConstructor;
+import com.mailjet.client.errors.MailjetException;
+import com.mailjet.client.errors.MailjetSocketTimeoutException;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,18 +19,13 @@ import net.bytebuddy.utility.RandomString;
 import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
-import com.decagon.fitnessoapp.service.PersonService;
 
-import javax.mail.MessagingException;
-import javax.mail.internet.MimeMessage;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-import java.io.UnsupportedEncodingException;
 
 @RestController
 @RequestMapping("/person")
@@ -50,12 +46,12 @@ public class PersonController {
 
         @PutMapping("/profile/edit/password")
         public void editUserPassword(@RequestBody ChangePassword changePassword) {
-            personService.updatePassword(changePassword);
+            personService.updateCurrentPassword(changePassword);
         }
 
 
         @PostMapping("/register")
-        public ResponseEntity<?> register (@Valid @RequestBody PersonDto personDto){
+        public ResponseEntity<?> register (@Valid @RequestBody PersonDto personDto) throws MailjetSocketTimeoutException, MailjetException {
             return ResponseEntity.ok(personService.register(personDto));
         }
 
@@ -82,7 +78,7 @@ public class PersonController {
         }
 
         @PostMapping("/forgot_password")
-        public ResponseEntity<String> processForgotPassword (@RequestBody Person person){
+        public ResponseEntity<String> processForgotPassword (@RequestBody Person person) throws MailjetSocketTimeoutException, MailjetException {
             String email = person.getEmail();
             String token = RandomString.make(64);
 
@@ -90,6 +86,7 @@ public class PersonController {
             return new ResponseEntity<>("forgot_password_form", HttpStatus.ACCEPTED);
 
         }
+
         @GetMapping("/reset_password")
         public ResponseEntity<String> showResetPasswordForm (@Param(value = "token") String token){
             Person person = personDetailsService.getByResetPasswordToken(token);
