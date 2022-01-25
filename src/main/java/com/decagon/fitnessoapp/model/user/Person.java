@@ -61,4 +61,8 @@ public class Person {
 
     private String image;
 
+    private String resetPasswordToken;
+
+    public Person(Long id, String email, String userName, String firstName, String lastName, String token) {
+    }
 }

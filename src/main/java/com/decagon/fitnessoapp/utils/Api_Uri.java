@@ -7,4 +7,6 @@ public class Api_Uri {
             "/login",
             "/sign"
     };
+
+//    public static String API_KEY = System.getenv().get("");
 }
