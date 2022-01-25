@@ -1,4 +1,4 @@
-package com.decagon.fitnessoapp.model.dto;
+package com.decagon.fitnessoapp.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
