@@ -39,8 +39,6 @@ public class PersonDto {
 
     private Role role;
 
-    private boolean verifyEmail;
-
     private String gender;
 
     private Date dateOfBirth;

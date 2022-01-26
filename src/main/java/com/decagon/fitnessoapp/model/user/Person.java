@@ -50,7 +50,7 @@ public class Person {
     private Role role;
 
     @Column(name = "verify_email")
-    private boolean verifyEmail;
+    private boolean verifyEmail = false;
 
     @NotNull
     private String gender;

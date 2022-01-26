@@ -1,14 +1,15 @@
 version: '3.3'
 services:
   app:
-    container_name: springboot-postgresql
-    image: springboot-postgresql
+    container_name: fitness-app-container
+    image: fitness-app-image
     build: ./
     ports:
       - "8084:8080"
     depends_on:
       - postgresqldb
   postgresqldb:
+    container_name: fitnes-server
     image: postgres
     ports:
       - "5443:5432"
