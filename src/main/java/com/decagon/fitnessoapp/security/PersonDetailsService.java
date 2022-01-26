@@ -13,6 +13,7 @@ import com.decagon.fitnessoapp.service.serviceImplementation.EmailValidator;
 import com.decagon.fitnessoapp.service.serviceImplementation.VerificationTokenServiceImpl;
 import com.mailjet.client.errors.MailjetException;
 import com.mailjet.client.errors.MailjetSocketTimeoutException;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,6 +26,7 @@ import java.util.Optional;
 import org.springframework.transaction.annotation.Transactional;
 
 @Component
+@Slf4j
 public class PersonDetailsService implements UserDetailsService, PersonService{
     private final VerificationTokenServiceImpl verificationTokenService;
     private final PasswordEncoder bCryptPasswordEncoder;
@@ -35,8 +37,8 @@ public class PersonDetailsService implements UserDetailsService, PersonService{
     @Value("${website.address}")
     private String website;
 
-//    @Value("${server.port}")
-//    private int port;
+    @Value("${server.port}")
+    private Integer port;
 
     @Autowired
     public PersonDetailsService(VerificationTokenServiceImpl verificationTokenService, PasswordEncoder bCryptPasswordEncoder, PersonRepository personRepository, EmailValidator emailValidator, ModelMapper modelMapper, EmailService emailSender) {
@@ -87,7 +89,8 @@ public class PersonDetailsService implements UserDetailsService, PersonService{
         Person person = personRepository.findByEmail(personDto.getEmail())
                 .orElseThrow(() -> new CustomServiceExceptions("Email not registered"));
         String token = verificationTokenService.saveVerificationToken(person);
-        String link = "http://"+ website + ":" + 8080 + "/person/confirm?token=" + token;
+        String link = "http://"+ website + ":" + port + "/person/confirm?token=" + token;
+        log.info(link);
         String subject = "Confirm your email";
         emailSender.sendMessage(subject, person.getEmail(), buildEmail(person.getFirstName(), link));
     }
