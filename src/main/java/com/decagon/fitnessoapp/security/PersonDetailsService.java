@@ -1,28 +1,28 @@
 package com.decagon.fitnessoapp.security;
 
+import com.decagon.fitnessoapp.Email.EmailService;
 import com.decagon.fitnessoapp.dto.PersonDto;
 import com.decagon.fitnessoapp.exception.CustomServiceExceptions;
-import com.decagon.fitnessoapp.model.dto.ChangePassword;
-import com.decagon.fitnessoapp.model.dto.UpdatePersonDetails;
+import com.decagon.fitnessoapp.exceptions.PersonNotFoundException;
+import com.decagon.fitnessoapp.dto.ChangePassword;
+import com.decagon.fitnessoapp.dto.UpdatePersonDetails;
 import com.decagon.fitnessoapp.model.user.Person;
-import com.decagon.fitnessoapp.model.user.Role;
 import com.decagon.fitnessoapp.repository.PersonRepository;
 import com.decagon.fitnessoapp.service.PersonService;
-import com.decagon.fitnessoapp.service.serviceImplementation.EmailSender;
 import com.decagon.fitnessoapp.service.serviceImplementation.EmailValidator;
 import com.decagon.fitnessoapp.service.serviceImplementation.VerificationTokenServiceImpl;
+import com.mailjet.client.errors.MailjetException;
+import com.mailjet.client.errors.MailjetSocketTimeoutException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.env.Environment;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 public class PersonDetailsService implements UserDetailsService, PersonService{
@@ -31,14 +31,14 @@ public class PersonDetailsService implements UserDetailsService, PersonService{
     private final PersonRepository personRepository;
     private final EmailValidator emailValidator;
     private final ModelMapper modelMapper;
-    private final EmailSender emailSender;
+    private final EmailService emailSender;
     @Value("${website.address}")
     private String website;
 
 
 
     @Autowired
-    public PersonDetailsService(VerificationTokenServiceImpl verificationTokenService, PasswordEncoder bCryptPasswordEncoder, PersonRepository personRepository, EmailValidator emailValidator, ModelMapper modelMapper, Environment env, EmailSender emailSender) {
+    public PersonDetailsService(VerificationTokenServiceImpl verificationTokenService, PasswordEncoder bCryptPasswordEncoder, PersonRepository personRepository, EmailValidator emailValidator, ModelMapper modelMapper, EmailService emailSender) {
         this.verificationTokenService = verificationTokenService;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.personRepository = personRepository;
@@ -60,7 +60,7 @@ public class PersonDetailsService implements UserDetailsService, PersonService{
 
 
 
-    public Person register(PersonDto personDto) {
+    public Person register(PersonDto personDto) throws MailjetSocketTimeoutException, MailjetException {
 
         boolean isValidEmail = emailValidator.test(personDto.getEmail());
         if(!isValidEmail){
@@ -82,16 +82,16 @@ public class PersonDetailsService implements UserDetailsService, PersonService{
         return person;
     }
 
-    public void sendingEmail(PersonDto personDto){
+    public void sendingEmail(PersonDto personDto) throws MailjetSocketTimeoutException, MailjetException {
         Person person = personRepository.findByEmail(personDto.getEmail())
                 .orElseThrow(() -> new CustomServiceExceptions("Email not registered"));
         String token = verificationTokenService.saveVerificationToken(person);
         String link = "http://"+ website + ":" + 8080 + "/person/confirm?token=" + token;
         String subject = "Confirm your email";
-        emailSender.send(subject, person.getEmail(), buildEmail(person.getFirstName(), link));
+        emailSender.sendMessage(subject, person.getEmail(), buildEmail(person.getFirstName(), link));
     }
 
-    public void updateResetPasswordToken(String token, String email) throws CustomServiceExceptions{
+    public void updateResetPasswordToken(String token, String email) throws CustomServiceExceptions, MailjetSocketTimeoutException, MailjetException {
         Person person = personRepository.findByEmail(email).get();
         if (person != null){
             person.setResetPasswordToken(token);
@@ -109,7 +109,7 @@ public class PersonDetailsService implements UserDetailsService, PersonService{
                 + "<br>"
                 + "<p> Ignore this email if you do remember your password, "
                 + "or you have not made the request.</p>";
-        emailSender.send(subject, person.getEmail(), resetPasswordLink);
+        emailSender.sendMessage(subject, person.getEmail(), resetPasswordLink);
     }
 
     public Person getByResetPasswordToken(String token){
@@ -122,6 +122,37 @@ public class PersonDetailsService implements UserDetailsService, PersonService{
 
         person.setResetPasswordToken(null);
         personRepository.save(person);
+    }
+
+    @Override
+    public void updateUserDetails(UpdatePersonDetails updatePersonDetails) {
+
+        Person existingPerson = personRepository.findPersonByUserName(updatePersonDetails.getUserName())
+                .orElseThrow(
+                        () -> new PersonNotFoundException("Person Not Found")
+                );
+
+        existingPerson.setFirstName(updatePersonDetails.getFirstName());
+        existingPerson.setLastName(updatePersonDetails.getLastName());
+        existingPerson.setEmail(updatePersonDetails.getEmail());
+        existingPerson.setGender(updatePersonDetails.getGender());
+        existingPerson.setDateOfBirth(updatePersonDetails.getDateOfBirth());
+
+        personRepository.save(existingPerson);
+    }
+
+
+    @Override
+    @Transactional
+    public void updateCurrentPassword(ChangePassword changePassword) {
+        Person currentPerson = personRepository.findPersonByPassword(changePassword.getCurrentPassword())
+                .orElseThrow(()-> new PersonNotFoundException("Person Not Found"));
+        String newPassword = changePassword.getNewPassword();
+        String confirmPassword = changePassword.getConfirmPassword();
+        if (newPassword.equals(confirmPassword)){
+            currentPerson.setPassword(bCryptPasswordEncoder.encode(newPassword));
+            personRepository.save(currentPerson);
+        }
     }
 
 
