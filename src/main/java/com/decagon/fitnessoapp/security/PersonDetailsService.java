@@ -35,8 +35,9 @@ public class PersonDetailsService implements UserDetailsService, PersonService{
     @Value("${website.address}")
     private String website;
 
-//    @Value("${server.port}")
-//    private int port;
+    @Value("${server.port}")
+    private Integer port;
+
 
     @Autowired
     public PersonDetailsService(VerificationTokenServiceImpl verificationTokenService, PasswordEncoder bCryptPasswordEncoder, PersonRepository personRepository, EmailValidator emailValidator, ModelMapper modelMapper, EmailService emailSender) {

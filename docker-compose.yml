@@ -5,7 +5,7 @@ services:
     image: fitness-app-image
     build: ./
     ports:
-      - "8084:8080"
+      - "8084:9067"
     depends_on:
       - postgresqldb
   postgresqldb:
