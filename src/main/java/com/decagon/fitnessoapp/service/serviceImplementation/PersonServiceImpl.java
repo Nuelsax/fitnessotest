@@ -8,10 +8,12 @@ import com.decagon.fitnessoapp.model.user.Person;
 import com.decagon.fitnessoapp.repository.PersonRepository;
 import com.decagon.fitnessoapp.service.PersonService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
-@Service
+//@Service
 @RequiredArgsConstructor
+@Component
 public class PersonServiceImpl implements PersonService {
 
     private final PersonRepository personRepository;

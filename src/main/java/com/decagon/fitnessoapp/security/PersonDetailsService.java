@@ -35,8 +35,7 @@ public class PersonDetailsService implements UserDetailsService, PersonService{
     @Value("${website.address}")
     private String website;
 
-    @Value("${server.port}")
-    private int port;
+
 
     @Autowired
     public PersonDetailsService(VerificationTokenServiceImpl verificationTokenService, PasswordEncoder bCryptPasswordEncoder, PersonRepository personRepository, EmailValidator emailValidator, ModelMapper modelMapper, Environment env, EmailSender emailSender) {
@@ -87,7 +86,7 @@ public class PersonDetailsService implements UserDetailsService, PersonService{
         Person person = personRepository.findByEmail(personDto.getEmail())
                 .orElseThrow(() -> new CustomServiceExceptions("Email not registered"));
         String token = verificationTokenService.saveVerificationToken(person);
-        String link = "http://"+ website + ":" + port + "/person/confirm?token=" + token;
+        String link = "http://"+ website + ":" + 8080 + "/person/confirm?token=" + token;
         String subject = "Confirm your email";
         emailSender.send(subject, person.getEmail(), buildEmail(person.getFirstName(), link));
     }
@@ -101,7 +100,7 @@ public class PersonDetailsService implements UserDetailsService, PersonService{
             throw new CustomServiceExceptions("Could not find any user with the email " + email);
         }
 
-        String resetPasswordLink = "http://"+ website + ":" + port + "/reset_password?token=" + token;
+        String resetPasswordLink = "http://"+ website + ":" + 8080+ "/reset_password?token=" + token;
         String subject = "Here's the link to reset your password";
         String content = "<p>Hello,</p>"
                 + "<p>You have requested to reset your password.</p>"
