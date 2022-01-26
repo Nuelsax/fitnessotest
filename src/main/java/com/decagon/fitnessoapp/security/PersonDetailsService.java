@@ -100,7 +100,7 @@ public class PersonDetailsService implements UserDetailsService, PersonService{
             throw new CustomServiceExceptions("Could not find any user with the email " + email);
         }
 
-        String resetPasswordLink = "http://"+ website + ":" + 8080+ "/reset_password?token=" + token;
+        String resetPasswordLink = "http://"+ website + ":" + 8080 + "/reset_password?token=" + token;
         String subject = "Here's the link to reset your password";
         String content = "<p>Hello,</p>"
                 + "<p>You have requested to reset your password.</p>"
