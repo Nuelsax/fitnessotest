@@ -12,7 +12,7 @@ import java.util.Date;
 import java.util.List;
 
 @Data
-public class PersonDto {
+public class PersonRequest {
 
     @NotEmpty(message = "Username Name cannot be empty")
     @Size(min = 2, message = "username must not be less than 1")
@@ -36,8 +36,6 @@ public class PersonDto {
     private String phoneNumber;
 
     private List<Address> address;
-
-    private Role role;
 
     private String gender;
 

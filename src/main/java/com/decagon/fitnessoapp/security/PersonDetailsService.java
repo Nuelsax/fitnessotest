@@ -1,7 +1,8 @@
 package com.decagon.fitnessoapp.security;
 
 import com.decagon.fitnessoapp.Email.EmailService;
-import com.decagon.fitnessoapp.dto.PersonDto;
+import com.decagon.fitnessoapp.dto.PersonRequest;
+import com.decagon.fitnessoapp.dto.PersonResponse;
 import com.decagon.fitnessoapp.exception.CustomServiceExceptions;
 import com.decagon.fitnessoapp.exception.PersonNotFoundException;
 import com.decagon.fitnessoapp.dto.ChangePassword;
@@ -9,6 +10,7 @@ import com.decagon.fitnessoapp.dto.UpdatePersonDetails;
 import com.decagon.fitnessoapp.model.user.Person;
 import com.decagon.fitnessoapp.repository.PersonRepository;
 import com.decagon.fitnessoapp.service.PersonService;
+import com.decagon.fitnessoapp.service.VerificationService;
 import com.decagon.fitnessoapp.service.serviceImplementation.EmailValidator;
 import com.decagon.fitnessoapp.service.serviceImplementation.VerificationTokenServiceImpl;
 import com.mailjet.client.errors.MailjetException;
@@ -26,7 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Component
 public class PersonDetailsService implements UserDetailsService, PersonService{
-    private final VerificationTokenServiceImpl verificationTokenService;
+    private final VerificationService verificationTokenService;
     private final PasswordEncoder bCryptPasswordEncoder;
     private final PersonRepository personRepository;
     private final EmailValidator emailValidator;
@@ -62,7 +64,7 @@ public class PersonDetailsService implements UserDetailsService, PersonService{
 
 
 
-    public Person register(PersonDto personDto) throws MailjetSocketTimeoutException, MailjetException {
+    public PersonResponse register(PersonRequest personDto) throws MailjetSocketTimeoutException, MailjetException {
 
         boolean isValidEmail = emailValidator.test(personDto.getEmail());
         if(!isValidEmail){
@@ -81,10 +83,12 @@ public class PersonDetailsService implements UserDetailsService, PersonService{
         person.setPassword(encodedPassword);
         personRepository.save(person);
         sendingEmail(personDto);
-        return person;
+        PersonResponse personResponse = new PersonResponse();
+        modelMapper.map(person, personResponse);
+        return personResponse;
     }
 
-    public void sendingEmail(PersonDto personDto) throws MailjetSocketTimeoutException, MailjetException {
+    public void sendingEmail(PersonRequest personDto) throws MailjetSocketTimeoutException, MailjetException {
         Person person = personRepository.findByEmail(personDto.getEmail())
                 .orElseThrow(() -> new CustomServiceExceptions("Email not registered"));
         String token = verificationTokenService.saveVerificationToken(person);

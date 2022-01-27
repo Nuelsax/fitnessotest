@@ -51,7 +51,7 @@ public class PersonController {
 
 
         @PostMapping("/register")
-        public ResponseEntity<?> register (@Valid @RequestBody PersonDto personDto) throws MailjetSocketTimeoutException, MailjetException {
+        public ResponseEntity<?> register (@Valid @RequestBody PersonRequest personDto) throws MailjetSocketTimeoutException, MailjetException {
             return ResponseEntity.ok(personService.register(personDto));
         }
 
@@ -61,7 +61,7 @@ public class PersonController {
         }
 
         @PostMapping("/login")
-        public ResponseEntity<AuthResponse> login (@RequestBody AuthRequest req, HttpServletResponse response) throws
+        public ResponseEntity<?> login (@RequestBody AuthRequest req, HttpServletResponse response) throws
         Exception {
             try {
                 authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(req.getUsername(), req.getPassword()));
@@ -74,7 +74,7 @@ public class PersonController {
             final AuthResponse res = new AuthResponse();
             res.setToken(jwt);
             response.addHeader("Authorization", "Bearer " + jwt);
-            return new ResponseEntity(res, HttpStatus.CREATED);
+            return new ResponseEntity<>(res, HttpStatus.CREATED);
         }
 
         @PostMapping("/forgot_password")

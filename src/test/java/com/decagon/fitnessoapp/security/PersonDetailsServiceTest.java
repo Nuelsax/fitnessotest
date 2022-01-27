@@ -15,7 +15,7 @@ import static org.mockito.Mockito.when;
 
 import com.decagon.fitnessoapp.Email.EmailService;
 import com.decagon.fitnessoapp.dto.ChangePassword;
-import com.decagon.fitnessoapp.dto.PersonDto;
+import com.decagon.fitnessoapp.dto.PersonRequest;
 import com.decagon.fitnessoapp.dto.UpdatePersonDetails;
 import com.decagon.fitnessoapp.exception.CustomServiceExceptions;
 import com.decagon.fitnessoapp.exception.PersonNotFoundException;
@@ -138,7 +138,7 @@ class PersonDetailsServiceTest {
         when(this.personRepository.findByEmail((String) any())).thenReturn(ofResult);
         when(this.emailValidator.test((String) any())).thenReturn(true);
 
-        PersonDto personDto = new PersonDto();
+        PersonRequest personDto = new PersonRequest();
         personDto.setAddress(new ArrayList<>());
         LocalDateTime atStartOfDayResult1 = LocalDate.of(1970, 1, 1).atStartOfDay();
         personDto.setDateOfBirth(Date.from(atStartOfDayResult1.atZone(ZoneId.of("UTC")).toInstant()));
@@ -161,7 +161,7 @@ class PersonDetailsServiceTest {
         when(this.personRepository.findByEmail((String) any())).thenThrow(new CustomServiceExceptions("An error occurred"));
         when(this.emailValidator.test((String) any())).thenReturn(true);
 
-        PersonDto personDto = new PersonDto();
+        PersonRequest personDto = new PersonRequest();
         personDto.setAddress(new ArrayList<>());
         LocalDateTime atStartOfDayResult = LocalDate.of(1970, 1, 1).atStartOfDay();
         personDto.setDateOfBirth(Date.from(atStartOfDayResult.atZone(ZoneId.of("UTC")).toInstant()));
@@ -203,7 +203,7 @@ class PersonDetailsServiceTest {
         doNothing().when(this.modelMapper).map((Object) any(), (Object) any());
         when(this.emailValidator.test((String) any())).thenReturn(true);
 
-        PersonDto personDto = new PersonDto();
+        PersonRequest personDto = new PersonRequest();
         personDto.setAddress(new ArrayList<>());
         LocalDateTime atStartOfDayResult1 = LocalDate.of(1970, 1, 1).atStartOfDay();
         personDto.setDateOfBirth(Date.from(atStartOfDayResult1.atZone(ZoneId.of("UTC")).toInstant()));
@@ -232,7 +232,7 @@ class PersonDetailsServiceTest {
         doNothing().when(this.modelMapper).map((Object) any(), (Object) any());
         when(this.emailValidator.test((String) any())).thenReturn(true);
 
-        PersonDto personDto = new PersonDto();
+        PersonRequest personDto = new PersonRequest();
         personDto.setAddress(new ArrayList<>());
         LocalDateTime atStartOfDayResult = LocalDate.of(1970, 1, 1).atStartOfDay();
         personDto.setDateOfBirth(Date.from(atStartOfDayResult.atZone(ZoneId.of("UTC")).toInstant()));
@@ -277,7 +277,7 @@ class PersonDetailsServiceTest {
         doNothing().when(this.modelMapper).map((Object) any(), (Object) any());
         when(this.emailValidator.test((String) any())).thenReturn(false);
 
-        PersonDto personDto = new PersonDto();
+        PersonRequest personDto = new PersonRequest();
         personDto.setAddress(new ArrayList<>());
         LocalDateTime atStartOfDayResult1 = LocalDate.of(1970, 1, 1).atStartOfDay();
         personDto.setDateOfBirth(Date.from(atStartOfDayResult1.atZone(ZoneId.of("UTC")).toInstant()));
@@ -318,7 +318,7 @@ class PersonDetailsServiceTest {
         when(this.personRepository.findByEmail((String) any())).thenReturn(ofResult);
         doNothing().when(this.emailService).sendMessage((String) any(), (String) any(), (String) any());
 
-        PersonDto personDto = new PersonDto();
+        PersonRequest personDto = new PersonRequest();
         personDto.setAddress(new ArrayList<>());
         LocalDateTime atStartOfDayResult1 = LocalDate.of(1970, 1, 1).atStartOfDay();
         personDto.setDateOfBirth(Date.from(atStartOfDayResult1.atZone(ZoneId.of("UTC")).toInstant()));
@@ -362,7 +362,7 @@ class PersonDetailsServiceTest {
         doThrow(new CustomServiceExceptions("An error occurred")).when(this.emailService)
                 .sendMessage((String) any(), (String) any(), (String) any());
 
-        PersonDto personDto = new PersonDto();
+        PersonRequest personDto = new PersonRequest();
         personDto.setAddress(new ArrayList<>());
         LocalDateTime atStartOfDayResult1 = LocalDate.of(1970, 1, 1).atStartOfDay();
         personDto.setDateOfBirth(Date.from(atStartOfDayResult1.atZone(ZoneId.of("UTC")).toInstant()));
@@ -387,7 +387,7 @@ class PersonDetailsServiceTest {
         when(this.personRepository.findByEmail((String) any())).thenReturn(Optional.empty());
         doNothing().when(this.emailService).sendMessage((String) any(), (String) any(), (String) any());
 
-        PersonDto personDto = new PersonDto();
+        PersonRequest personDto = new PersonRequest();
         personDto.setAddress(new ArrayList<>());
         LocalDateTime atStartOfDayResult = LocalDate.of(1970, 1, 1).atStartOfDay();
         personDto.setDateOfBirth(Date.from(atStartOfDayResult.atZone(ZoneId.of("UTC")).toInstant()));

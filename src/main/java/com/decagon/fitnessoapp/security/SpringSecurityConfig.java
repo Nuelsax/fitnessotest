@@ -28,8 +28,6 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     private final PersonDetailsService personDetailsService;
     private final JwtRequestFilters jwtRequestFilters;
     private final PasswordEncoder passwordEncoder;
-//    private final Api_Uri apiUri;
-
 
 
     @Override
