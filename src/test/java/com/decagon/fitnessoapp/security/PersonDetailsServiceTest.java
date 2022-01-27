@@ -18,7 +18,7 @@ import com.decagon.fitnessoapp.dto.ChangePassword;
 import com.decagon.fitnessoapp.dto.PersonDto;
 import com.decagon.fitnessoapp.dto.UpdatePersonDetails;
 import com.decagon.fitnessoapp.exception.CustomServiceExceptions;
-import com.decagon.fitnessoapp.exceptions.PersonNotFoundException;
+import com.decagon.fitnessoapp.exception.PersonNotFoundException;
 import com.decagon.fitnessoapp.model.user.Person;
 import com.decagon.fitnessoapp.model.user.Role;
 import com.decagon.fitnessoapp.repository.PersonRepository;

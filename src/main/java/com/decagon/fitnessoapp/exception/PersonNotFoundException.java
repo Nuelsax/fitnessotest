@@ -1,4 +1,4 @@
-package com.decagon.fitnessoapp.exceptions;
+package com.decagon.fitnessoapp.exception;
 
 public class PersonNotFoundException extends RuntimeException{
     public PersonNotFoundException(String message) {
