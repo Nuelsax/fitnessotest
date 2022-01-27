@@ -115,7 +115,8 @@ public class PersonDetailsService implements UserDetailsService, PersonService{
     }
 
     public Person getByResetPasswordToken(String token){
-        return personRepository.findByResetPasswordToken(token).get();
+        return personRepository.findByResetPasswordToken(token)
+                .orElseThrow(() -> new PersonNotFoundException("Person Not Found"));
     }
 
     public void updatePassword(Person person, String newPassword){
