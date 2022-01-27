@@ -3,7 +3,7 @@ package com.decagon.fitnessoapp.security;
 import com.decagon.fitnessoapp.Email.EmailService;
 import com.decagon.fitnessoapp.dto.PersonDto;
 import com.decagon.fitnessoapp.exception.CustomServiceExceptions;
-import com.decagon.fitnessoapp.exceptions.PersonNotFoundException;
+import com.decagon.fitnessoapp.exception.PersonNotFoundException;
 import com.decagon.fitnessoapp.dto.ChangePassword;
 import com.decagon.fitnessoapp.dto.UpdatePersonDetails;
 import com.decagon.fitnessoapp.model.user.Person;
@@ -13,7 +13,6 @@ import com.decagon.fitnessoapp.service.serviceImplementation.EmailValidator;
 import com.decagon.fitnessoapp.service.serviceImplementation.VerificationTokenServiceImpl;
 import com.mailjet.client.errors.MailjetException;
 import com.mailjet.client.errors.MailjetSocketTimeoutException;
-import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,7 +25,6 @@ import java.util.Optional;
 import org.springframework.transaction.annotation.Transactional;
 
 @Component
-@Slf4j
 public class PersonDetailsService implements UserDetailsService, PersonService{
     private final VerificationTokenServiceImpl verificationTokenService;
     private final PasswordEncoder bCryptPasswordEncoder;
@@ -39,6 +37,7 @@ public class PersonDetailsService implements UserDetailsService, PersonService{
 
     @Value("${server.port}")
     private Integer port;
+
 
     @Autowired
     public PersonDetailsService(VerificationTokenServiceImpl verificationTokenService, PasswordEncoder bCryptPasswordEncoder, PersonRepository personRepository, EmailValidator emailValidator, ModelMapper modelMapper, EmailService emailSender) {
@@ -90,7 +89,6 @@ public class PersonDetailsService implements UserDetailsService, PersonService{
                 .orElseThrow(() -> new CustomServiceExceptions("Email not registered"));
         String token = verificationTokenService.saveVerificationToken(person);
         String link = "http://"+ website + ":" + port + "/person/confirm?token=" + token;
-        log.info(link);
         String subject = "Confirm your email";
         emailSender.sendMessage(subject, person.getEmail(), buildEmail(person.getFirstName(), link));
     }
@@ -104,7 +102,7 @@ public class PersonDetailsService implements UserDetailsService, PersonService{
             throw new CustomServiceExceptions("Could not find any user with the email " + email);
         }
 
-        String resetPasswordLink = "http://"+ website + ":" + 8080 + "/reset_password?token=" + token;
+        String resetPasswordLink = "http://"+ website + ":" + port + "/reset_password?token=" + token;
         String subject = "Here's the link to reset your password";
         String content = "<p>Hello,</p>"
                 + "<p>You have requested to reset your password.</p>"
