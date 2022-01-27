@@ -111,7 +111,7 @@ public class PersonDetailsService implements UserDetailsService, PersonService{
                 + "<br>"
                 + "<p> Ignore this email if you do remember your password, "
                 + "or you have not made the request.</p>";
-        emailSender.sendMessage(subject, person.getEmail(), resetPasswordLink);
+        emailSender.sendMessage(subject, person.getEmail(), content);
     }
 
     public Person getByResetPasswordToken(String token){
