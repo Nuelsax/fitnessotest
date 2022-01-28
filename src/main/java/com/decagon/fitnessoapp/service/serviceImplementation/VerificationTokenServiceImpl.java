@@ -8,7 +8,6 @@ import com.decagon.fitnessoapp.repository.VerificationTokenRepository;
 import com.decagon.fitnessoapp.service.VerificationService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;

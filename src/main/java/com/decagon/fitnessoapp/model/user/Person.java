@@ -1,13 +1,13 @@
 package com.decagon.fitnessoapp.model.user;
 
-import com.sun.istack.NotNull;
+import com.decagon.fitnessoapp.model.user.Role;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.util.Date;
-import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -21,42 +21,43 @@ public class Person {
     private Long id;
 
     @NotNull
-    @Column(name = "user_name", unique = true)
+    @Column(name = "user_name", unique = true, nullable = false)
     private String userName;
 
     @NotNull
-    @Column(name = "first_name")
+    @Column(name = "first_name", nullable = false)
     private String firstName;
 
     @NotNull
-    @Column(name = "last_name")
+    @Column(name = "last_name", nullable = false)
     private String lastName;
 
     @NotNull
-    @Column(unique = true)
+    @Column(unique = true, nullable = false)
     private String email;
 
     @NotNull
+    @Column(nullable = false)
     private String password;
 
     @NotNull
-    @Column(name = "phone_number")
+    @Column(name = "phone_number", nullable = false)
     private String phoneNumber;
 
-    @ManyToMany
-    private List<Address> address;
-
     @NotNull
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private Role role;
 
-    @Column(name = "verify_email")
+    @Column(name = "verify_email", nullable = false)
     private boolean verifyEmail = false;
 
     @NotNull
+    @Column(nullable = false)
     private String gender;
 
     @NotNull
-    @Column(name = "date_of_birth")
+    @Column(name = "date_of_birth", nullable = false)
     private Date dateOfBirth;
 
     private String image;

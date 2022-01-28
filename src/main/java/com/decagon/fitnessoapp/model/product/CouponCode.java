@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -14,16 +15,17 @@ public class CouponCode {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     private Long id;
 
-    @Column(name = "coupon_code")
+    @NotNull
+    @Column(name = "coupon_code", nullable = false)
     private String couponCode;
 
-    @Column(name = "discount_percent")
+    @NotNull
+    @Column(name = "discount_percent", nullable = false)
     private float discountPercent;
 
     @OneToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "order_id", referencedColumnName = "id")
+    @JoinColumn(name = "order_id", referencedColumnName = "id", nullable = false)
     private Order order;
 }

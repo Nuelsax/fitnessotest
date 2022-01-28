@@ -7,4 +7,6 @@ import lombok.Setter;
 @Setter
 public class AuthResponse {
     private String token;
+//    todo: francis
+    private String role;
 }

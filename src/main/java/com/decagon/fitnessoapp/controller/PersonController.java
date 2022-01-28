@@ -2,6 +2,7 @@ package com.decagon.fitnessoapp.controller;
 
 import com.decagon.fitnessoapp.dto.ChangePassword;
 import com.decagon.fitnessoapp.dto.UpdatePersonDetails;
+import com.decagon.fitnessoapp.model.user.Role;
 import com.decagon.fitnessoapp.service.PersonService;
 import com.mailjet.client.errors.MailjetException;
 import com.mailjet.client.errors.MailjetSocketTimeoutException;
@@ -9,21 +10,13 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import com.decagon.fitnessoapp.dto.*;
-import com.decagon.fitnessoapp.model.user.Person;
 import com.decagon.fitnessoapp.security.JwtUtils;
-import com.decagon.fitnessoapp.security.PersonDetails;
-import com.decagon.fitnessoapp.security.PersonDetailsService;
 import com.decagon.fitnessoapp.service.VerificationService;
 import lombok.AllArgsConstructor;
-import net.bytebuddy.utility.RandomString;
-import org.springframework.data.repository.query.Param;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
@@ -34,25 +27,28 @@ public class PersonController {
 
     private final PersonService personService;
     public final VerificationService verificationTokenService;
-    private final PersonDetailsService personDetailsService;
-    private final AuthenticationManager authenticationManager;
-    private final JwtUtils jwtUtils;
-
 
         @PutMapping("/profile/edit/personinfo")
-        public void editUserDetails(@RequestBody UpdatePersonDetails updatePersonDetails) {
-            personService.updateUserDetails(updatePersonDetails);
+        public ResponseEntity<String> editUserDetails(@RequestBody UpdatePersonDetails updatePersonDetails) {
+            return ResponseEntity.ok().body( personService.updateUserDetails(updatePersonDetails));
         }
 
         @PutMapping("/profile/edit/password")
-        public void editUserPassword(@RequestBody ChangePassword changePassword) {
-            personService.updateCurrentPassword(changePassword);
+        public  ResponseEntity<String> editUserPassword(@RequestBody ChangePassword changePassword) {
+
+            return ResponseEntity.ok().body(personService.updateCurrentPassword(changePassword));
         }
 
-
         @PostMapping("/register")
-        public ResponseEntity<?> register (@Valid @RequestBody PersonRequest personDto) throws MailjetSocketTimeoutException, MailjetException {
-            return ResponseEntity.ok(personService.register(personDto));
+        public ResponseEntity<?> register (@Valid @RequestBody PersonRequest personRequest) throws MailjetSocketTimeoutException, MailjetException {
+            personRequest.setRole(Role.PREMIUM);
+            return ResponseEntity.ok(personService.register(personRequest));
+        }
+
+        @PostMapping("/admin/register")
+        public ResponseEntity<?> registerAdmin (@Valid @RequestBody PersonRequest personRequest) throws MailjetSocketTimeoutException, MailjetException {
+            personRequest.setRole(Role.ADMIN);
+            return ResponseEntity.ok(personService.register(personRequest));
         }
 
         @GetMapping("/confirm")
@@ -61,52 +57,30 @@ public class PersonController {
         }
 
         @PostMapping("/login")
-        public ResponseEntity<?> login (@RequestBody AuthRequest req, HttpServletResponse response) throws
-        Exception {
-            try {
-                authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(req.getUsername(), req.getPassword()));
-            } catch (Exception e) {
-                throw new Exception("incorrect username or password!");
-            }
-
-            final PersonDetails person = personDetailsService.loadUserByUsername(req.getUsername());
-            final String jwt = jwtUtils.generateToken(person);
-            final AuthResponse res = new AuthResponse();
-            res.setToken(jwt);
-            response.addHeader("Authorization", "Bearer " + jwt);
-            return new ResponseEntity<>(res, HttpStatus.CREATED);
-        }
-
-        @PostMapping("/forgot_password")
-        public ResponseEntity<String> processForgotPassword (@RequestBody Person person) throws MailjetSocketTimeoutException, MailjetException {
-            String email = person.getEmail();
-            String token = RandomString.make(64);
-
-            personDetailsService.updateResetPasswordToken(token, email);
-            return new ResponseEntity<>("forgot_password_form", HttpStatus.ACCEPTED);
-
-        }
-
-        @GetMapping("/reset_password")
-        public ResponseEntity<String> showResetPasswordForm (@Param(value = "token") String token){
-            Person person = personDetailsService.getByResetPasswordToken(token);
-            if (person == null) {
-                return new ResponseEntity("invalid_token", HttpStatus.BAD_REQUEST);
-            }
-            return new ResponseEntity("reset_password_form", HttpStatus.ACCEPTED);
+        public ResponseEntity<AuthResponse> login (@RequestBody AuthRequest req, HttpServletResponse response) throws Exception {
+            return personService.loginUser(req);
         }
 
         @PostMapping("/reset_password")
-        public ResponseEntity<String> processResetPassword (@RequestBody Person person, @Param(value = "token") String
-        token, HttpServletRequest request){
-            String password = person.getPassword();
-            Person person1 = personDetailsService.getByResetPasswordToken(token);
-            if (person1 == null) {
-                return new ResponseEntity("invalid_token", HttpStatus.BAD_REQUEST);
-            } else {
-                personDetailsService.updatePassword(person1, password);
-            }
-            return new ResponseEntity("You have successfully changed your password. ", HttpStatus.CREATED);
+        public ResponseEntity<String> processResetPassword (@RequestBody EmailRequest resetEmail) throws MailjetSocketTimeoutException, MailjetException {
+            return ResponseEntity.ok().body(personService.resetPasswordToken(resetEmail.getEmail()));
+        }
+
+        @PutMapping("/update_password")
+        public ResponseEntity<?> updatePassword(@RequestBody ResetPasswordRequest passwordRequest, @RequestParam(value = "token") String token){
+            return ResponseEntity.ok().body(personService.updateResetPassword(passwordRequest, token));
+        }
+
+        //TODO: add preAuthorization
+
+        @PostMapping("/admin/reset_password")
+        public ResponseEntity<String> adminProcessResetPassword (@RequestBody EmailRequest resetEmail) throws MailjetSocketTimeoutException, MailjetException {
+            return ResponseEntity.ok().body(personService.resetPasswordToken(resetEmail.getEmail()));
+        }
+
+        @PutMapping("/admin/update_password")
+        public ResponseEntity<?> adminUpdatePassword(@RequestBody ResetPasswordRequest passwordRequest, @RequestParam(value = "token") String token){
+            return ResponseEntity.ok().body(personService.updateResetPassword(passwordRequest, token));
         }
 }
 

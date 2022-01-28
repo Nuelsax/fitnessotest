@@ -1,6 +1,7 @@
 package com.decagon.fitnessoapp.dto;
 
 import com.decagon.fitnessoapp.model.user.Address;
+import com.decagon.fitnessoapp.model.user.Role;
 import lombok.Data;
 
 import javax.validation.constraints.Email;
@@ -32,11 +33,12 @@ public class PersonRequest {
     @Size(min = 8, message = "password must not be less than 8")
     private String password;
 
+    @Size(min = 10, max = 14, message = "invalid Phone Number")
     private String phoneNumber;
 
-    private List<Address> address;
-
     private String gender;
+
+    private Role role;
 
     private Date dateOfBirth;
 

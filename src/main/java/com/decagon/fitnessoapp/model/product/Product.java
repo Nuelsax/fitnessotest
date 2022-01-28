@@ -4,6 +4,7 @@ import lombok.Data;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 
 @Data
@@ -15,14 +16,20 @@ public abstract class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "stock_keeping_unit")
+    @NotNull
+    @Column(name = "stock_keeping_unit",nullable = false)
     private String stockKeepingUnit;
 
+    @NotNull
+    @Column(nullable = false)
     private String category;
 
-    @Column(name = "product_name")
+    @NotNull
+    @Column(name = "product_name", nullable = false)
     private String productName;
 
+    @NotNull
+    @Column(nullable = false)
     private BigDecimal price;
 
     private String description;
