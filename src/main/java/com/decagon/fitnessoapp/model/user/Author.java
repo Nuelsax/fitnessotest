@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -13,15 +14,19 @@ import javax.persistence.*;
 public class Author {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     private Long id;
 
-    @Column(name = "author_name")
+    @NotNull
+    @Column(name = "author_name", nullable = false)
     private String authorName;
 
     private String image;
 
+    @NotNull
+    @Column(nullable = false)
     private String contact;
 
+    @NotNull
+    @Column(nullable = false)
     private String biography;
 }

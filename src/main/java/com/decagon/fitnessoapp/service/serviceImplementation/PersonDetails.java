@@ -1,4 +1,4 @@
-package com.decagon.fitnessoapp.security;
+package com.decagon.fitnessoapp.service.serviceImplementation;
 
 import com.decagon.fitnessoapp.model.user.Person;
 import org.springframework.security.core.GrantedAuthority;

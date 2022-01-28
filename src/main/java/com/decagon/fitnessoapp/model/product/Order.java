@@ -19,23 +19,22 @@ import java.util.List;
 public class Order {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinColumn(name = "person_id", referencedColumnName = "id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "person_id", referencedColumnName = "id", nullable = false)
     private Person person;
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinColumn(name = "shoppingCart_id", referencedColumnName = "id")
-    private List<ShoppingCart> ShoppingCarts;
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "shoppingCart_id", referencedColumnName = "id", nullable = false)
+    private List<ShoppingItem> shoppingItems;
 
-    @Column(name = "total_price")
+    @Column(name = "total_price", nullable = false)
     private Double totalPrice;
 
     @OneToOne
-    @JoinColumn(name = "shipping_address_id", referencedColumnName = "id")
+    @JoinColumn(name = "shipping_address_id", referencedColumnName = "id", nullable = false)
     private Address shippingAddress;
 
     @CreationTimestamp
@@ -47,5 +46,6 @@ public class Order {
     @OneToOne
     private CouponCode couponCode;
 
+    @Column(nullable = false)
     private SHIPPING_METHOD shippingMethod;
 }

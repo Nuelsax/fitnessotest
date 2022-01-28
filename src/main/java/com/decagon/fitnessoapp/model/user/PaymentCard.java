@@ -1,11 +1,11 @@
 package com.decagon.fitnessoapp.model.user;
 
-import com.sun.istack.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -15,23 +15,22 @@ public class PaymentCard {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     private Long id;
 
-    @Column(name = "account_name")
+    @Column(name = "account_name", nullable = false)
     private String accountName;
 
     @NotNull
-    @Column(name = "card_number", unique = true)
+    @Column(name = "card_number", unique = true, nullable = false)
     private Long cardNumber;
 
-    @Column(name = "expiring_date")
+    @Column(name = "expiring_date", nullable = false)
     private String expiringDate;
 
-    @Column(name = "cvv_number")
+    @Column(name = "cvv_number", nullable = false)
     private Integer cvvNumber;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "person_id", referencedColumnName = "id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "person_id", referencedColumnName = "id", nullable = false)
     private Person person;
 }

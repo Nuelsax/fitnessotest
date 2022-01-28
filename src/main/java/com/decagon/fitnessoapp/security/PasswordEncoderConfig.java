@@ -17,13 +17,5 @@ public class PasswordEncoderConfig {
         return new BCryptPasswordEncoder();
     }
 
-    @Bean
-    public ModelMapper modelMapper(){
-        return new ModelMapper();
-    }
 
-    @Bean
-    public JavaMailSender javaMailSender(){
-        return new JavaMailSenderImpl();
-    }
 }

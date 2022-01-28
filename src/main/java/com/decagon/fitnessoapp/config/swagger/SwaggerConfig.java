@@ -1,4 +1,4 @@
-package com.decagon.fitnessoapp.security.swagger;
+package com.decagon.fitnessoapp.config.swagger;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

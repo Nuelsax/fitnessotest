@@ -8,14 +8,12 @@ import com.decagon.fitnessoapp.repository.VerificationTokenRepository;
 import com.decagon.fitnessoapp.service.VerificationService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
-//@Service
 @Component
 @AllArgsConstructor
 public class VerificationTokenServiceImpl implements VerificationService {
