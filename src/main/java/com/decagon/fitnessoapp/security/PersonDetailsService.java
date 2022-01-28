@@ -42,7 +42,7 @@ public class PersonDetailsService implements UserDetailsService, PersonService{
 
 
     @Autowired
-    public PersonDetailsService(VerificationTokenServiceImpl verificationTokenService, PasswordEncoder bCryptPasswordEncoder, PersonRepository personRepository, EmailValidator emailValidator, ModelMapper modelMapper, EmailService emailSender) {
+    public PersonDetailsService(VerificationService verificationTokenService, PasswordEncoder bCryptPasswordEncoder, PersonRepository personRepository, EmailValidator emailValidator, ModelMapper modelMapper, EmailService emailSender) {
         this.verificationTokenService = verificationTokenService;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.personRepository = personRepository;

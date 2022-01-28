@@ -1,7 +1,6 @@
 package com.decagon.fitnessoapp.dto;
 
 import com.decagon.fitnessoapp.model.user.Address;
-import com.decagon.fitnessoapp.model.user.Role;
 import lombok.Data;
 
 import javax.validation.constraints.Email;
