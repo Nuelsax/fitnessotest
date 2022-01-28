@@ -66,8 +66,9 @@ public class PersonController {
             return ResponseEntity.ok().body(personService.resetPasswordToken(resetEmail.getEmail()));
         }
 
-        @PutMapping("/update_password")
-        public ResponseEntity<?> updatePassword(@RequestBody ResetPasswordRequest passwordRequest, @RequestParam(value = "token") String token){
+        @PutMapping("/update_password/{token}")
+        public ResponseEntity<?> updatePassword(@RequestBody ResetPasswordRequest passwordRequest, /*@RequestParam*/@PathVariable ("token") String token){
+            System.out.println("here");
             return ResponseEntity.ok().body(personService.updateResetPassword(passwordRequest, token));
         }
 

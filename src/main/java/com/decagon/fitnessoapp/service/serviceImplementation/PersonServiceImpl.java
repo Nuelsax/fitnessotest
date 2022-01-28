@@ -89,8 +89,11 @@ public class PersonServiceImpl implements PersonService {
 
         final String encodedPassword = bCryptPasswordEncoder.encode(personRequest.getPassword());
         person.setPassword(encodedPassword);
+        String token = RandomString.make(64);
+        person.setResetPasswordToken(token);
         personRepository.save(person);
         sendingEmail(personRequest);
+
         PersonResponse personResponse = new PersonResponse();
         modelMapper.map(person, personResponse);
         return personResponse;
@@ -166,9 +169,9 @@ public class PersonServiceImpl implements PersonService {
     public String resetPasswordToken(String email) throws MailjetSocketTimeoutException, MailjetException {
         Person person = personRepository.findByEmail(email)
                 .orElseThrow(()-> new PersonNotFoundException("Email not Registered"));
-        String token = RandomString.make(64);
+        String token = RandomString.make(30);
+        System.out.println(token);
         person.setResetPasswordToken(token);
-
         resetPasswordMailSender(person.getEmail(), token);
         return "email sent";
     }
