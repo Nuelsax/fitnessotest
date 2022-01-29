@@ -8,7 +8,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.decagon.fitnessoapp.model.user.Person;
-import com.decagon.fitnessoapp.model.user.Role;
+import com.decagon.fitnessoapp.model.user.ROLE_DETAIL;
 import com.decagon.fitnessoapp.repository.PersonRepository;
 
 import java.time.LocalDate;
@@ -51,7 +51,7 @@ class PersonDetailsServiceTest {
         person.setPassword("iloveyou");
         person.setPhoneNumber("4105551212");
         person.setResetPasswordToken("ABC123");
-        person.setRole(Role.ANONYMOUS);
+        person.setRoleDetail(ROLE_DETAIL.ANONYMOUS);
         person.setUserName("janedoe");
         person.setVerifyEmail(true);
         Optional<Person> ofResult = Optional.of(person);

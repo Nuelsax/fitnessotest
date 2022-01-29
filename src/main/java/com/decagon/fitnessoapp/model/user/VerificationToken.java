@@ -36,7 +36,7 @@ public class VerificationToken {
     @Column(name = "confirmed_at")
     private LocalDateTime confirmedAt;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "person_id", referencedColumnName = "id", nullable = false)
     private Person person;
 

@@ -1,6 +1,5 @@
 package com.decagon.fitnessoapp.model.user;
 
-import com.decagon.fitnessoapp.model.user.Role;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,7 +16,6 @@ public class Person {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     private Long id;
 
     @NotNull
@@ -47,7 +45,7 @@ public class Person {
     @NotNull
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private Role role;
+    private ROLE_DETAIL roleDetail;
 
     @Column(name = "verify_email", nullable = false)
     private boolean verifyEmail = false;

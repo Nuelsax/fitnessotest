@@ -5,7 +5,6 @@ import com.mailjet.client.errors.MailjetException;
 import com.mailjet.client.errors.MailjetSocketTimeoutException;
 import org.springframework.http.ResponseEntity;
 
-
 public interface PersonService {
 
     ResponseEntity<AuthResponse> loginUser(AuthRequest req) throws Exception;

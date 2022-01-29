@@ -1,6 +1,6 @@
 package com.decagon.fitnessoapp.security;
 
-import com.decagon.fitnessoapp.model.user.Role;
+import com.decagon.fitnessoapp.model.user.ROLE_DETAIL;
 import com.decagon.fitnessoapp.security.filter.JwtRequestFilters;
 import com.decagon.fitnessoapp.service.serviceImplementation.PersonDetailsService;
 import com.decagon.fitnessoapp.utils.Api_Uri;
@@ -39,7 +39,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
         http.csrf().disable().authorizeRequests()
                 .antMatchers(Api_Uri.PUBLIC_URIs)
                 .permitAll()
-                .antMatchers("/auth-dependent-routes").hasAnyRole(Role.PREMIUM.toString(),Role.ADMIN.toString())
+                .antMatchers("/auth-dependent-routes").hasAnyRole(ROLE_DETAIL.PREMIUM.toString(), ROLE_DETAIL.ADMIN.toString())
                 .anyRequest().authenticated()
                 .and()
                 .sessionManagement()
@@ -60,6 +60,4 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     GrantedAuthorityDefaults grantedAuthorityDefaults() {
         return new GrantedAuthorityDefaults("");
     }
-
-
 }

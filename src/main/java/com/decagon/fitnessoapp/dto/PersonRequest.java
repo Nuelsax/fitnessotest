@@ -1,7 +1,6 @@
 package com.decagon.fitnessoapp.dto;
 
-import com.decagon.fitnessoapp.model.user.Address;
-import com.decagon.fitnessoapp.model.user.Role;
+import com.decagon.fitnessoapp.model.user.ROLE_DETAIL;
 import lombok.Data;
 
 import javax.validation.constraints.Email;
@@ -9,7 +8,6 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.Date;
-import java.util.List;
 
 @Data
 public class PersonRequest {
@@ -38,7 +36,7 @@ public class PersonRequest {
 
     private String gender;
 
-    private Role role;
+    private ROLE_DETAIL roleDetail;
 
     private Date dateOfBirth;
 

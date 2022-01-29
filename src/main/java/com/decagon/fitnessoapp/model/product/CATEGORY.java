@@ -7,10 +7,9 @@ public enum CATEGORY {
     SUPPLEMENTS("Supplements"),
     TRAINERS("Trainers");
 
-
     private final String category;
 
-    private CATEGORY(String category) {
+    CATEGORY(String category) {
         this.category = category;
     }
 }
