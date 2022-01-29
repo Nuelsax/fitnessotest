@@ -23,7 +23,7 @@ public class PersonDetails implements UserDetails {
         this.name = person.getUserName();
         this.password = person.getPassword();
         this.active = person.isVerifyEmail();
-        this.authorities = Arrays.stream(person.getRole().toString().split(","))
+        this.authorities = Arrays.stream(person.getRoleDetail().toString().split(","))
                 .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toList());
     }

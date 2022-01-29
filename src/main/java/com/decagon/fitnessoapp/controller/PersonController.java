@@ -2,8 +2,7 @@ package com.decagon.fitnessoapp.controller;
 
 import com.decagon.fitnessoapp.dto.ChangePassword;
 import com.decagon.fitnessoapp.dto.UpdatePersonDetails;
-import com.decagon.fitnessoapp.model.user.Role;
-import com.decagon.fitnessoapp.service.AddressService;
+import com.decagon.fitnessoapp.model.user.ROLE_DETAIL;
 import com.decagon.fitnessoapp.service.PersonService;
 import com.mailjet.client.errors.MailjetException;
 import com.mailjet.client.errors.MailjetSocketTimeoutException;
@@ -11,14 +10,11 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import com.decagon.fitnessoapp.dto.*;
-import com.decagon.fitnessoapp.security.JwtUtils;
 import com.decagon.fitnessoapp.service.VerificationService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 @RestController
@@ -42,13 +38,13 @@ public class PersonController {
 
         @PostMapping("/register")
         public ResponseEntity<?> register (@Valid @RequestBody PersonRequest personRequest) throws MailjetSocketTimeoutException, MailjetException {
-            personRequest.setRole(Role.PREMIUM);
+            personRequest.setRoleDetail(ROLE_DETAIL.PREMIUM);
             return ResponseEntity.ok(personService.register(personRequest));
         }
 
         @PostMapping("/admin/register")
         public ResponseEntity<?> registerAdmin (@Valid @RequestBody PersonRequest personRequest) throws MailjetSocketTimeoutException, MailjetException {
-            personRequest.setRole(Role.ADMIN);
+            personRequest.setRoleDetail(ROLE_DETAIL.ADMIN);
             return ResponseEntity.ok(personService.register(personRequest));
         }
 
