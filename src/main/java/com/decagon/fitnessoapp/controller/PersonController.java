@@ -28,7 +28,6 @@ public class PersonController {
 
     private final PersonService personService;
     public final VerificationService verificationTokenService;
-    public final AddressService addressService;
 
         @PutMapping("/profile/edit/personinfo")
         public ResponseEntity<String> editUserDetails(@RequestBody UpdatePersonDetails updatePersonDetails) {
@@ -61,11 +60,6 @@ public class PersonController {
         @PostMapping("/login")
         public ResponseEntity<AuthResponse> login(@RequestBody AuthRequest req) throws Exception {
             return personService.loginUser(req);
-        }
-
-        @PostMapping("/address")
-        public ResponseEntity<?> addAddress(@RequestBody AddressRequest addressRequest){
-            return addressService.createAddress(addressRequest);
         }
 
         @PostMapping("/reset_password")
