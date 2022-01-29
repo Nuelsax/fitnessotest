@@ -5,7 +5,6 @@ import com.decagon.fitnessoapp.dto.*;
 import com.decagon.fitnessoapp.exception.CustomServiceExceptions;
 import com.decagon.fitnessoapp.exception.PersonNotFoundException;
 import com.decagon.fitnessoapp.model.user.Person;
-import com.decagon.fitnessoapp.model.user.Role;
 import com.decagon.fitnessoapp.repository.PersonRepository;
 import com.decagon.fitnessoapp.security.JwtUtils;
 import com.decagon.fitnessoapp.service.PersonService;
@@ -26,7 +25,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -132,7 +130,6 @@ public class PersonServiceImpl implements PersonService {
         } catch (Exception e) {
             throw new Exception("incorrect username or password!");
         }
-
     }
 
     @Override
@@ -143,7 +140,6 @@ public class PersonServiceImpl implements PersonService {
                         () -> new PersonNotFoundException("Person Not Found")
                 );
         modelMapper.map(updatePersonDetails, existingPerson);
-
         personRepository.save(existingPerson);
         return "user details updated";
     }
@@ -162,16 +158,17 @@ public class PersonServiceImpl implements PersonService {
         } else {
             return "password mix match";
         }
-
     }
 
     @Override
     public String resetPasswordToken(String email) throws MailjetSocketTimeoutException, MailjetException {
         Person person = personRepository.findByEmail(email)
                 .orElseThrow(()-> new PersonNotFoundException("Email not Registered"));
-        String token = RandomString.make(30);
+        String token = RandomString.make(64);
+        //TODO:remove after testing app
         System.out.println(token);
         person.setResetPasswordToken(token);
+        personRepository.save(person);
         resetPasswordMailSender(person.getEmail(), token);
         return "email sent";
     }
@@ -183,6 +180,7 @@ public class PersonServiceImpl implements PersonService {
                 .orElseThrow(()-> new PersonNotFoundException("Person not found"));
         if(passwordRequest.getNewPassword().equals(passwordRequest.getConfirmPassword())){
             person.setPassword(bCryptPasswordEncoder.encode(passwordRequest.getNewPassword()));
+            personRepository.save(person);
             return "updated";
         }
         return "mismatch of new and confirm password";

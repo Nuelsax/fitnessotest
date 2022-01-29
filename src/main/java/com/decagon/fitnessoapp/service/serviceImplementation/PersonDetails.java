@@ -29,7 +29,6 @@ public class PersonDetails implements UserDetails {
     }
 
     public PersonDetails() {
-
     }
 
     @Override

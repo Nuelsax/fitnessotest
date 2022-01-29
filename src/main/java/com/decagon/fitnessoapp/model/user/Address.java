@@ -32,7 +32,7 @@ public class Address {
     @Column(name = "zip_code", nullable = false)
     private String zipCode;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "person_id", referencedColumnName = "id", nullable = false)
     private Person person;
 

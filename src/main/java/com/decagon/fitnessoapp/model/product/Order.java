@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.sql.Timestamp;
 import java.util.List;
 
@@ -22,22 +23,27 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "person_id", referencedColumnName = "id", nullable = false)
     private Person person;
 
+    @NotNull
     @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "shoppingCart_id", referencedColumnName = "id", nullable = false)
     private List<ShoppingItem> shoppingItems;
 
+    @NotNull
     @Column(name = "total_price", nullable = false)
     private Double totalPrice;
 
+    @NotNull
     @OneToOne
     @JoinColumn(name = "shipping_address_id", referencedColumnName = "id", nullable = false)
     private Address shippingAddress;
 
     @CreationTimestamp
+    @Column(nullable = false)
     private Timestamp orderDate;
 
     @Column(name = "order_status")

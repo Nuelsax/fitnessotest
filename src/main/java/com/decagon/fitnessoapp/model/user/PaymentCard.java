@@ -30,7 +30,7 @@ public class PaymentCard {
     @Column(name = "cvv_number", nullable = false)
     private Integer cvvNumber;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "person_id", referencedColumnName = "id", nullable = false)
     private Person person;
 }

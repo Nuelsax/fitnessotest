@@ -3,6 +3,7 @@ package com.decagon.fitnessoapp.controller;
 import com.decagon.fitnessoapp.dto.ChangePassword;
 import com.decagon.fitnessoapp.dto.UpdatePersonDetails;
 import com.decagon.fitnessoapp.model.user.Role;
+import com.decagon.fitnessoapp.service.AddressService;
 import com.decagon.fitnessoapp.service.PersonService;
 import com.mailjet.client.errors.MailjetException;
 import com.mailjet.client.errors.MailjetSocketTimeoutException;
@@ -27,15 +28,16 @@ public class PersonController {
 
     private final PersonService personService;
     public final VerificationService verificationTokenService;
+    public final AddressService addressService;
 
         @PutMapping("/profile/edit/personinfo")
         public ResponseEntity<String> editUserDetails(@RequestBody UpdatePersonDetails updatePersonDetails) {
             return ResponseEntity.ok().body( personService.updateUserDetails(updatePersonDetails));
         }
 
+        //Todo: duplicate
         @PutMapping("/profile/edit/password")
         public  ResponseEntity<String> editUserPassword(@RequestBody ChangePassword changePassword) {
-
             return ResponseEntity.ok().body(personService.updateCurrentPassword(changePassword));
         }
 
@@ -57,8 +59,13 @@ public class PersonController {
         }
 
         @PostMapping("/login")
-        public ResponseEntity<AuthResponse> login (@RequestBody AuthRequest req, HttpServletResponse response) throws Exception {
+        public ResponseEntity<AuthResponse> login(@RequestBody AuthRequest req) throws Exception {
             return personService.loginUser(req);
+        }
+
+        @PostMapping("/address")
+        public ResponseEntity<?> addAddress(@RequestBody AddressRequest addressRequest){
+            return addressService.createAddress(addressRequest);
         }
 
         @PostMapping("/reset_password")
@@ -66,13 +73,10 @@ public class PersonController {
             return ResponseEntity.ok().body(personService.resetPasswordToken(resetEmail.getEmail()));
         }
 
-        @PutMapping("/update_password/{token}")
-        public ResponseEntity<?> updatePassword(@RequestBody ResetPasswordRequest passwordRequest, /*@RequestParam*/@PathVariable ("token") String token){
-            System.out.println("here");
+        @PutMapping("/update_password")
+        public ResponseEntity<?> updatePassword(@RequestBody ResetPasswordRequest passwordRequest, @RequestParam(value = "token") String token){
             return ResponseEntity.ok().body(personService.updateResetPassword(passwordRequest, token));
         }
-
-        //TODO: add preAuthorization
 
         @PostMapping("/admin/reset_password")
         public ResponseEntity<String> adminProcessResetPassword (@RequestBody EmailRequest resetEmail) throws MailjetSocketTimeoutException, MailjetException {

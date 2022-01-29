@@ -1,6 +1,5 @@
 package com.decagon.fitnessoapp.dto;
 
-import com.decagon.fitnessoapp.model.user.Address;
 import com.decagon.fitnessoapp.model.user.Role;
 import lombok.Data;
 
@@ -9,7 +8,6 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.Date;
-import java.util.List;
 
 @Data
 public class PersonRequest {

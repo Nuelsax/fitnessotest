@@ -1,6 +1,5 @@
 package com.decagon.fitnessoapp.model.user;
 
-import com.decagon.fitnessoapp.model.user.Role;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
