@@ -30,7 +30,6 @@ public class PersonController {
             return ResponseEntity.ok().body( personService.updateUserDetails(updatePersonDetails));
         }
 
-        //Todo: duplicate
         @PutMapping("/profile/edit/password")
         public  ResponseEntity<String> editUserPassword(@RequestBody ChangePassword changePassword) {
             return ResponseEntity.ok().body(personService.updateCurrentPassword(changePassword));

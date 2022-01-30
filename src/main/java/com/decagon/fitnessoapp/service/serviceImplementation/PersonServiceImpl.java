@@ -128,13 +128,12 @@ public class PersonServiceImpl implements PersonService {
             res.setRole(role);
             return ResponseEntity.ok().body(res);
         } catch (Exception e) {
-            throw new Exception("incorrect username or password!");
+            throw new Exception("incorrect username or password!", e);
         }
     }
 
     @Override
     public String updateUserDetails(UpdatePersonDetails updatePersonDetails) {
-
         Person existingPerson = personRepository.findPersonByUserName(updatePersonDetails.getUserName())
                 .orElseThrow(
                         () -> new PersonNotFoundException("Person Not Found")
@@ -147,16 +146,20 @@ public class PersonServiceImpl implements PersonService {
     @Override
     @Transactional
     public String updateCurrentPassword(ChangePassword changePassword) {
-        Person currentPerson = personRepository.findPersonByPassword(bCryptPasswordEncoder.encode(changePassword.getCurrentPassword()))
+        Person currentPerson = personRepository.findByUserName(changePassword.getUserName())
                 .orElseThrow(()-> new PersonNotFoundException("Person Not Found"));
         String newPassword = changePassword.getNewPassword();
         String confirmPassword = changePassword.getConfirmPassword();
-        if (newPassword.equals(confirmPassword)){
-            currentPerson.setPassword(bCryptPasswordEncoder.encode(newPassword));
-            personRepository.save(currentPerson);
-            return "password successfully changed";
-        } else {
-            return "password mix match";
+        if(bCryptPasswordEncoder.matches(changePassword.getCurrentPassword(), currentPerson.getPassword())){
+            if (newPassword.equals(confirmPassword)) {
+                currentPerson.setPassword(bCryptPasswordEncoder.encode(newPassword));
+                personRepository.save(currentPerson);
+                return "password successfully changed";
+            }
+            else { return "password mix match";}
+        }
+        else {
+            return "Incorrect current password";
         }
     }
 
