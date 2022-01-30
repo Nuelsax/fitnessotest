@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.sql.Timestamp;
 import java.util.List;
 
@@ -19,26 +20,30 @@ import java.util.List;
 public class Order {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinColumn(name = "person_id", referencedColumnName = "id")
+    @NotNull
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "person_id", referencedColumnName = "id", nullable = false)
     private Person person;
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinColumn(name = "shoppingCart_id", referencedColumnName = "id")
-    private List<ShoppingCart> ShoppingCarts;
+    @NotNull
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "shoppingCart_id", referencedColumnName = "id", nullable = false)
+    private List<ShoppingItem> shoppingItems;
 
-    @Column(name = "total_price")
+    @NotNull
+    @Column(name = "total_price", nullable = false)
     private Double totalPrice;
 
+    @NotNull
     @OneToOne
-    @JoinColumn(name = "shipping_address_id", referencedColumnName = "id")
+    @JoinColumn(name = "shipping_address_id", referencedColumnName = "id", nullable = false)
     private Address shippingAddress;
 
     @CreationTimestamp
+    @Column(nullable = false)
     private Timestamp orderDate;
 
     @Column(name = "order_status")
@@ -47,5 +52,6 @@ public class Order {
     @OneToOne
     private CouponCode couponCode;
 
+    @Column(nullable = false)
     private SHIPPING_METHOD shippingMethod;
 }

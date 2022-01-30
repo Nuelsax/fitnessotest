@@ -1,10 +1,8 @@
 package com.decagon.fitnessoapp.controller;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -12,21 +10,23 @@ import static org.mockito.Mockito.when;
 import com.decagon.fitnessoapp.Email.EmailService;
 import com.decagon.fitnessoapp.dto.AuthRequest;
 import com.decagon.fitnessoapp.dto.ChangePassword;
-import com.decagon.fitnessoapp.dto.PersonDto;
+import com.decagon.fitnessoapp.dto.EmailRequest;
+import com.decagon.fitnessoapp.dto.PersonRequest;
+import com.decagon.fitnessoapp.dto.PersonResponse;
+import com.decagon.fitnessoapp.dto.ResetPasswordRequest;
 import com.decagon.fitnessoapp.dto.UpdatePersonDetails;
-import com.decagon.fitnessoapp.exception.CustomServiceExceptions;
 import com.decagon.fitnessoapp.model.user.Person;
-import com.decagon.fitnessoapp.model.user.Role;
+import com.decagon.fitnessoapp.model.user.ROLE_DETAIL;
 import com.decagon.fitnessoapp.repository.PersonRepository;
 import com.decagon.fitnessoapp.repository.VerificationTokenRepository;
 import com.decagon.fitnessoapp.security.JwtUtils;
-import com.decagon.fitnessoapp.security.PersonDetailsService;
 import com.decagon.fitnessoapp.service.PersonService;
 import com.decagon.fitnessoapp.service.VerificationService;
 import com.decagon.fitnessoapp.service.serviceImplementation.EmailValidator;
+import com.decagon.fitnessoapp.service.serviceImplementation.PersonDetailsService;
+import com.decagon.fitnessoapp.service.serviceImplementation.PersonServiceImpl;
 import com.decagon.fitnessoapp.service.serviceImplementation.VerificationTokenServiceImpl;
-import com.mailjet.client.errors.MailjetException;
-import com.mailjet.client.errors.MailjetSocketTimeoutException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -35,71 +35,59 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Optional;
 
-import org.apache.catalina.connector.Response;
-
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.security.access.intercept.RunAsImplAuthenticationProvider;
+import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.ProviderManager;
-import org.springframework.security.authentication.jaas.DefaultJaasAuthenticationProvider;
 import org.springframework.security.crypto.argon2.Argon2PasswordEncoder;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+@ContextConfiguration(classes = {PersonController.class})
+@ExtendWith(SpringExtension.class)
 class PersonControllerTest {
+    @Autowired
+    private PersonController personController;
+
+    @MockBean
+    private PersonService personService;
+
+    @MockBean
+    private VerificationService verificationService;
+
+    @Test
+    void testAdminProcessResetPassword() throws Exception {
+        when(this.personService.resetPasswordToken((String) any())).thenReturn("ABC123");
+
+        EmailRequest emailRequest = new EmailRequest();
+        emailRequest.setEmail("jane.doe@example.org");
+        String content = (new ObjectMapper()).writeValueAsString(emailRequest);
+        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.post("/person/admin/reset_password")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(content);
+        MockMvcBuilders.standaloneSetup(this.personController)
+                .build()
+                .perform(requestBuilder)
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().contentType("text/plain;charset=ISO-8859-1"))
+                .andExpect(MockMvcResultMatchers.content().string("ABC123"));
+    }
+
     @Test
     void testEditUserDetails() {
-        PersonService personService = mock(PersonService.class);
-        doNothing().when(personService).updateUserDetails((UpdatePersonDetails) any());
-        VerificationTokenServiceImpl verificationTokenService = new VerificationTokenServiceImpl(
-                mock(VerificationTokenRepository.class), mock(PersonRepository.class));
-
-        VerificationTokenServiceImpl verificationTokenService1 = new VerificationTokenServiceImpl(
-                mock(VerificationTokenRepository.class), mock(PersonRepository.class));
-
-        Argon2PasswordEncoder bCryptPasswordEncoder = new Argon2PasswordEncoder();
-        PersonRepository personRepository = mock(PersonRepository.class);
-        EmailValidator emailValidator = new EmailValidator();
-        PersonDetailsService personDetailsService = new PersonDetailsService(verificationTokenService1,
-                bCryptPasswordEncoder, personRepository, emailValidator, new ModelMapper(), mock(EmailService.class));
-
-        ProviderManager authenticationManager = new ProviderManager(new RunAsImplAuthenticationProvider());
-        PersonController personController = new PersonController(personService, verificationTokenService,
-                personDetailsService, authenticationManager, new JwtUtils());
-        LocalDateTime atStartOfDayResult = LocalDate.of(1970, 1, 1).atStartOfDay();
-        personController.editUserDetails(new UpdatePersonDetails("janedoe", "Jane", "Doe", "jane.doe@example.org", "Gender",
-                Date.from(atStartOfDayResult.atZone(ZoneId.of("UTC")).toInstant())));
-        verify(personService).updateUserDetails((UpdatePersonDetails) any());
-    }
-
-    @Test
-    void testEditUserPassword() {
-        PersonService personService = mock(PersonService.class);
-        doNothing().when(personService).updateCurrentPassword((ChangePassword) any());
-        VerificationTokenServiceImpl verificationTokenService = new VerificationTokenServiceImpl(
-                mock(VerificationTokenRepository.class), mock(PersonRepository.class));
-
-        VerificationTokenServiceImpl verificationTokenService1 = new VerificationTokenServiceImpl(
-                mock(VerificationTokenRepository.class), mock(PersonRepository.class));
-
-        Argon2PasswordEncoder bCryptPasswordEncoder = new Argon2PasswordEncoder();
-        PersonRepository personRepository = mock(PersonRepository.class);
-        EmailValidator emailValidator = new EmailValidator();
-        PersonDetailsService personDetailsService = new PersonDetailsService(verificationTokenService1,
-                bCryptPasswordEncoder, personRepository, emailValidator, new ModelMapper(), mock(EmailService.class));
-
-        ProviderManager authenticationManager = new ProviderManager(new RunAsImplAuthenticationProvider());
-        PersonController personController = new PersonController(personService, verificationTokenService,
-                personDetailsService, authenticationManager, new JwtUtils());
-        personController.editUserPassword(new ChangePassword("iloveyou", "iloveyou", "iloveyou"));
-        verify(personService).updateCurrentPassword((ChangePassword) any());
-    }
-
-    @Test
-    void testRegister() throws MailjetException, MailjetSocketTimeoutException {
         Person person = new Person();
-        person.setAddress(new ArrayList<>());
         LocalDateTime atStartOfDayResult = LocalDate.of(1970, 1, 1).atStartOfDay();
         person.setDateOfBirth(Date.from(atStartOfDayResult.atZone(ZoneId.of("UTC")).toInstant()));
         person.setEmail("jane.doe@example.org");
@@ -111,200 +99,12 @@ class PersonControllerTest {
         person.setPassword("iloveyou");
         person.setPhoneNumber("4105551212");
         person.setResetPasswordToken("ABC123");
-        person.setRole(Role.ANONYMOUS);
-        person.setUserName("janedoe");
-        person.setVerifyEmail(true);
-        PersonService personService = mock(PersonService.class);
-        when(personService.register((PersonDto) any())).thenReturn(person);
-        VerificationTokenServiceImpl verificationTokenService = new VerificationTokenServiceImpl(
-                mock(VerificationTokenRepository.class), mock(PersonRepository.class));
-
-        VerificationTokenServiceImpl verificationTokenService1 = new VerificationTokenServiceImpl(
-                mock(VerificationTokenRepository.class), mock(PersonRepository.class));
-
-        Argon2PasswordEncoder bCryptPasswordEncoder = new Argon2PasswordEncoder();
-        PersonRepository personRepository = mock(PersonRepository.class);
-        EmailValidator emailValidator = new EmailValidator();
-        PersonDetailsService personDetailsService = new PersonDetailsService(verificationTokenService1,
-                bCryptPasswordEncoder, personRepository, emailValidator, new ModelMapper(), mock(EmailService.class));
-
-        ProviderManager authenticationManager = new ProviderManager(new RunAsImplAuthenticationProvider());
-        PersonController personController = new PersonController(personService, verificationTokenService,
-                personDetailsService, authenticationManager, new JwtUtils());
-
-        PersonDto personDto = new PersonDto();
-        personDto.setAddress(new ArrayList<>());
-        LocalDateTime atStartOfDayResult1 = LocalDate.of(1970, 1, 1).atStartOfDay();
-        personDto.setDateOfBirth(Date.from(atStartOfDayResult1.atZone(ZoneId.of("UTC")).toInstant()));
-        personDto.setEmail("jane.doe@example.org");
-        personDto.setFirstName("Jane");
-        personDto.setGender("Gender");
-        personDto.setImage("Image");
-        personDto.setLastName("Doe");
-        personDto.setPassword("iloveyou");
-        personDto.setPhoneNumber("4105551212");
-        personDto.setRole(Role.ANONYMOUS);
-        personDto.setUserName("janedoe");
-        ResponseEntity<?> actualRegisterResult = personController.register(personDto);
-        assertTrue(actualRegisterResult.hasBody());
-        assertTrue(actualRegisterResult.getHeaders().isEmpty());
-        assertEquals(HttpStatus.OK, actualRegisterResult.getStatusCode());
-        verify(personService).register((PersonDto) any());
-    }
-
-    @Test
-    void testRegister2() throws MailjetException, MailjetSocketTimeoutException {
-        PersonService personService = mock(PersonService.class);
-        when(personService.register((PersonDto) any())).thenThrow(new MailjetSocketTimeoutException("An error occurred"));
-        VerificationTokenServiceImpl verificationTokenService = new VerificationTokenServiceImpl(
-                mock(VerificationTokenRepository.class), mock(PersonRepository.class));
-
-        VerificationTokenServiceImpl verificationTokenService1 = new VerificationTokenServiceImpl(
-                mock(VerificationTokenRepository.class), mock(PersonRepository.class));
-
-        Argon2PasswordEncoder bCryptPasswordEncoder = new Argon2PasswordEncoder();
-        PersonRepository personRepository = mock(PersonRepository.class);
-        EmailValidator emailValidator = new EmailValidator();
-        PersonDetailsService personDetailsService = new PersonDetailsService(verificationTokenService1,
-                bCryptPasswordEncoder, personRepository, emailValidator, new ModelMapper(), mock(EmailService.class));
-
-        ProviderManager authenticationManager = new ProviderManager(new RunAsImplAuthenticationProvider());
-        PersonController personController = new PersonController(personService, verificationTokenService,
-                personDetailsService, authenticationManager, new JwtUtils());
-
-        PersonDto personDto = new PersonDto();
-        personDto.setAddress(new ArrayList<>());
-        LocalDateTime atStartOfDayResult = LocalDate.of(1970, 1, 1).atStartOfDay();
-        personDto.setDateOfBirth(Date.from(atStartOfDayResult.atZone(ZoneId.of("UTC")).toInstant()));
-        personDto.setEmail("jane.doe@example.org");
-        personDto.setFirstName("Jane");
-        personDto.setGender("Gender");
-        personDto.setImage("Image");
-        personDto.setLastName("Doe");
-        personDto.setPassword("iloveyou");
-        personDto.setPhoneNumber("4105551212");
-        personDto.setRole(Role.ANONYMOUS);
-        personDto.setUserName("janedoe");
-        assertThrows(MailjetSocketTimeoutException.class, () -> personController.register(personDto));
-        verify(personService).register((PersonDto) any());
-    }
-
-    @Test
-    void testConfirm() {
-        VerificationService verificationService = mock(VerificationService.class);
-        when(verificationService.confirmToken((String) any())).thenReturn("ABC123");
-        PersonService personService = mock(PersonService.class);
-        VerificationTokenServiceImpl verificationTokenService = new VerificationTokenServiceImpl(
-                mock(VerificationTokenRepository.class), mock(PersonRepository.class));
-
-        Argon2PasswordEncoder bCryptPasswordEncoder = new Argon2PasswordEncoder();
-        PersonRepository personRepository = mock(PersonRepository.class);
-        EmailValidator emailValidator = new EmailValidator();
-        PersonDetailsService personDetailsService = new PersonDetailsService(verificationTokenService,
-                bCryptPasswordEncoder, personRepository, emailValidator, new ModelMapper(), mock(EmailService.class));
-
-        ProviderManager authenticationManager = new ProviderManager(new RunAsImplAuthenticationProvider());
-        assertEquals("ABC123", (new PersonController(personService, verificationService, personDetailsService,
-                authenticationManager, new JwtUtils())).confirm("ABC123"));
-        verify(verificationService).confirmToken((String) any());
-    }
-
-    @Test
-    void testLogin() throws Exception {
-        PersonService personService = mock(PersonService.class);
-        VerificationTokenServiceImpl verificationTokenService = new VerificationTokenServiceImpl(
-                mock(VerificationTokenRepository.class), mock(PersonRepository.class));
-
-        VerificationTokenServiceImpl verificationTokenService1 = new VerificationTokenServiceImpl(
-                mock(VerificationTokenRepository.class), mock(PersonRepository.class));
-
-        Argon2PasswordEncoder bCryptPasswordEncoder = new Argon2PasswordEncoder();
-        PersonRepository personRepository = mock(PersonRepository.class);
-        EmailValidator emailValidator = new EmailValidator();
-        PersonDetailsService personDetailsService = new PersonDetailsService(verificationTokenService1,
-                bCryptPasswordEncoder, personRepository, emailValidator, new ModelMapper(), mock(EmailService.class));
-
-        ProviderManager authenticationManager = new ProviderManager(new RunAsImplAuthenticationProvider());
-        PersonController personController = new PersonController(personService, verificationTokenService,
-                personDetailsService, authenticationManager, new JwtUtils());
-
-        AuthRequest authRequest = new AuthRequest();
-        authRequest.setPassword("iloveyou");
-        authRequest.setUsername("janedoe");
-        assertThrows(Exception.class, () -> personController.login(authRequest, new Response()));
-    }
-
-    @Test
-    void testLogin2() throws Exception {
-        PersonService personService = mock(PersonService.class);
-        VerificationTokenServiceImpl verificationTokenService = new VerificationTokenServiceImpl(
-                mock(VerificationTokenRepository.class), mock(PersonRepository.class));
-
-        VerificationTokenServiceImpl verificationTokenService1 = new VerificationTokenServiceImpl(
-                mock(VerificationTokenRepository.class), mock(PersonRepository.class));
-
-        Argon2PasswordEncoder bCryptPasswordEncoder = new Argon2PasswordEncoder();
-        PersonRepository personRepository = mock(PersonRepository.class);
-        EmailValidator emailValidator = new EmailValidator();
-        PersonDetailsService personDetailsService = new PersonDetailsService(verificationTokenService1,
-                bCryptPasswordEncoder, personRepository, emailValidator, new ModelMapper(), mock(EmailService.class));
-
-        ProviderManager authenticationManager = new ProviderManager(new DefaultJaasAuthenticationProvider());
-        PersonController personController = new PersonController(personService, verificationTokenService,
-                personDetailsService, authenticationManager, new JwtUtils());
-
-        AuthRequest authRequest = new AuthRequest();
-        authRequest.setPassword("iloveyou");
-        authRequest.setUsername("janedoe");
-        assertThrows(Exception.class, () -> personController.login(authRequest, new Response()));
-    }
-
-    @Test
-    void testLogin3() throws Exception {
-        PersonService personService = mock(PersonService.class);
-        VerificationTokenServiceImpl verificationTokenService = new VerificationTokenServiceImpl(
-                mock(VerificationTokenRepository.class), mock(PersonRepository.class));
-
-        VerificationTokenServiceImpl verificationTokenService1 = new VerificationTokenServiceImpl(
-                mock(VerificationTokenRepository.class), mock(PersonRepository.class));
-
-        Argon2PasswordEncoder bCryptPasswordEncoder = new Argon2PasswordEncoder();
-        PersonRepository personRepository = mock(PersonRepository.class);
-        EmailValidator emailValidator = new EmailValidator();
-        PersonDetailsService personDetailsService = new PersonDetailsService(verificationTokenService1,
-                bCryptPasswordEncoder, personRepository, emailValidator, new ModelMapper(), mock(EmailService.class));
-
-        PersonController personController = new PersonController(personService, verificationTokenService,
-                personDetailsService, null, new JwtUtils());
-
-        AuthRequest authRequest = new AuthRequest();
-        authRequest.setPassword("iloveyou");
-        authRequest.setUsername("janedoe");
-        assertThrows(Exception.class, () -> personController.login(authRequest, new Response()));
-    }
-
-    @Test
-    void testProcessForgotPassword() throws MailjetException, MailjetSocketTimeoutException {
-        Person person = new Person();
-        person.setAddress(new ArrayList<>());
-        LocalDateTime atStartOfDayResult = LocalDate.of(1970, 1, 1).atStartOfDay();
-        person.setDateOfBirth(Date.from(atStartOfDayResult.atZone(ZoneId.of("UTC")).toInstant()));
-        person.setEmail("jane.doe@example.org");
-        person.setFirstName("Jane");
-        person.setGender("Gender");
-        person.setId(123L);
-        person.setImage("Image");
-        person.setLastName("Doe");
-        person.setPassword("iloveyou");
-        person.setPhoneNumber("4105551212");
-        person.setResetPasswordToken("ABC123");
-        person.setRole(Role.ANONYMOUS);
+        person.setRoleDetail(ROLE_DETAIL.ANONYMOUS);
         person.setUserName("janedoe");
         person.setVerifyEmail(true);
         Optional<Person> ofResult = Optional.of(person);
 
         Person person1 = new Person();
-        person1.setAddress(new ArrayList<>());
         LocalDateTime atStartOfDayResult1 = LocalDate.of(1970, 1, 1).atStartOfDay();
         person1.setDateOfBirth(Date.from(atStartOfDayResult1.atZone(ZoneId.of("UTC")).toInstant()));
         person1.setEmail("jane.doe@example.org");
@@ -316,224 +116,211 @@ class PersonControllerTest {
         person1.setPassword("iloveyou");
         person1.setPhoneNumber("4105551212");
         person1.setResetPasswordToken("ABC123");
-        person1.setRole(Role.ANONYMOUS);
+        person1.setRoleDetail(ROLE_DETAIL.ANONYMOUS);
         person1.setUserName("janedoe");
         person1.setVerifyEmail(true);
         PersonRepository personRepository = mock(PersonRepository.class);
         when(personRepository.save((Person) any())).thenReturn(person1);
-        when(personRepository.findByEmail((String) any())).thenReturn(ofResult);
-        EmailService emailService = mock(EmailService.class);
-        doNothing().when(emailService).sendMessage((String) any(), (String) any(), (String) any());
+        when(personRepository.findPersonByUserName((String) any())).thenReturn(ofResult);
+
+        ArrayList<AuthenticationProvider> authenticationProviderList = new ArrayList<>();
+        authenticationProviderList.add(new RunAsImplAuthenticationProvider());
+        ProviderManager authenticationManager = new ProviderManager(authenticationProviderList);
         VerificationTokenServiceImpl verificationTokenService = new VerificationTokenServiceImpl(
                 mock(VerificationTokenRepository.class), mock(PersonRepository.class));
 
         Argon2PasswordEncoder bCryptPasswordEncoder = new Argon2PasswordEncoder();
         EmailValidator emailValidator = new EmailValidator();
-        PersonDetailsService personDetailsService = new PersonDetailsService(verificationTokenService,
-                bCryptPasswordEncoder, personRepository, emailValidator, new ModelMapper(), emailService);
+        ModelMapper modelMapper = new ModelMapper();
+        EmailService emailSender = mock(EmailService.class);
+        JwtUtils jwtUtils = new JwtUtils();
+        PersonServiceImpl personService = new PersonServiceImpl(verificationTokenService, bCryptPasswordEncoder,
+                personRepository, emailValidator, modelMapper, emailSender, jwtUtils,
+                new PersonDetailsService(mock(PersonRepository.class)), authenticationManager);
 
-        PersonService personService = mock(PersonService.class);
-        VerificationTokenServiceImpl verificationTokenService1 = new VerificationTokenServiceImpl(
-                mock(VerificationTokenRepository.class), mock(PersonRepository.class));
-
-        ProviderManager authenticationManager = new ProviderManager(new RunAsImplAuthenticationProvider());
-        PersonController personController = new PersonController(personService, verificationTokenService1,
-                personDetailsService, authenticationManager, new JwtUtils());
-
-        Person person2 = new Person();
-        person2.setAddress(new ArrayList<>());
+        PersonController personController = new PersonController(personService,
+                new VerificationTokenServiceImpl(mock(VerificationTokenRepository.class), mock(PersonRepository.class)));
         LocalDateTime atStartOfDayResult2 = LocalDate.of(1970, 1, 1).atStartOfDay();
-        person2.setDateOfBirth(Date.from(atStartOfDayResult2.atZone(ZoneId.of("UTC")).toInstant()));
-        person2.setEmail("jane.doe@example.org");
-        person2.setFirstName("Jane");
-        person2.setGender("Gender");
-        person2.setId(123L);
-        person2.setImage("Image");
-        person2.setLastName("Doe");
-        person2.setPassword("iloveyou");
-        person2.setPhoneNumber("4105551212");
-        person2.setResetPasswordToken("ABC123");
-        person2.setRole(Role.ANONYMOUS);
-        person2.setUserName("janedoe");
-        person2.setVerifyEmail(true);
-        ResponseEntity<String> actualProcessForgotPasswordResult = personController.processForgotPassword(person2);
-        assertEquals("forgot_password_form", actualProcessForgotPasswordResult.getBody());
-        assertEquals("<202 ACCEPTED Accepted,forgot_password_form,[]>", actualProcessForgotPasswordResult.toString());
-        assertEquals(HttpStatus.ACCEPTED, actualProcessForgotPasswordResult.getStatusCode());
-        assertTrue(actualProcessForgotPasswordResult.getHeaders().isEmpty());
-        verify(personRepository).findByEmail((String) any());
+        ResponseEntity<PersonResponse> actualEditUserDetailsResult = personController
+                .editUserDetails(new UpdatePersonDetails("janedoe", "Jane", "Doe", "jane.doe@example.org", "Gender",
+                        Date.from(atStartOfDayResult2.atZone(ZoneId.of("UTC")).toInstant()), "4105551212"));
+        PersonResponse personResponse = new PersonResponse();
+        ModelMapper mapper = new ModelMapper();
+        mapper.map(personResponse, actualEditUserDetailsResult.getBody());
+        assertEquals(personResponse, actualEditUserDetailsResult.getBody());
+        assertEquals("<200 OK OK,"+personResponse+",[]>", actualEditUserDetailsResult.toString());
+        assertEquals(HttpStatus.OK, actualEditUserDetailsResult.getStatusCode());
+        assertTrue(actualEditUserDetailsResult.getHeaders().isEmpty());
+        verify(personRepository).findPersonByUserName((String) any());
         verify(personRepository).save((Person) any());
-        verify(emailService).sendMessage((String) any(), (String) any(), (String) any());
     }
 
     @Test
-    void testProcessForgotPassword2() throws CustomServiceExceptions, MailjetException, MailjetSocketTimeoutException {
-        PersonDetailsService personDetailsService = mock(PersonDetailsService.class);
-        doNothing().when(personDetailsService).updateResetPasswordToken((String) any(), (String) any());
-        PersonService personService = mock(PersonService.class);
-        VerificationTokenServiceImpl verificationTokenService = new VerificationTokenServiceImpl(
-                mock(VerificationTokenRepository.class), mock(PersonRepository.class));
-
-        ProviderManager authenticationManager = new ProviderManager(new RunAsImplAuthenticationProvider());
-        PersonController personController = new PersonController(personService, verificationTokenService,
-                personDetailsService, authenticationManager, new JwtUtils());
-
-        Person person = new Person();
-        person.setAddress(new ArrayList<>());
-        LocalDateTime atStartOfDayResult = LocalDate.of(1970, 1, 1).atStartOfDay();
-        person.setDateOfBirth(Date.from(atStartOfDayResult.atZone(ZoneId.of("UTC")).toInstant()));
-        person.setEmail("jane.doe@example.org");
-        person.setFirstName("Jane");
-        person.setGender("Gender");
-        person.setId(123L);
-        person.setImage("Image");
-        person.setLastName("Doe");
-        person.setPassword("iloveyou");
-        person.setPhoneNumber("4105551212");
-        person.setResetPasswordToken("ABC123");
-        person.setRole(Role.ANONYMOUS);
-        person.setUserName("janedoe");
-        person.setVerifyEmail(true);
-        ResponseEntity<String> actualProcessForgotPasswordResult = personController.processForgotPassword(person);
-        assertEquals("forgot_password_form", actualProcessForgotPasswordResult.getBody());
-        assertEquals("<202 ACCEPTED Accepted,forgot_password_form,[]>", actualProcessForgotPasswordResult.toString());
-        assertEquals(HttpStatus.ACCEPTED, actualProcessForgotPasswordResult.getStatusCode());
-        assertTrue(actualProcessForgotPasswordResult.getHeaders().isEmpty());
-        verify(personDetailsService).updateResetPasswordToken((String) any(), (String) any());
+    void testEditUserPassword() {
+        PersonServiceImpl personServiceImpl = mock(PersonServiceImpl.class);
+        when(personServiceImpl.updateCurrentPassword((ChangePassword) any())).thenReturn("2020-03-01");
+        PersonController personController = new PersonController(personServiceImpl,
+                new VerificationTokenServiceImpl(mock(VerificationTokenRepository.class), mock(PersonRepository.class)));
+        ResponseEntity<String> actualEditUserPasswordResult = personController
+                .editUserPassword(new ChangePassword("iloveyou", "iloveyou", "iloveyou","iloveyou"));
+        assertEquals("2020-03-01", actualEditUserPasswordResult.getBody());
+        assertEquals("<200 OK OK,2020-03-01,[]>", actualEditUserPasswordResult.toString());
+        assertEquals(HttpStatus.OK, actualEditUserPasswordResult.getStatusCode());
+        assertTrue(actualEditUserPasswordResult.getHeaders().isEmpty());
+        verify(personServiceImpl).updateCurrentPassword((ChangePassword) any());
     }
 
     @Test
-    void testShowResetPasswordForm() {
-        Person person = new Person();
-        person.setAddress(new ArrayList<>());
+    void testRegister() throws Exception {
+        PersonResponse personResponse = new PersonResponse();
+        personResponse.setEmail("jane.doe@example.org");
+        personResponse.setFirstName("Jane");
+        personResponse.setLastName("Doe");
+        when(this.personService.register((PersonRequest) any())).thenReturn(personResponse);
+
+        PersonRequest personRequest = new PersonRequest();
         LocalDateTime atStartOfDayResult = LocalDate.of(1970, 1, 1).atStartOfDay();
-        person.setDateOfBirth(Date.from(atStartOfDayResult.atZone(ZoneId.of("UTC")).toInstant()));
-        person.setEmail("jane.doe@example.org");
-        person.setFirstName("Jane");
-        person.setGender("Gender");
-        person.setId(123L);
-        person.setImage("Image");
-        person.setLastName("Doe");
-        person.setPassword("iloveyou");
-        person.setPhoneNumber("4105551212");
-        person.setResetPasswordToken("ABC123");
-        person.setRole(Role.ANONYMOUS);
-        person.setUserName("janedoe");
-        person.setVerifyEmail(true);
-        PersonRepository personRepository = mock(PersonRepository.class);
-        when(personRepository.findByResetPasswordToken((String) any())).thenReturn(Optional.of(person));
-        VerificationTokenServiceImpl verificationTokenService = new VerificationTokenServiceImpl(
-                mock(VerificationTokenRepository.class), mock(PersonRepository.class));
-
-        Argon2PasswordEncoder bCryptPasswordEncoder = new Argon2PasswordEncoder();
-        EmailValidator emailValidator = new EmailValidator();
-        PersonDetailsService personDetailsService = new PersonDetailsService(verificationTokenService,
-                bCryptPasswordEncoder, personRepository, emailValidator, new ModelMapper(), mock(EmailService.class));
-
-        PersonService personService = mock(PersonService.class);
-        VerificationTokenServiceImpl verificationTokenService1 = new VerificationTokenServiceImpl(
-                mock(VerificationTokenRepository.class), mock(PersonRepository.class));
-
-        ProviderManager authenticationManager = new ProviderManager(new RunAsImplAuthenticationProvider());
-        ResponseEntity<String> actualShowResetPasswordFormResult = (new PersonController(personService,
-                verificationTokenService1, personDetailsService, authenticationManager, new JwtUtils()))
-                .showResetPasswordForm("ABC123");
-        assertEquals("reset_password_form", actualShowResetPasswordFormResult.getBody());
-        assertEquals("<202 ACCEPTED Accepted,reset_password_form,[]>", actualShowResetPasswordFormResult.toString());
-        assertEquals(HttpStatus.ACCEPTED, actualShowResetPasswordFormResult.getStatusCode());
-        assertTrue(actualShowResetPasswordFormResult.getHeaders().isEmpty());
-        verify(personRepository).findByResetPasswordToken((String) any());
+        personRequest.setDateOfBirth(Date.from(atStartOfDayResult.atZone(ZoneId.of("UTC")).toInstant()));
+        personRequest.setEmail("jane.doe@example.org");
+        personRequest.setFirstName("Jane");
+        personRequest.setGender("Gender");
+        personRequest.setImage("Image");
+        personRequest.setLastName("Doe");
+        personRequest.setPassword("iloveyou");
+        personRequest.setPhoneNumber("4105551212");
+        personRequest.setRoleDetail(ROLE_DETAIL.ANONYMOUS);
+        personRequest.setUserName("janedoe");
+        String content = (new ObjectMapper()).writeValueAsString(personRequest);
+        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.post("/person/register")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(content);
+        MockMvcBuilders.standaloneSetup(this.personController)
+                .build()
+                .perform(requestBuilder)
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().contentType("application/json"))
+                .andExpect(MockMvcResultMatchers.content()
+                        .string("{\"firstName\":\"Jane\",\"lastName\":\"Doe\",\"email\":\"jane.doe@example.org\"}"));
     }
 
     @Test
-    void testShowResetPasswordForm2() {
-        Person person = new Person();
-        person.setAddress(new ArrayList<>());
-        LocalDateTime atStartOfDayResult = LocalDate.of(1970, 1, 1).atStartOfDay();
-        person.setDateOfBirth(Date.from(atStartOfDayResult.atZone(ZoneId.of("UTC")).toInstant()));
-        person.setEmail("jane.doe@example.org");
-        person.setFirstName("Jane");
-        person.setGender("Gender");
-        person.setId(123L);
-        person.setImage("Image");
-        person.setLastName("Doe");
-        person.setPassword("iloveyou");
-        person.setPhoneNumber("4105551212");
-        person.setResetPasswordToken("ABC123");
-        person.setRole(Role.ANONYMOUS);
-        person.setUserName("janedoe");
-        person.setVerifyEmail(true);
-        PersonDetailsService personDetailsService = mock(PersonDetailsService.class);
-        when(personDetailsService.getByResetPasswordToken((String) any())).thenReturn(person);
-        PersonService personService = mock(PersonService.class);
-        VerificationTokenServiceImpl verificationTokenService = new VerificationTokenServiceImpl(
-                mock(VerificationTokenRepository.class), mock(PersonRepository.class));
+    void testRegisterAdmin() throws Exception {
+        PersonResponse personResponse = new PersonResponse();
+        personResponse.setEmail("jane.doe@example.org");
+        personResponse.setFirstName("Jane");
+        personResponse.setLastName("Doe");
+        when(this.personService.register((PersonRequest) any())).thenReturn(personResponse);
 
-        ProviderManager authenticationManager = new ProviderManager(new RunAsImplAuthenticationProvider());
-        ResponseEntity<String> actualShowResetPasswordFormResult = (new PersonController(personService,
-                verificationTokenService, personDetailsService, authenticationManager, new JwtUtils()))
-                .showResetPasswordForm("ABC123");
-        assertEquals("reset_password_form", actualShowResetPasswordFormResult.getBody());
-        assertEquals("<202 ACCEPTED Accepted,reset_password_form,[]>", actualShowResetPasswordFormResult.toString());
-        assertEquals(HttpStatus.ACCEPTED, actualShowResetPasswordFormResult.getStatusCode());
-        assertTrue(actualShowResetPasswordFormResult.getHeaders().isEmpty());
-        verify(personDetailsService).getByResetPasswordToken((String) any());
+        PersonRequest personRequest = new PersonRequest();
+        LocalDateTime atStartOfDayResult = LocalDate.of(1970, 1, 1).atStartOfDay();
+        personRequest.setDateOfBirth(Date.from(atStartOfDayResult.atZone(ZoneId.of("UTC")).toInstant()));
+        personRequest.setEmail("jane.doe@example.org");
+        personRequest.setFirstName("Jane");
+        personRequest.setGender("Gender");
+        personRequest.setImage("Image");
+        personRequest.setLastName("Doe");
+        personRequest.setPassword("iloveyou");
+        personRequest.setPhoneNumber("4105551212");
+        personRequest.setRoleDetail(ROLE_DETAIL.ANONYMOUS);
+        personRequest.setUserName("janedoe");
+        String content = (new ObjectMapper()).writeValueAsString(personRequest);
+        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.post("/person/admin/register")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(content);
+        MockMvcBuilders.standaloneSetup(this.personController)
+                .build()
+                .perform(requestBuilder)
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().contentType("application/json"))
+                .andExpect(MockMvcResultMatchers.content()
+                        .string("{\"firstName\":\"Jane\",\"lastName\":\"Doe\",\"email\":\"jane.doe@example.org\"}"));
     }
 
     @Test
-    void testProcessResetPassword() {
-        Person person = new Person();
-        person.setAddress(new ArrayList<>());
-        LocalDateTime atStartOfDayResult = LocalDate.of(1970, 1, 1).atStartOfDay();
-        person.setDateOfBirth(Date.from(atStartOfDayResult.atZone(ZoneId.of("UTC")).toInstant()));
-        person.setEmail("jane.doe@example.org");
-        person.setFirstName("Jane");
-        person.setGender("Gender");
-        person.setId(123L);
-        person.setImage("Image");
-        person.setLastName("Doe");
-        person.setPassword("iloveyou");
-        person.setPhoneNumber("4105551212");
-        person.setResetPasswordToken("ABC123");
-        person.setRole(Role.ANONYMOUS);
-        person.setUserName("janedoe");
-        person.setVerifyEmail(true);
-        PersonDetailsService personDetailsService = mock(PersonDetailsService.class);
-        doNothing().when(personDetailsService).updatePassword((Person) any(), (String) any());
-        when(personDetailsService.getByResetPasswordToken((String) any())).thenReturn(person);
-        PersonService personService = mock(PersonService.class);
-        VerificationTokenServiceImpl verificationTokenService = new VerificationTokenServiceImpl(
-                mock(VerificationTokenRepository.class), mock(PersonRepository.class));
+    void testAdminUpdatePassword() throws Exception {
+        when(this.personService.updateResetPassword((ResetPasswordRequest) any(), (String) any())).thenReturn("2020-03-01");
 
-        ProviderManager authenticationManager = new ProviderManager(new RunAsImplAuthenticationProvider());
-        PersonController personController = new PersonController(personService, verificationTokenService,
-                personDetailsService, authenticationManager, new JwtUtils());
+        ResetPasswordRequest resetPasswordRequest = new ResetPasswordRequest();
+        resetPasswordRequest.setConfirmPassword("iloveyou");
+        resetPasswordRequest.setNewPassword("iloveyou");
+        String content = (new ObjectMapper()).writeValueAsString(resetPasswordRequest);
+        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.put("/person/admin/update_password")
+                .param("token", "foo")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(content);
+        MockMvcBuilders.standaloneSetup(this.personController)
+                .build()
+                .perform(requestBuilder)
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().contentType("text/plain;charset=ISO-8859-1"))
+                .andExpect(MockMvcResultMatchers.content().string("2020-03-01"));
+    }
 
-        Person person1 = new Person();
-        person1.setAddress(new ArrayList<>());
-        LocalDateTime atStartOfDayResult1 = LocalDate.of(1970, 1, 1).atStartOfDay();
-        person1.setDateOfBirth(Date.from(atStartOfDayResult1.atZone(ZoneId.of("UTC")).toInstant()));
-        person1.setEmail("jane.doe@example.org");
-        person1.setFirstName("Jane");
-        person1.setGender("Gender");
-        person1.setId(123L);
-        person1.setImage("Image");
-        person1.setLastName("Doe");
-        person1.setPassword("iloveyou");
-        person1.setPhoneNumber("4105551212");
-        person1.setResetPasswordToken("ABC123");
-        person1.setRole(Role.ANONYMOUS);
-        person1.setUserName("janedoe");
-        person1.setVerifyEmail(true);
-        ResponseEntity<String> actualProcessResetPasswordResult = personController.processResetPassword(person1, "ABC123",
-                new MockHttpServletRequest());
-        assertEquals("You have successfully changed your password. ", actualProcessResetPasswordResult.getBody());
-        assertEquals("<201 CREATED Created,You have successfully changed your password. ,[]>",
-                actualProcessResetPasswordResult.toString());
-        assertEquals(HttpStatus.CREATED, actualProcessResetPasswordResult.getStatusCode());
-        assertTrue(actualProcessResetPasswordResult.getHeaders().isEmpty());
-        verify(personDetailsService).getByResetPasswordToken((String) any());
-        verify(personDetailsService).updatePassword((Person) any(), (String) any());
+    @Test
+    void testConfirm() throws Exception {
+        when(this.verificationService.confirmToken((String) any())).thenReturn("ABC123");
+        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.get("/person/confirm").param("token", "foo");
+        MockMvcBuilders.standaloneSetup(this.personController)
+                .build()
+                .perform(requestBuilder)
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().contentType("text/plain;charset=ISO-8859-1"))
+                .andExpect(MockMvcResultMatchers.content().string("ABC123"));
+    }
+
+    @Test
+    void testLogin() throws Exception {
+        when(this.personService.loginUser((AuthRequest) any())).thenReturn(new ResponseEntity<>(HttpStatus.CONTINUE));
+
+        AuthRequest authRequest = new AuthRequest();
+        authRequest.setPassword("iloveyou");
+        authRequest.setUsername("janedoe");
+        String content = (new ObjectMapper()).writeValueAsString(authRequest);
+        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.post("/person/login")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(content);
+        ResultActions actualPerformResult = MockMvcBuilders.standaloneSetup(this.personController)
+                .build()
+                .perform(requestBuilder);
+        actualPerformResult.andExpect(MockMvcResultMatchers.status().is(100));
+    }
+
+    @Test
+    void testProcessResetPassword() throws Exception {
+        when(this.personService.resetPasswordToken((String) any())).thenReturn("ABC123");
+
+        EmailRequest emailRequest = new EmailRequest();
+        emailRequest.setEmail("jane.doe@example.org");
+        String content = (new ObjectMapper()).writeValueAsString(emailRequest);
+        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.post("/person/reset_password")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(content);
+        MockMvcBuilders.standaloneSetup(this.personController)
+                .build()
+                .perform(requestBuilder)
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().contentType("text/plain;charset=ISO-8859-1"))
+                .andExpect(MockMvcResultMatchers.content().string("ABC123"));
+    }
+
+    @Test
+    void testUpdatePassword() throws Exception {
+        when(this.personService.updateResetPassword((ResetPasswordRequest) any(), (String) any())).thenReturn("2020-03-01");
+
+        ResetPasswordRequest resetPasswordRequest = new ResetPasswordRequest();
+        resetPasswordRequest.setConfirmPassword("iloveyou");
+        resetPasswordRequest.setNewPassword("iloveyou");
+        String content = (new ObjectMapper()).writeValueAsString(resetPasswordRequest);
+        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.put("/person/update_password")
+                .param("token", "foo")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(content);
+        MockMvcBuilders.standaloneSetup(this.personController)
+                .build()
+                .perform(requestBuilder)
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().contentType("text/plain;charset=ISO-8859-1"))
+                .andExpect(MockMvcResultMatchers.content().string("2020-03-01"));
     }
 }
 

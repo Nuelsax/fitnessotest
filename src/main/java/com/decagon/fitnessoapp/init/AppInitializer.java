@@ -7,9 +7,7 @@ import org.springframework.boot.ApplicationRunner;
 @RequiredArgsConstructor
 public class AppInitializer implements ApplicationRunner {
 
-
     @Override
-    public void run(ApplicationArguments args) throws Exception {
-
+    public void run(ApplicationArguments args) {
     }
 }

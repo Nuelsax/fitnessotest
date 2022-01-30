@@ -1,11 +1,10 @@
 package com.decagon.fitnessoapp.security;
 
-import com.decagon.fitnessoapp.model.user.Role;
+import com.decagon.fitnessoapp.model.user.ROLE_DETAIL;
 import com.decagon.fitnessoapp.security.filter.JwtRequestFilters;
+import com.decagon.fitnessoapp.service.serviceImplementation.PersonDetailsService;
 import com.decagon.fitnessoapp.utils.Api_Uri;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -28,31 +27,23 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     private final PersonDetailsService personDetailsService;
     private final JwtRequestFilters jwtRequestFilters;
     private final PasswordEncoder passwordEncoder;
-//    private final Api_Uri apiUri;
-
-
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-
             auth.userDetailsService(personDetailsService)
                 .passwordEncoder(passwordEncoder);
-
     }
-
-
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.authorizeRequests()
+        http.csrf().disable().authorizeRequests()
                 .antMatchers(Api_Uri.PUBLIC_URIs)
                 .permitAll()
-                .antMatchers("/auth-dependent-routes").hasAnyRole(Role.PREMIUM.toString(),Role.ADMIN.toString())
+                .antMatchers("/auth-dependent-routes").hasAnyRole(ROLE_DETAIL.PREMIUM.toString(), ROLE_DETAIL.ADMIN.toString())
                 .anyRequest().authenticated()
                 .and()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                //TODO: REMOVE WHEN ADDING LOGIN ENDPOINT
                 .and()
                 .formLogin();
 
@@ -69,6 +60,4 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     GrantedAuthorityDefaults grantedAuthorityDefaults() {
         return new GrantedAuthorityDefaults("");
     }
-
-
 }

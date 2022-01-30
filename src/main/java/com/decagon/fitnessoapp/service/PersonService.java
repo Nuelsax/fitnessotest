@@ -1,31 +1,28 @@
 package com.decagon.fitnessoapp.service;
 
-import com.decagon.fitnessoapp.dto.ChangePassword;
-import com.decagon.fitnessoapp.dto.UpdatePersonDetails;
-import com.decagon.fitnessoapp.dto.PersonDto;
-import com.decagon.fitnessoapp.model.user.Person;
+import com.decagon.fitnessoapp.dto.*;
 import com.mailjet.client.errors.MailjetException;
 import com.mailjet.client.errors.MailjetSocketTimeoutException;
-
+import org.springframework.http.ResponseEntity;
 
 public interface PersonService {
 
-    default void updateUserDetails(UpdatePersonDetails updatePersonDetails) {
+    ResponseEntity<AuthResponse> loginUser(AuthRequest req) throws Exception;
 
-    }
+    PersonResponse updateUserDetails(UpdatePersonDetails updatePersonDetails);
 
+    PersonResponse register(PersonRequest personRequest) throws MailjetSocketTimeoutException, MailjetException;
 
-    default Person register(PersonDto personDto) throws MailjetSocketTimeoutException, MailjetException {
-        return null;
-    }
+    void sendingEmail(PersonRequest personRequest) throws MailjetSocketTimeoutException, MailjetException;
 
-    default void sendingEmail(PersonDto personDto) throws MailjetSocketTimeoutException, MailjetException {
+    String updateCurrentPassword(ChangePassword changePassword);
 
-    }
+    String resetPasswordToken(String email) throws MailjetSocketTimeoutException, MailjetException;
 
-    default String buildEmail(String name, String link) {
-        return null;
-    }
+    String updateResetPassword(ResetPasswordRequest passwordRequest, String token);
 
-    void updateCurrentPassword(ChangePassword changePassword);
+    void resetPasswordMailSender(String email, String token) throws MailjetSocketTimeoutException,
+            MailjetException;
+
+    String buildEmail(String name, String link);
 }

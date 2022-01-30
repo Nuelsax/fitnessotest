@@ -15,10 +15,10 @@ import javax.persistence.Entity;
 @Entity
 public class IntangibleProduct extends Product{
 
-    @Column(name = "duration_in_hours_per_day")
+    @Column(name = "duration_in_hours_per_day", nullable = false)
     private Integer durationInHoursPerDay;
 
-    @Column(name = "duration_in_days")
+    @Column(name = "duration_in_days", nullable = false)
     private Integer durationInDays;
 
 }

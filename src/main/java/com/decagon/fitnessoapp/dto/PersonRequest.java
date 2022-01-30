@@ -1,7 +1,6 @@
 package com.decagon.fitnessoapp.dto;
 
-import com.decagon.fitnessoapp.model.user.Address;
-import com.decagon.fitnessoapp.model.user.Role;
+import com.decagon.fitnessoapp.model.user.ROLE_DETAIL;
 import lombok.Data;
 
 import javax.validation.constraints.Email;
@@ -9,10 +8,9 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.Date;
-import java.util.List;
 
 @Data
-public class PersonDto {
+public class PersonRequest {
 
     @NotEmpty(message = "Username Name cannot be empty")
     @Size(min = 2, message = "username must not be less than 1")
@@ -33,13 +31,12 @@ public class PersonDto {
     @Size(min = 8, message = "password must not be less than 8")
     private String password;
 
+    @Size(min = 10, max = 14, message = "invalid Phone Number")
     private String phoneNumber;
 
-    private List<Address> address;
-
-    private Role role;
-
     private String gender;
+
+    private ROLE_DETAIL roleDetail;
 
     private Date dateOfBirth;
 

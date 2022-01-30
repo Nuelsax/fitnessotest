@@ -1,4 +1,4 @@
-package com.decagon.fitnessoapp.security.swagger;
+package com.decagon.fitnessoapp.config.swagger;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,6 +23,7 @@ import java.util.List;
 @Configuration
 @EnableSwagger2
 public class SwaggerConfig implements WebMvcConfigurer {
+
     @Bean
     public Docket api() {
         return new Docket(DocumentationType.SWAGGER_2)

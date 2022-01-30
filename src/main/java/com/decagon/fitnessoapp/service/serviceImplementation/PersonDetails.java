@@ -1,4 +1,4 @@
-package com.decagon.fitnessoapp.security;
+package com.decagon.fitnessoapp.service.serviceImplementation;
 
 import com.decagon.fitnessoapp.model.user.Person;
 import org.springframework.security.core.GrantedAuthority;
@@ -23,13 +23,12 @@ public class PersonDetails implements UserDetails {
         this.name = person.getUserName();
         this.password = person.getPassword();
         this.active = person.isVerifyEmail();
-        this.authorities = Arrays.stream(person.getRole().toString().split(","))
+        this.authorities = Arrays.stream(person.getRoleDetail().toString().split(","))
                 .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toList());
     }
 
     public PersonDetails() {
-
     }
 
     @Override

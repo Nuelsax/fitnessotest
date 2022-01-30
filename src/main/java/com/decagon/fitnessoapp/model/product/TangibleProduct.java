@@ -1,12 +1,13 @@
 package com.decagon.fitnessoapp.model.product;
 
-import com.sun.istack.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.validation.constraints.NotNull;
 
 @EqualsAndHashCode(callSuper = true)
 @AllArgsConstructor
@@ -16,5 +17,6 @@ import javax.persistence.Entity;
 public class TangibleProduct extends Product{
 
     @NotNull
+    @Column(nullable = false)
     private Integer quantity;
 }

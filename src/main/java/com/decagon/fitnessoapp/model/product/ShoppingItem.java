@@ -1,33 +1,32 @@
 package com.decagon.fitnessoapp.model.product;
 
-import com.sun.istack.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.math.BigDecimal;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
 @Entity
-public class ShoppingCart {
+public class ShoppingItem {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     private Long id;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "intangible_product_id", referencedColumnName = "id")
     private List<IntangibleProduct> intangibleProducts;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "tangible_product_id", referencedColumnName = "id")
     private List<TangibleProduct> tangibleProducts;
 
     @NotNull
+    @Column(nullable = false)
     private Integer quantity;
 }

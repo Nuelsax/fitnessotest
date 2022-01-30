@@ -1,7 +1,7 @@
 package com.decagon.fitnessoapp.security.filter;
 
 import com.decagon.fitnessoapp.security.JwtUtils;
-import com.decagon.fitnessoapp.security.PersonDetailsService;
+import com.decagon.fitnessoapp.service.serviceImplementation.PersonDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -31,7 +31,6 @@ public class JwtRequestFilters extends OncePerRequestFilter {
         this.jwtTokenUtils = jwtTokenUtils;
     }
 
-    // "Authorization": "bearer eheeryhdhd"
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         final String authorizationHeader = request.getHeader("Authorization");
