@@ -159,7 +159,7 @@ class PersonControllerTest {
         PersonController personController = new PersonController(personServiceImpl,
                 new VerificationTokenServiceImpl(mock(VerificationTokenRepository.class), mock(PersonRepository.class)));
         ResponseEntity<String> actualEditUserPasswordResult = personController
-                .editUserPassword(new ChangePassword("iloveyou", "iloveyou", "iloveyou"));
+                .editUserPassword(new ChangePassword("iloveyou", "iloveyou", "iloveyou","iloveyou"));
         assertEquals("2020-03-01", actualEditUserPasswordResult.getBody());
         assertEquals("<200 OK OK,2020-03-01,[]>", actualEditUserPasswordResult.toString());
         assertEquals(HttpStatus.OK, actualEditUserPasswordResult.getStatusCode());
