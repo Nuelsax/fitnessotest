@@ -141,11 +141,14 @@ class PersonControllerTest {
         PersonController personController = new PersonController(personService,
                 new VerificationTokenServiceImpl(mock(VerificationTokenRepository.class), mock(PersonRepository.class)));
         LocalDateTime atStartOfDayResult2 = LocalDate.of(1970, 1, 1).atStartOfDay();
-        ResponseEntity<String> actualEditUserDetailsResult = personController
+        ResponseEntity<PersonResponse> actualEditUserDetailsResult = personController
                 .editUserDetails(new UpdatePersonDetails("janedoe", "Jane", "Doe", "jane.doe@example.org", "Gender",
                         Date.from(atStartOfDayResult2.atZone(ZoneId.of("UTC")).toInstant()), "4105551212"));
-        assertEquals("user details updated", actualEditUserDetailsResult.getBody());
-        assertEquals("<200 OK OK,user details updated,[]>", actualEditUserDetailsResult.toString());
+        PersonResponse personResponse = new PersonResponse();
+        ModelMapper mapper = new ModelMapper();
+        mapper.map(personResponse, actualEditUserDetailsResult.getBody());
+        assertEquals(personResponse, actualEditUserDetailsResult.getBody());
+        assertEquals("<200 OK OK,"+personResponse+",[]>", actualEditUserDetailsResult.toString());
         assertEquals(HttpStatus.OK, actualEditUserDetailsResult.getStatusCode());
         assertTrue(actualEditUserDetailsResult.getHeaders().isEmpty());
         verify(personRepository).findPersonByUserName((String) any());

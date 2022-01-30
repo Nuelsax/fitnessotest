@@ -9,7 +9,7 @@ public interface PersonService {
 
     ResponseEntity<AuthResponse> loginUser(AuthRequest req) throws Exception;
 
-    String updateUserDetails(UpdatePersonDetails updatePersonDetails);
+    PersonResponse updateUserDetails(UpdatePersonDetails updatePersonDetails);
 
     PersonResponse register(PersonRequest personRequest) throws MailjetSocketTimeoutException, MailjetException;
 

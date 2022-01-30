@@ -133,14 +133,16 @@ public class PersonServiceImpl implements PersonService {
     }
 
     @Override
-    public String updateUserDetails(UpdatePersonDetails updatePersonDetails) {
+    public PersonResponse updateUserDetails(UpdatePersonDetails updatePersonDetails) {
         Person existingPerson = personRepository.findPersonByUserName(updatePersonDetails.getUserName())
                 .orElseThrow(
                         () -> new PersonNotFoundException("Person Not Found")
                 );
         modelMapper.map(updatePersonDetails, existingPerson);
         personRepository.save(existingPerson);
-        return "user details updated";
+        PersonResponse personResponse = new PersonResponse();
+        modelMapper.map(existingPerson,personResponse);
+        return personResponse;
     }
 
     @Override

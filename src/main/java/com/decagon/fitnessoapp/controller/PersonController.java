@@ -26,7 +26,7 @@ public class PersonController {
     public final VerificationService verificationTokenService;
 
         @PutMapping("/profile/edit/personinfo")
-        public ResponseEntity<String> editUserDetails(@RequestBody UpdatePersonDetails updatePersonDetails) {
+        public ResponseEntity<PersonResponse> editUserDetails(@RequestBody UpdatePersonDetails updatePersonDetails) {
             return ResponseEntity.ok().body( personService.updateUserDetails(updatePersonDetails));
         }
 
