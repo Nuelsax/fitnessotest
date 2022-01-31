@@ -9,6 +9,7 @@ import com.decagon.fitnessoapp.repository.IntangibleProductRepository;
 import com.decagon.fitnessoapp.repository.TangibleProductRepository;
 import com.decagon.fitnessoapp.service.ProductService;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -71,13 +72,16 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ResponseEntity<List<ProductResponseDto>> getAllProduct() {
-        return  null;
+    public ResponseEntity<Page<TangibleProduct>> getAllProduct(int pageSize, int pageNumber) {
+        Page<TangibleProduct> products = tangibleProductRepository.findAll(PageRequest.of(pageNumber, pageSize));
+        return  ResponseEntity.ok(products);
     }
 
+
     @Override
-    public ResponseEntity<List<ProductResponseDto>> getAllServices() {
-        return null;
+    public ResponseEntity<Page<IntangibleProduct>> getAllServices(int pageSize, int pageNumber) {
+        Page<IntangibleProduct> products = intangibleProductRepository.findAll(PageRequest.of(pageNumber, pageSize));
+        return  ResponseEntity.ok(products);
     }
 
 
