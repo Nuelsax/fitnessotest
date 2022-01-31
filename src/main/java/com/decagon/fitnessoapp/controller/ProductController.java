@@ -8,6 +8,7 @@ import com.decagon.fitnessoapp.service.serviceImplementation.ProductServiceImpl;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -17,32 +18,38 @@ public class ProductController {
 
     private final ProductServiceImpl productService;
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/add")
     public ResponseEntity<ProductResponseDto> addProduct(@RequestBody ProductRequestDto requestDto) {
          return productService.addProduct(requestDto);
     }
 
-    @DeleteMapping("/delete")
-    public ResponseEntity<ProductResponseDto> deleteProduct(Long productId){
+    @PreAuthorize("hasRole('ADMIN')")
+    @DeleteMapping("/delete/{productId}")
+    public ResponseEntity<ProductResponseDto> deleteProduct(@PathVariable Long productId){
         return productService.deleteProduct(productId);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/update/{id}")
     public ResponseEntity<ProductResponseDto> updateProduct(@PathVariable (name = "id") Long productId, @RequestBody ProductRequestDto requestDto){
         return productService.updateProduct(productId, requestDto);
     }
 
-    @GetMapping("/product/{id}")
-    public ResponseEntity<ProductResponseDto> getProduct(@PathVariable ("id") Long productId){
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/{productId}")
+    public ResponseEntity<ProductResponseDto> getProduct(@PathVariable Long productId){
         return productService.getProduct(productId);
     }
 
-    @GetMapping("/products/{size}/{number}")
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/allproducts/{size}/{number}")
     public ResponseEntity<Page<TangibleProduct>> getAllProduct(@PathVariable (name = "size") int pageSize,@PathVariable (name = "number") int pageNumber){
         return productService.getAllProduct(pageSize, pageNumber);
     }
 
-    @GetMapping("/products/{size}/{number}")
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/allservices/{size}/{number}")
     public ResponseEntity<Page<IntangibleProduct>> getAllServices(@PathVariable (name = "size") int pageSize, @PathVariable (name = "number") int pageNumber){
         return productService.getAllServices(pageSize, pageNumber);
     }

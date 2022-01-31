@@ -14,7 +14,7 @@ public class ProductRequestDto {
     private String productName;
     private BigDecimal price;
     private String description;
-    private String ProductType;
+    private String productType;
     private String image;
     private Integer durationInHoursPerDay;
     private Integer durationInDays;

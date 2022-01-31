@@ -33,15 +33,29 @@ public class ProductServiceImpl implements ProductService {
         this.mapper = mapper;
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+
     @Override
     public ResponseEntity<ProductResponseDto> addProduct(ProductRequestDto requestDto) {
-        Product newProduct;
+//        Product newProduct;
         ProductResponseDto responseDto;
         if (requestDto.getProductType().equals("PRODUCT")) {
+
+            TangibleProduct newProduct;
+
+            newProduct = new TangibleProduct();
+            newProduct.setStockKeepingUnit("abu dhabi");
+
             newProduct = tangibleProductRepository.save(mapper.map(requestDto, TangibleProduct.class));
             responseDto = mapper.map(newProduct, ProductResponseDto.class);
+
+
         } else if (requestDto.getProductType().equals("SERVICE")) {
+
+            IntangibleProduct newProduct;
+
+            newProduct = new IntangibleProduct();
+            newProduct.setStockKeepingUnit("abu dhabi");
+
             newProduct = intangibleProductRepository.save(mapper.map(requestDto, IntangibleProduct.class));
             responseDto = mapper.map(newProduct, ProductResponseDto.class);
         } else{
@@ -60,13 +74,13 @@ public class ProductServiceImpl implements ProductService {
         if(isThere) {
             TangibleProduct deletedProduct =  tangibleProductRepository.getById(productId);
             tangibleProductRepository.deleteById(productId);
-            return ResponseEntity.ok(mapper.map(deletedProduct, ProductResponseDto.class));
+            return ResponseEntity.ok().body(mapper.map(deletedProduct, ProductResponseDto.class));
         }
 
         if(isThere2) {
             IntangibleProduct deletedProduct =  intangibleProductRepository.getById(productId);
             intangibleProductRepository.deleteById(productId);
-            return ResponseEntity.ok(mapper.map(deletedProduct, ProductResponseDto.class));
+            return ResponseEntity.ok().body(mapper.map(deletedProduct, ProductResponseDto.class));
         }
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
@@ -74,14 +88,14 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public ResponseEntity<Page<TangibleProduct>> getAllProduct(int pageSize, int pageNumber) {
         Page<TangibleProduct> products = tangibleProductRepository.findAll(PageRequest.of(pageNumber, pageSize));
-        return  ResponseEntity.ok(products);
+        return  ResponseEntity.ok().body(products);
     }
 
 
     @Override
     public ResponseEntity<Page<IntangibleProduct>> getAllServices(int pageSize, int pageNumber) {
         Page<IntangibleProduct> products = intangibleProductRepository.findAll(PageRequest.of(pageNumber, pageSize));
-        return  ResponseEntity.ok(products);
+        return  ResponseEntity.ok().body(products);
     }
 
 
@@ -93,14 +107,18 @@ public class ProductServiceImpl implements ProductService {
         if(isThere){
             TangibleProduct product = tangibleProductRepository.getById(productId);
             mapper.map(requestDto, product);
+
+
             TangibleProduct updatedProduct = tangibleProductRepository.save(product);
-            return ResponseEntity.ok(mapper.map(updatedProduct, ProductResponseDto.class));
+            return ResponseEntity.ok().body(mapper.map(updatedProduct, ProductResponseDto.class));
         }
         if(isThere2){
             IntangibleProduct product = intangibleProductRepository.getById(productId);
             mapper.map(requestDto, product);
+
+
             IntangibleProduct updatedProduct = intangibleProductRepository.save(product);
-            return ResponseEntity.ok(mapper.map(updatedProduct, ProductResponseDto.class));
+            return ResponseEntity.ok().body(mapper.map(updatedProduct, ProductResponseDto.class));
         }
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
@@ -112,15 +130,15 @@ public class ProductServiceImpl implements ProductService {
 
         if(isThere){
             ProductResponseDto responseDto = new ProductResponseDto();
-            mapper.map(responseDto, tangibleProductRepository.getById(productId));
-            return ResponseEntity.ok(responseDto);
+            mapper.map(tangibleProductRepository.getById(productId), responseDto);
+            return ResponseEntity.ok().body(responseDto);
 
         }
 
         if(isThere2){
             ProductResponseDto responseDto = new ProductResponseDto();
-            mapper.map(responseDto, intangibleProductRepository.getById(productId));
-            return ResponseEntity.ok(responseDto);
+            mapper.map(intangibleProductRepository.getById(productId), responseDto);
+            return ResponseEntity.ok().body(responseDto);
 
         }
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
