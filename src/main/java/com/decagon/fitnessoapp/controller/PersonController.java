@@ -6,6 +6,7 @@ import com.decagon.fitnessoapp.model.user.ROLE_DETAIL;
 import com.decagon.fitnessoapp.service.PersonService;
 import com.mailjet.client.errors.MailjetException;
 import com.mailjet.client.errors.MailjetSocketTimeoutException;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -46,6 +47,19 @@ public class PersonController {
             personRequest.setRoleDetail(ROLE_DETAIL.ADMIN);
             return ResponseEntity.ok(personService.register(personRequest));
         }
+
+
+//        @PreAuthorize("hasRole('ADMIN')")
+        @PutMapping("/trainer/register")
+        public ResponseEntity<?> addTrainer (@Valid @RequestBody PersonRequest personRequest){
+        return ResponseEntity.ok(personService.addTrainer(personRequest));
+        }
+
+//        @PreAuthorize("hasRole('ADMIN')")
+        @DeleteMapping("/trainer/delete/{id}")
+        public ResponseEntity<String> removeTrainer (@Valid @PathVariable ("id") Long id){
+        return personService.removeTrainer(id);
+    }
 
         @GetMapping("/confirm")
         public String confirm (@RequestParam("token") String token){
