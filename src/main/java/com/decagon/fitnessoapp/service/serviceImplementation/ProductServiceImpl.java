@@ -54,7 +54,6 @@ public class ProductServiceImpl implements ProductService {
             IntangibleProduct newProduct;
 
             newProduct = new IntangibleProduct();
-            newProduct.setStockKeepingUnit("abu dhabi");
 
             newProduct = intangibleProductRepository.save(mapper.map(requestDto, IntangibleProduct.class));
             responseDto = mapper.map(newProduct, ProductResponseDto.class);
@@ -68,16 +67,16 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ResponseEntity<ProductResponseDto> deleteProduct(Long productId) {
-        boolean isThere = tangibleProductRepository.findById(productId).isPresent();
-        boolean isThere2 = intangibleProductRepository.findById(productId).isPresent();
+        boolean isTangiblePresent = tangibleProductRepository.findById(productId).isPresent();
+        boolean isIntangiblePresent = intangibleProductRepository.findById(productId).isPresent();
 
-        if(isThere) {
+        if(isTangiblePresent ) {
             TangibleProduct deletedProduct =  tangibleProductRepository.getById(productId);
             tangibleProductRepository.deleteById(productId);
             return ResponseEntity.ok().body(mapper.map(deletedProduct, ProductResponseDto.class));
         }
 
-        if(isThere2) {
+        if(isIntangiblePresent) {
             IntangibleProduct deletedProduct =  intangibleProductRepository.getById(productId);
             intangibleProductRepository.deleteById(productId);
             return ResponseEntity.ok().body(mapper.map(deletedProduct, ProductResponseDto.class));
@@ -101,10 +100,10 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ResponseEntity<ProductResponseDto> updateProduct(Long productId, ProductRequestDto requestDto) {
-        boolean isThere = tangibleProductRepository.findById(productId).isPresent();
-        boolean isThere2 = intangibleProductRepository.findById(productId).isPresent();
+        boolean isTangiblePresent = tangibleProductRepository.findById(productId).isPresent();
+        boolean isIntangiblePresent = intangibleProductRepository.findById(productId).isPresent();
 
-        if(isThere){
+        if(isTangiblePresent){
             TangibleProduct product = tangibleProductRepository.getById(productId);
             mapper.map(requestDto, product);
 
@@ -112,7 +111,7 @@ public class ProductServiceImpl implements ProductService {
             TangibleProduct updatedProduct = tangibleProductRepository.save(product);
             return ResponseEntity.ok().body(mapper.map(updatedProduct, ProductResponseDto.class));
         }
-        if(isThere2){
+        if(isIntangiblePresent){
             IntangibleProduct product = intangibleProductRepository.getById(productId);
             mapper.map(requestDto, product);
 
@@ -125,17 +124,17 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ResponseEntity<ProductResponseDto> getProduct(Long productId) {
-        boolean isThere = tangibleProductRepository.findById(productId).isPresent();
-        boolean isThere2 = intangibleProductRepository.findById(productId).isPresent();
+        boolean isTangiblePresent = tangibleProductRepository.findById(productId).isPresent();
+        boolean isIntangiblePresent = intangibleProductRepository.findById(productId).isPresent();
 
-        if(isThere){
+        if(isTangiblePresent){
             ProductResponseDto responseDto = new ProductResponseDto();
             mapper.map(tangibleProductRepository.getById(productId), responseDto);
             return ResponseEntity.ok().body(responseDto);
 
         }
 
-        if(isThere2){
+        if(isIntangiblePresent){
             ProductResponseDto responseDto = new ProductResponseDto();
             mapper.map(intangibleProductRepository.getById(productId), responseDto);
             return ResponseEntity.ok().body(responseDto);
