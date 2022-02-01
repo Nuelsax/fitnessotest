@@ -9,12 +9,12 @@ import static org.mockito.Mockito.when;
 
 import com.decagon.fitnessoapp.Email.EmailService;
 import com.decagon.fitnessoapp.dto.AuthRequest;
-import com.decagon.fitnessoapp.dto.ChangePassword;
+import com.decagon.fitnessoapp.dto.ChangePasswordRequest;
 import com.decagon.fitnessoapp.dto.EmailRequest;
 import com.decagon.fitnessoapp.dto.PersonRequest;
 import com.decagon.fitnessoapp.dto.PersonResponse;
 import com.decagon.fitnessoapp.dto.ResetPasswordRequest;
-import com.decagon.fitnessoapp.dto.UpdatePersonDetails;
+import com.decagon.fitnessoapp.dto.UpdatePersonRequest;
 import com.decagon.fitnessoapp.model.user.Person;
 import com.decagon.fitnessoapp.model.user.ROLE_DETAIL;
 import com.decagon.fitnessoapp.repository.PersonRepository;
@@ -142,7 +142,7 @@ class PersonControllerTest {
                 new VerificationTokenServiceImpl(mock(VerificationTokenRepository.class), mock(PersonRepository.class)));
         LocalDateTime atStartOfDayResult2 = LocalDate.of(1970, 1, 1).atStartOfDay();
         ResponseEntity<PersonResponse> actualEditUserDetailsResult = personController
-                .editUserDetails(new UpdatePersonDetails("janedoe", "Jane", "Doe", "jane.doe@example.org", "Gender",
+                .editUserDetails(new UpdatePersonRequest("janedoe", "Jane", "Doe", "jane.doe@example.org", "Gender",
                         Date.from(atStartOfDayResult2.atZone(ZoneId.of("UTC")).toInstant()), "4105551212"));
         PersonResponse personResponse = new PersonResponse();
         ModelMapper mapper = new ModelMapper();
@@ -158,16 +158,16 @@ class PersonControllerTest {
     @Test
     void testEditUserPassword() {
         PersonServiceImpl personServiceImpl = mock(PersonServiceImpl.class);
-        when(personServiceImpl.updateCurrentPassword((ChangePassword) any())).thenReturn("2020-03-01");
+        when(personServiceImpl.updateCurrentPassword((ChangePasswordRequest) any())).thenReturn("2020-03-01");
         PersonController personController = new PersonController(personServiceImpl,
                 new VerificationTokenServiceImpl(mock(VerificationTokenRepository.class), mock(PersonRepository.class)));
         ResponseEntity<String> actualEditUserPasswordResult = personController
-                .editUserPassword(new ChangePassword("iloveyou", "iloveyou", "iloveyou","iloveyou"));
+                .editUserPassword(new ChangePasswordRequest("iloveyou", "iloveyou", "iloveyou","iloveyou"));
         assertEquals("2020-03-01", actualEditUserPasswordResult.getBody());
         assertEquals("<200 OK OK,2020-03-01,[]>", actualEditUserPasswordResult.toString());
         assertEquals(HttpStatus.OK, actualEditUserPasswordResult.getStatusCode());
         assertTrue(actualEditUserPasswordResult.getHeaders().isEmpty());
-        verify(personServiceImpl).updateCurrentPassword((ChangePassword) any());
+        verify(personServiceImpl).updateCurrentPassword((ChangePasswordRequest) any());
     }
 
     @Test

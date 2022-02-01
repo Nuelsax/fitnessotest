@@ -7,12 +7,11 @@ import java.util.Date;
 
 @Data
 @AllArgsConstructor
-public class UpdatePersonDetails {
+public class UpdatePersonRequest {
 
     private String userName;
     private String firstName;
     private String lastName;
-    private String email;
     private String gender;
     private Date dateOfBirth;
     private String phoneNumber;

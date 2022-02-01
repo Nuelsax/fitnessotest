@@ -13,9 +13,8 @@ import com.decagon.fitnessoapp.Email.EmailService;
 import com.decagon.fitnessoapp.dto.AuthRequest;
 import com.decagon.fitnessoapp.dto.PersonRequest;
 import com.decagon.fitnessoapp.dto.ResetPasswordRequest;
-import com.decagon.fitnessoapp.dto.UpdatePersonDetails;
+import com.decagon.fitnessoapp.dto.UpdatePersonRequest;
 import com.decagon.fitnessoapp.exception.CustomServiceExceptions;
-import com.decagon.fitnessoapp.exception.PersonNotFoundException;
 import com.decagon.fitnessoapp.model.user.Person;
 import com.decagon.fitnessoapp.model.user.ROLE_DETAIL;
 import com.decagon.fitnessoapp.model.user.VerificationToken;
@@ -38,7 +37,6 @@ import org.modelmapper.ModelMapper;
 import org.springframework.security.access.intercept.RunAsImplAuthenticationProvider;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.ProviderManager;
-import org.springframework.security.authentication.jaas.DefaultJaasAuthenticationProvider;
 import org.springframework.security.crypto.argon2.Argon2PasswordEncoder;
 
 class PersonServiceImplTest {
@@ -237,7 +235,7 @@ class PersonServiceImplTest {
                 new PersonDetailsService(mock(PersonRepository.class)), authenticationManager);
         LocalDateTime atStartOfDayResult2 = LocalDate.of(1970, 1, 1).atStartOfDay();
         assertEquals("user details updated",
-                personServiceImpl.updateUserDetails(new UpdatePersonDetails("janedoe", "Jane", "Doe", "jane.doe@example.org",
+                personServiceImpl.updateUserDetails(new UpdatePersonRequest("janedoe", "Jane", "Doe", "jane.doe@example.org",
                         "Gender", Date.from(atStartOfDayResult2.atZone(ZoneId.of("UTC")).toInstant()), "4105551212")));
         verify(personRepository).findPersonByUserName((String) any());
         verify(personRepository).save((Person) any());
