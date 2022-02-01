@@ -3,7 +3,6 @@ package com.decagon.fitnessoapp.service.serviceImplementation;
 import com.decagon.fitnessoapp.dto.ProductRequestDto;
 import com.decagon.fitnessoapp.dto.ProductResponseDto;
 import com.decagon.fitnessoapp.model.product.IntangibleProduct;
-import com.decagon.fitnessoapp.model.product.Product;
 import com.decagon.fitnessoapp.model.product.TangibleProduct;
 import com.decagon.fitnessoapp.repository.IntangibleProductRepository;
 import com.decagon.fitnessoapp.repository.TangibleProductRepository;
@@ -11,21 +10,16 @@ import com.decagon.fitnessoapp.service.ProductService;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 public class ProductServiceImpl implements ProductService {
 
     private final TangibleProductRepository  tangibleProductRepository;
     private final IntangibleProductRepository intangibleProductRepository;
-    private ModelMapper mapper;
+    private final ModelMapper mapper;
 
     public ProductServiceImpl(TangibleProductRepository tangibleProductRepository, IntangibleProductRepository intangibleProductRepository, ModelMapper mapper) {
         this.tangibleProductRepository = tangibleProductRepository;
@@ -36,14 +30,11 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ResponseEntity<ProductResponseDto> addProduct(ProductRequestDto requestDto) {
-//        Product newProduct;
+
         ProductResponseDto responseDto;
         if (requestDto.getProductType().equals("PRODUCT")) {
 
             TangibleProduct newProduct;
-
-            newProduct = new TangibleProduct();
-            newProduct.setStockKeepingUnit("abu dhabi");
 
             newProduct = tangibleProductRepository.save(mapper.map(requestDto, TangibleProduct.class));
             responseDto = mapper.map(newProduct, ProductResponseDto.class);
@@ -52,8 +43,6 @@ public class ProductServiceImpl implements ProductService {
         } else if (requestDto.getProductType().equals("SERVICE")) {
 
             IntangibleProduct newProduct;
-
-            newProduct = new IntangibleProduct();
 
             newProduct = intangibleProductRepository.save(mapper.map(requestDto, IntangibleProduct.class));
             responseDto = mapper.map(newProduct, ProductResponseDto.class);
