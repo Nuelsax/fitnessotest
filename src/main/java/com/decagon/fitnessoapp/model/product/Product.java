@@ -13,11 +13,13 @@ import java.math.BigDecimal;
 public abstract class Product {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @NotNull
-    @Column(name = "stock_keeping_unit",nullable = false)
+    @Column(name = "stock_keeping_unit",nullable = false, unique = true)
+    @SequenceGenerator(name = "sku_sequence", initialValue = 1000, allocationSize = 25)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sku_generator")
     private String stockKeepingUnit;
 
     @NotNull
