@@ -1,13 +1,11 @@
 package com.decagon.fitnessoapp.service.serviceImplementation;
 
-import com.decagon.fitnessoapp.dto.ProductDetailsResponse;
 import com.decagon.fitnessoapp.dto.ProductRequestDto;
 import com.decagon.fitnessoapp.dto.ProductResponseDto;
 import com.decagon.fitnessoapp.model.product.IntangibleProduct;
 import com.decagon.fitnessoapp.model.product.TangibleProduct;
 import com.decagon.fitnessoapp.repository.IntangibleProductRepository;
 import com.decagon.fitnessoapp.repository.TangibleProductRepository;
-import com.decagon.fitnessoapp.service.ProductService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -17,7 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 @Service
-public class ProductServiceImpl implements ProductService {
+public class ProductServiceImpl implements com.decagon.fitnessoapp.service.ProductService {
 
     private final IntangibleProductRepository intangibleProductRepository;
     private final TangibleProductRepository tangibleProductRepository;
@@ -31,23 +29,28 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ResponseEntity<ProductDetailsResponse> viewProductDetails(Long id) {
-        ProductDetailsResponse productDetailsResponse = new ProductDetailsResponse();
+    public ResponseEntity<ProductResponseDto> viewProductDetails(Long id, String productType) {
+        ProductResponseDto productDetailsResponse = new ProductResponseDto();
+        System.out.println("here");
 
-        modelMapper.map(intangibleProductRepository.getById(id), productDetailsResponse);
-        System.out.println(productDetailsResponse);
-        if(productDetailsResponse != null){
+        System.out.println("Product "+tangibleProductRepository.getById(id));
+        System.out.println("Service "+intangibleProductRepository.getById(id));
+        if(productType.equals("PRODUCT")){
+            System.out.println(tangibleProductRepository.getById(id));
+            modelMapper.map(productDetailsResponse, tangibleProductRepository.getById(id));
             if(productDetailsResponse.getStockKeepingUnit().equals("0")) {
                 productDetailsResponse.setImage("Sold Out");
             }
-            System.out.println("Enter");
-            return ResponseEntity.ok().body(productDetailsResponse);
+        }else if(productType.equals("SERVICE")){
+            System.out.println(intangibleProductRepository.getById(id));
+            modelMapper.map(intangibleProductRepository.getById(id), productDetailsResponse);
+            if(productDetailsResponse.getStockKeepingUnit().equals("0")) {
+                productDetailsResponse.setImage("Sold Out");
+            }
+        }else {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        modelMapper.map(productDetailsResponse, tangibleProductRepository.getById(id));
-        if(productDetailsResponse.getStockKeepingUnit().equals("0")) {
-            productDetailsResponse.setImage("Sold Out");
-        }
-        System.out.println("Enter2");
+
         return ResponseEntity.ok().body(productDetailsResponse);
     }
 

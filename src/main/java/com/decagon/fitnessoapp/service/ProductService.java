@@ -1,6 +1,5 @@
 package com.decagon.fitnessoapp.service;
 
-import com.decagon.fitnessoapp.dto.ProductDetailsResponse;
 import com.decagon.fitnessoapp.dto.ProductRequestDto;
 import com.decagon.fitnessoapp.dto.ProductResponseDto;
 import com.decagon.fitnessoapp.model.product.IntangibleProduct;
@@ -21,5 +20,5 @@ public interface ProductService {
 
     ResponseEntity<ProductResponseDto> getProduct(Long id);
 
-    ResponseEntity<ProductDetailsResponse> viewProductDetails(Long id);
+    ResponseEntity<ProductResponseDto> viewProductDetails(Long id, String productType);
 }
