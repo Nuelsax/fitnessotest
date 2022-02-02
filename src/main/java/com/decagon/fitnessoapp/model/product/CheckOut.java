@@ -1,6 +1,7 @@
 package com.decagon.fitnessoapp.model.product;
 
 import com.decagon.fitnessoapp.model.user.Address;
+import com.decagon.fitnessoapp.model.user.PaymentCard;
 import com.decagon.fitnessoapp.model.user.Person;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -9,6 +10,7 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.List;
 
@@ -17,7 +19,7 @@ import java.util.List;
 @Data
 @Entity
 @Table(name = "orders")
-public class Order {
+public class CheckOut {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,25 +31,33 @@ public class Order {
     private Person person;
 
     @NotNull
-    @OneToMany(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "shoppingCart_id", referencedColumnName = "id", nullable = false)
-    private List<ShoppingItem> shoppingItems;
+    private ShoppingItem shoppingItems;
 
     @NotNull
     @Column(name = "total_price", nullable = false)
-    private Double totalPrice;
+    private BigDecimal totalPrice;
 
     @NotNull
     @OneToOne
     @JoinColumn(name = "shipping_address_id", referencedColumnName = "id", nullable = false)
     private Address shippingAddress;
 
+    @NotNull
+    @OneToOne
+    @JoinColumn(name = "billing_address_id", referencedColumnName = "id", nullable = false)
+    private Address billingAddress;
+
+    @NotNull
+    @OneToOne
+    @JoinColumn(name = "payment_card", referencedColumnName = "id", nullable = false)
+    private PaymentCard paymentCard;
+
+
     @CreationTimestamp
     @Column(nullable = false)
     private Timestamp orderDate;
-
-    @Column(name = "order_status")
-    private String orderStatus;
 
     @OneToOne
     private CouponCode couponCode;

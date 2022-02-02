@@ -25,7 +25,4 @@ public class CouponCode {
     @Column(name = "discount_percent", nullable = false)
     private float discountPercent;
 
-    @OneToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "order_id", referencedColumnName = "id", nullable = false)
-    private Order order;
 }
