@@ -26,12 +26,12 @@ public class PersonController {
     public final VerificationService verificationTokenService;
 
         @PutMapping("/profile/edit/personinfo")
-        public ResponseEntity<PersonResponse> editUserDetails(@RequestBody UpdatePersonRequest updatePersonRequest) {
+        public ResponseEntity<UpdatePersonResponse> editUserDetails(@RequestBody UpdatePersonRequest updatePersonRequest) {
             return ResponseEntity.ok().body( personService.updateUserDetails(updatePersonRequest));
         }
 
         @PutMapping("/profile/edit/password")
-        public  ResponseEntity<String> editUserPassword(@RequestBody ChangePasswordRequest changePasswordRequest) {
+        public  ResponseEntity<ChangePasswordResponse> editUserPassword(@RequestBody ChangePasswordRequest changePasswordRequest) {
             return ResponseEntity.ok().body(personService.updateCurrentPassword(changePasswordRequest));
         }
 
