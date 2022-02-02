@@ -10,6 +10,6 @@ public class CheckOutRequest {
     private AddressRequest billingAddress;
     private PaymentRequest paymentRequest;
     private DiscountRequest discountRequest;
-    private String paymentMethod;
     private SHIPPING_METHOD shippingMethod;
+    private OrderSummaryRequest orderSummary;
 }
