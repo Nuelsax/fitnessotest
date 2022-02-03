@@ -1,7 +1,7 @@
 package com.decagon.fitnessoapp.controller;
 
-import com.decagon.fitnessoapp.dto.ChangePassword;
-import com.decagon.fitnessoapp.dto.UpdatePersonDetails;
+import com.decagon.fitnessoapp.dto.ChangePasswordRequest;
+import com.decagon.fitnessoapp.dto.UpdatePersonRequest;
 import com.decagon.fitnessoapp.model.user.ROLE_DETAIL;
 import com.decagon.fitnessoapp.service.PersonService;
 import com.mailjet.client.errors.MailjetException;
@@ -26,13 +26,13 @@ public class PersonController {
     public final VerificationService verificationTokenService;
 
         @PutMapping("/profile/edit/personinfo")
-        public ResponseEntity<PersonResponse> editUserDetails(@RequestBody UpdatePersonDetails updatePersonDetails) {
-            return ResponseEntity.ok().body( personService.updateUserDetails(updatePersonDetails));
+        public ResponseEntity<UpdatePersonResponse> editUserDetails(@RequestBody UpdatePersonRequest updatePersonRequest) {
+            return ResponseEntity.ok().body( personService.updateUserDetails(updatePersonRequest));
         }
 
         @PutMapping("/profile/edit/password")
-        public  ResponseEntity<String> editUserPassword(@RequestBody ChangePassword changePassword) {
-            return ResponseEntity.ok().body(personService.updateCurrentPassword(changePassword));
+        public  ResponseEntity<ChangePasswordResponse> editUserPassword(@RequestBody ChangePasswordRequest changePasswordRequest) {
+            return ResponseEntity.ok().body(personService.updateCurrentPassword(changePasswordRequest));
         }
 
         @PostMapping("/register")
