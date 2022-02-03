@@ -6,6 +6,7 @@ import com.decagon.fitnessoapp.model.user.ROLE_DETAIL;
 import com.decagon.fitnessoapp.service.PersonService;
 import com.mailjet.client.errors.MailjetException;
 import com.mailjet.client.errors.MailjetSocketTimeoutException;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -30,8 +31,9 @@ public class PersonController {
             return ResponseEntity.ok().body( personService.updateUserDetails(updatePersonDetails));
         }
 
+        @PreAuthorize("hasRole('PREMIUM') or hasRole('ADMIN')")
         @PutMapping("/profile/edit/password")
-        public  ResponseEntity<String> editUserPassword(@RequestBody ChangePassword changePassword) {
+        public  ResponseEntity<?> editUserPassword(@RequestBody ChangePassword changePassword) {
             return ResponseEntity.ok().body(personService.updateCurrentPassword(changePassword));
         }
 
