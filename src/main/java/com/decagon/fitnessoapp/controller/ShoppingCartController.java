@@ -1,12 +1,9 @@
 package com.decagon.fitnessoapp.controller;
 
-import com.decagon.fitnessoapp.model.product.ShoppingItem;
 import com.decagon.fitnessoapp.service.ShoppingCartService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/carts")

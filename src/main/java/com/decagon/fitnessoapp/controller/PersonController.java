@@ -1,18 +1,14 @@
 package com.decagon.fitnessoapp.controller;
 
-import com.decagon.fitnessoapp.dto.ChangePassword;
-import com.decagon.fitnessoapp.dto.UpdatePersonDetails;
+import com.decagon.fitnessoapp.dto.*;
 import com.decagon.fitnessoapp.model.user.ROLE_DETAIL;
 import com.decagon.fitnessoapp.service.PersonService;
+import com.decagon.fitnessoapp.service.VerificationService;
 import com.mailjet.client.errors.MailjetException;
 import com.mailjet.client.errors.MailjetSocketTimeoutException;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
-import com.decagon.fitnessoapp.dto.*;
-import com.decagon.fitnessoapp.service.VerificationService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -26,12 +22,13 @@ public class PersonController {
     public final VerificationService verificationTokenService;
 
         @PutMapping("/profile/edit/personinfo")
-        public ResponseEntity<PersonResponse> editUserDetails(@RequestBody UpdatePersonDetails updatePersonDetails) {
+        public ResponseEntity<UpdatePersonResponse> editUserDetails(@RequestBody UpdatePersonRequest updatePersonDetails) {
             return ResponseEntity.ok().body( personService.updateUserDetails(updatePersonDetails));
         }
 
+        @PreAuthorize("hasRole('PREMIUM') or hasRole('ADMIN')")
         @PutMapping("/profile/edit/password")
-        public  ResponseEntity<String> editUserPassword(@RequestBody ChangePassword changePassword) {
+        public  ResponseEntity<ChangePasswordResponse> editUserPassword(@RequestBody ChangePasswordRequest changePassword) {
             return ResponseEntity.ok().body(personService.updateCurrentPassword(changePassword));
         }
 
@@ -58,7 +55,7 @@ public class PersonController {
         }
 
         @PostMapping("/reset_password")
-        public ResponseEntity<String> processResetPassword (@RequestBody EmailRequest resetEmail) throws MailjetSocketTimeoutException, MailjetException {
+        public ResponseEntity<?> processResetPassword (@RequestBody EmailRequest resetEmail) throws MailjetSocketTimeoutException, MailjetException {
             return ResponseEntity.ok().body(personService.resetPasswordToken(resetEmail.getEmail()));
         }
 
