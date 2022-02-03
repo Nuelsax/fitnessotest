@@ -15,10 +15,16 @@ import javax.persistence.Entity;
 @Entity
 public class IntangibleProduct extends Product{
 
+    @Override
+    public String getProductName() {
+        return super.getProductName();
+    }
+
     @Column(name = "duration_in_hours_per_day", nullable = false)
     private Integer durationInHoursPerDay;
 
     @Column(name = "duration_in_days", nullable = false)
     private Integer durationInDays;
+
 
 }

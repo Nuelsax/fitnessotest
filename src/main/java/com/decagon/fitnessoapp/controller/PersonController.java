@@ -76,5 +76,6 @@ public class PersonController {
         public ResponseEntity<?> adminUpdatePassword(@RequestBody ResetPasswordRequest passwordRequest, @RequestParam(value = "token") String token){
             return ResponseEntity.ok().body(personService.updateResetPassword(passwordRequest, token));
         }
+
 }
 
