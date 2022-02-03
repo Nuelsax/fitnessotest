@@ -12,13 +12,20 @@ public class ShoppingCartController {
 
     private final ShoppingCartService shoppingCartService;
 
-   @PutMapping("/{productId}")
-    public ResponseEntity<?> addItemToCart(@PathVariable(value = "productId") Long productId, int quantity) {
+   @PutMapping("/ add/{productId}/{quantity}")
+    public ResponseEntity<?> addItemToCart(@PathVariable(value = "productId") Long productId,
+                                           @PathVariable(value = "quantity") int quantity) {
        return ResponseEntity.ok(shoppingCartService.addProductAsShoppingItem(productId, quantity));
    }
 
-   @DeleteMapping("/{productId}")
+   @DeleteMapping("/delete/{productId}")
     public ResponseEntity<?> removeItemFromCart(@PathVariable(value = "productId") Long productId){
        return ResponseEntity.ok(shoppingCartService.removeProductAsShoppingItem(productId));
    }
+
+//    @DeleteMapping("/deleteall/{shoppingItemId}")
+//    public ResponseEntity<?> removeAllItemFromCart(@PathVariable (value = "shoppingItemId") Long cartId){
+//        return ResponseEntity.ok(shoppingCartService.removeAllProductAsShoppingItem(cartId));
+//    }
+
 }
