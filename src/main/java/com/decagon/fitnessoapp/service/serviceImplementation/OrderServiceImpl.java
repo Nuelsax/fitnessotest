@@ -13,6 +13,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class OrderServiceImpl implements OrderService {
 
@@ -40,4 +42,16 @@ public class OrderServiceImpl implements OrderService {
         modelMapper.map(order, orderResponse);
         return ResponseEntity.ok().body(orderResponse);
     }
+
+    @Override
+    public ResponseEntity<List<Order>> getAllOrders() {
+        return ResponseEntity.ok(orderRepository.findAll());
+    }
+
+    @Override
+    public ResponseEntity<List<Order>> getOrdersByStatus(String status) {
+        return ResponseEntity.ok(orderRepository.findAllByOrderStatus(status));
+    }
+
+
 }

@@ -10,6 +10,9 @@ import com.decagon.fitnessoapp.model.user.Person;
 import com.decagon.fitnessoapp.model.user.ROLE_DETAIL;
 import com.decagon.fitnessoapp.repository.OrderRepository;
 import com.decagon.fitnessoapp.repository.PersonRepository;
+
+import java.util.List;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -32,7 +35,12 @@ import java.util.Date;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ContextConfiguration(classes = {OrderServiceImpl.class})
 @ExtendWith(SpringExtension.class)
@@ -55,7 +63,7 @@ class OrderServiceImplTest {
     Address address = new Address();
 
     @BeforeEach
-    void test(){
+    void test() {
         LocalDateTime atStartOfDayResult = LocalDate.of(1970, 1, 1).atStartOfDay();
         person.setDateOfBirth(Date.from(atStartOfDayResult.atZone(ZoneId.of("UTC")).toInstant()));
         person.setEmail("jane.doe@example.org");
@@ -130,6 +138,18 @@ class OrderServiceImplTest {
         assertThrows(UsernameNotFoundException.class,
                 () -> this.orderServiceImpl.getOrder(new TestingAuthenticationToken("Principal", "Credentials")));
         verify(this.personRepository).findPersonByUserName((String) any());
+    }
+
+    @Test
+    void testGetOrdersByStatus() {
+        when(this.orderRepository.findAllByOrderStatus((String) any())).thenReturn(new ArrayList<>());
+        ResponseEntity<List<Order>> actualOrdersByStatus = this.orderServiceImpl.getOrdersByStatus("Status");
+        assertEquals("<200 OK OK,[],[]>", actualOrdersByStatus.toString());
+        assertTrue(actualOrdersByStatus.hasBody());
+        assertEquals(HttpStatus.OK, actualOrdersByStatus.getStatusCode());
+        assertTrue(actualOrdersByStatus.getHeaders().isEmpty());
+        verify(this.orderRepository).findAllByOrderStatus((String) any());
+        assertEquals(actualOrdersByStatus, this.orderServiceImpl.getAllOrders());
     }
 }
 
