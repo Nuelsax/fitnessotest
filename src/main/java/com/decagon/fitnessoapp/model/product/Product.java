@@ -6,6 +6,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
+import java.util.UUID;
 
 @Data
 @MappedSuperclass
@@ -18,9 +19,11 @@ public abstract class Product {
 
     @NotNull
     @Column(name = "stock_keeping_unit",nullable = false, unique = true)
-    @SequenceGenerator(name = "sku_sequence", initialValue = 1000, allocationSize = 25)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sku_generator")
-    private String stockKeepingUnit;
+    private String stockKeepingUnit = UUID.randomUUID().toString();
+
+    @NotNull
+    @Column(nullable = false, unique = true)
+    private Long stock;
 
     @NotNull
     @Column(nullable = false)

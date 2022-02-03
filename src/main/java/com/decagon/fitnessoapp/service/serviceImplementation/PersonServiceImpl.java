@@ -134,35 +134,35 @@ public class PersonServiceImpl implements PersonService {
     }
 
     @Override
-    public PersonResponse updateUserDetails(UpdatePersonDetails updatePersonDetails) {
-        Person existingPerson = personRepository.findPersonByUserName(updatePersonDetails.getUserName())
+    public UpdatePersonResponse updateUserDetails(UpdatePersonRequest updatePersonRequest) {
+        Person existingPerson = personRepository.findPersonByUserName(updatePersonRequest.getUserName())
                 .orElseThrow(
                         () -> new PersonNotFoundException("Person Not Found")
                 );
-        modelMapper.map(updatePersonDetails, existingPerson);
+        modelMapper.map(updatePersonRequest, existingPerson);
         personRepository.save(existingPerson);
-        PersonResponse personResponse = new PersonResponse();
-        modelMapper.map(existingPerson,personResponse);
-        return personResponse;
+        UpdatePersonResponse response = new UpdatePersonResponse();
+        modelMapper.map(existingPerson,response);
+        return response;
     }
 
     @Override
     @Transactional
-    public String updateCurrentPassword(ChangePassword changePassword) {
-        Person currentPerson = personRepository.findByUserName(changePassword.getUserName())
+    public ChangePasswordResponse updateCurrentPassword(ChangePasswordRequest changePasswordRequest) {
+        Person currentPerson = personRepository.findByUserName(changePasswordRequest.getUserName())
                 .orElseThrow(()-> new PersonNotFoundException("Person Not Found"));
-        String newPassword = changePassword.getNewPassword();
-        String confirmPassword = changePassword.getConfirmPassword();
-        if(bCryptPasswordEncoder.matches(changePassword.getCurrentPassword(), currentPerson.getPassword())){
+        String newPassword = changePasswordRequest.getNewPassword();
+        String confirmPassword = changePasswordRequest.getConfirmPassword();
+        if(bCryptPasswordEncoder.matches(changePasswordRequest.getCurrentPassword(), currentPerson.getPassword())){
             if (newPassword.equals(confirmPassword)) {
                 currentPerson.setPassword(bCryptPasswordEncoder.encode(newPassword));
                 personRepository.save(currentPerson);
-                return "password successfully changed";
+                return new ChangePasswordResponse("password successfully changed");
             }
-            else { return "password mix match";}
+            else { return new ChangePasswordResponse("password mix match");}
         }
         else {
-            return "Incorrect current password";
+            return new ChangePasswordResponse("Incorrect current password");
         }
     }
 

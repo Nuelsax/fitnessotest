@@ -161,7 +161,7 @@ class PersonControllerTest {
         when(personServiceImpl.updateCurrentPassword((ChangePassword) any())).thenReturn("2020-03-01");
         PersonController personController = new PersonController(personServiceImpl,
                 new VerificationTokenServiceImpl(mock(VerificationTokenRepository.class), mock(PersonRepository.class)));
-        ResponseEntity<?> actualEditUserPasswordResult = personController
+        ResponseEntity<String> actualEditUserPasswordResult = personController
                 .editUserPassword(new ChangePassword("iloveyou", "iloveyou", "iloveyou","iloveyou"));
         assertEquals("2020-03-01", actualEditUserPasswordResult.getBody());
         assertEquals("<200 OK OK,2020-03-01,[]>", actualEditUserPasswordResult.toString());
