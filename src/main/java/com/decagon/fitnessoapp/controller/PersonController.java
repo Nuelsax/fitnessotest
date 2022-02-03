@@ -2,10 +2,15 @@ package com.decagon.fitnessoapp.controller;
 
 import com.decagon.fitnessoapp.dto.ChangePassword;
 import com.decagon.fitnessoapp.dto.UpdatePersonDetails;
+import com.decagon.fitnessoapp.model.user.Favourite;
 import com.decagon.fitnessoapp.model.user.ROLE_DETAIL;
+import com.decagon.fitnessoapp.service.FavouriteService;
 import com.decagon.fitnessoapp.service.PersonService;
 import com.mailjet.client.errors.MailjetException;
 import com.mailjet.client.errors.MailjetSocketTimeoutException;
+import org.springframework.boot.autoconfigure.neo4j.Neo4jProperties;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -23,7 +28,9 @@ import javax.validation.Valid;
 public class PersonController {
 
     private final PersonService personService;
+    private final FavouriteService favouriteService;
     public final VerificationService verificationTokenService;
+
 
         @PutMapping("/profile/edit/personinfo")
         public ResponseEntity<PersonResponse> editUserDetails(@RequestBody UpdatePersonDetails updatePersonDetails) {
@@ -57,6 +64,10 @@ public class PersonController {
             return personService.loginUser(req);
         }
 
+        @PostMapping("/add_or_delete_favourite/{productId}")
+        public ResponseEntity<String> addOrDeleteFavourite(@PathVariable("productId") Long productId, Authentication authentication){
+            return favouriteService.addOrDeleteFavourite(productId, authentication);
+        }
         @PostMapping("/reset_password")
         public ResponseEntity<String> processResetPassword (@RequestBody EmailRequest resetEmail) throws MailjetSocketTimeoutException, MailjetException {
             return ResponseEntity.ok().body(personService.resetPasswordToken(resetEmail.getEmail()));
