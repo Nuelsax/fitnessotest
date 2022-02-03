@@ -141,7 +141,30 @@ class OrderServiceImplTest {
     }
 
     @Test
+    void testGetAllOrders() {
+        when(this.orderRepository.findAll()).thenReturn(new ArrayList<>());
+        ResponseEntity<List<Order>> actualAllOrders = this.orderServiceImpl.getAllOrders();
+        assertEquals("<200 OK OK,[],[]>", actualAllOrders.toString());
+        assertTrue(actualAllOrders.hasBody());
+        assertEquals(HttpStatus.OK, actualAllOrders.getStatusCode());
+        assertTrue(actualAllOrders.getHeaders().isEmpty());
+        verify(this.orderRepository).findAll();
+    }
+
+    @Test
     void testGetOrdersByStatus() {
+        when(this.orderRepository.findAllByOrderStatus((String) any())).thenReturn(new ArrayList<>());
+        ResponseEntity<List<Order>> actualOrdersByStatus = this.orderServiceImpl.getOrdersByStatus("Status");
+        assertEquals("<200 OK OK,[],[]>", actualOrdersByStatus.toString());
+        assertTrue(actualOrdersByStatus.hasBody());
+        assertEquals(HttpStatus.OK, actualOrdersByStatus.getStatusCode());
+        assertTrue(actualOrdersByStatus.getHeaders().isEmpty());
+        verify(this.orderRepository).findAllByOrderStatus((String) any());
+        assertEquals(actualOrdersByStatus, this.orderServiceImpl.getAllOrders());
+    }
+
+    @Test
+    void testGetOrdersByStatus2() {
         when(this.orderRepository.findAllByOrderStatus((String) any())).thenReturn(new ArrayList<>());
         ResponseEntity<List<Order>> actualOrdersByStatus = this.orderServiceImpl.getOrdersByStatus("Status");
         assertEquals("<200 OK OK,[],[]>", actualOrdersByStatus.toString());
