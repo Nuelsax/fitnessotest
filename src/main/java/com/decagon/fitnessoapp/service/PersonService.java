@@ -9,13 +9,13 @@ public interface PersonService {
 
     ResponseEntity<AuthResponse> loginUser(AuthRequest req) throws Exception;
 
-    PersonResponse updateUserDetails(UpdatePersonDetails updatePersonDetails);
+    UpdatePersonResponse updateUserDetails(UpdatePersonRequest updatePersonRequest);
 
     PersonResponse register(PersonRequest personRequest) throws MailjetSocketTimeoutException, MailjetException;
 
     void sendingEmail(PersonRequest personRequest) throws MailjetSocketTimeoutException, MailjetException;
 
-    String updateCurrentPassword(ChangePassword changePassword);
+    ChangePasswordResponse updateCurrentPassword(ChangePasswordRequest changePasswordRequest);
 
     String resetPasswordToken(String email) throws MailjetSocketTimeoutException, MailjetException;
 

@@ -6,6 +6,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
+import java.util.UUID;
 
 
 @Data
@@ -14,12 +15,16 @@ import java.math.BigDecimal;
 public abstract class Product {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @NotNull
-    @Column(name = "stock_keeping_unit",nullable = false)
-    private String stockKeepingUnit;
+    @Column(name = "stock_keeping_unit",nullable = false, unique = true)
+    private String stockKeepingUnit = UUID.randomUUID().toString();
+
+    @NotNull
+    @Column(nullable = false, unique = true)
+    private Long stock;
 
     @NotNull
     @Column(nullable = false)
