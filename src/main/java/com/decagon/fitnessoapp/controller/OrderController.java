@@ -1,5 +1,6 @@
 package com.decagon.fitnessoapp.controller;
 
+import com.decagon.fitnessoapp.dto.OrderResponse;
 import com.decagon.fitnessoapp.service.OrderService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +19,7 @@ public class OrderController {
 
     @PreAuthorize("hasRole('PREMIUM')"+ "|| hasRole('ADMIN')")
     @GetMapping("/viewOrder")
-    private ResponseEntity<?> viewOrder(Authentication authentication){
+    public ResponseEntity<OrderResponse> viewOrder(Authentication authentication){
         return orderService.getOrder(authentication);
     }
 }

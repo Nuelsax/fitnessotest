@@ -31,26 +31,24 @@ public class ProductServiceImpl implements com.decagon.fitnessoapp.service.Produ
     @Override
     public ResponseEntity<ProductResponseDto> viewProductDetails(Long id, String productType) {
         ProductResponseDto productDetailsResponse = new ProductResponseDto();
-        System.out.println("here");
 
-        System.out.println("Product "+tangibleProductRepository.getById(id));
-        System.out.println("Service "+intangibleProductRepository.getById(id));
         if(productType.equals("PRODUCT")){
-            System.out.println(tangibleProductRepository.getById(id));
-            modelMapper.map(productDetailsResponse, tangibleProductRepository.getById(id));
-            if(productDetailsResponse.getStockKeepingUnit().equals("0")) {
+            modelMapper.map(tangibleProductRepository.getById(id), productDetailsResponse );
+            productDetailsResponse.setProductType("PRODUCT");
+            if(productDetailsResponse.getStock() == 0) {
                 productDetailsResponse.setImage("Sold Out");
             }
+
         }else if(productType.equals("SERVICE")){
-            System.out.println(intangibleProductRepository.getById(id));
             modelMapper.map(intangibleProductRepository.getById(id), productDetailsResponse);
-            if(productDetailsResponse.getStockKeepingUnit().equals("0")) {
+            productDetailsResponse.setProductType("SERVICE");
+            if(productDetailsResponse.getStock() == 0) {
                 productDetailsResponse.setImage("Sold Out");
             }
+
         }else {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-
         return ResponseEntity.ok().body(productDetailsResponse);
     }
 
@@ -146,7 +144,6 @@ public class ProductServiceImpl implements com.decagon.fitnessoapp.service.Produ
             ProductResponseDto responseDto = new ProductResponseDto();
             modelMapper.map(tangibleProductRepository.getById(productId), responseDto);
             return ResponseEntity.ok().body(responseDto);
-
         }
 
         if (isIntangiblePresent) {

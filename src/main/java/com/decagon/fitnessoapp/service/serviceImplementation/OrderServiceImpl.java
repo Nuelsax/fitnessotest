@@ -30,7 +30,7 @@ public class OrderServiceImpl implements OrderService {
 
 
     @Override
-    public ResponseEntity<?> getOrder(Authentication authentication) {
+    public ResponseEntity<OrderResponse> getOrder(Authentication authentication) {
 
         Person person = personRepository.findPersonByUserName(authentication.getName())
                 .orElseThrow(()-> new UsernameNotFoundException("Check getOrder at OrderServiceImpl: User Name does not Exist"));

@@ -47,11 +47,13 @@ public class Order {
     private Timestamp orderDate;
 
     @Column(name = "order_status")
-    private String orderStatus;
+    @Enumerated(EnumType.STRING)
+    private ORDER_STATUS orderStatus;
 
     @OneToOne
     private CouponCode couponCode;
 
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private SHIPPING_METHOD shippingMethod;
 }

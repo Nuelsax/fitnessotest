@@ -4,7 +4,7 @@ import com.decagon.fitnessoapp.dto.ProductRequestDto;
 import com.decagon.fitnessoapp.dto.ProductResponseDto;
 import com.decagon.fitnessoapp.model.product.IntangibleProduct;
 import com.decagon.fitnessoapp.model.product.TangibleProduct;
-import com.decagon.fitnessoapp.service.serviceImplementation.ProductServiceImpl;
+import com.decagon.fitnessoapp.service.ProductService;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 @AllArgsConstructor
 public class ProductController {
 
-    private final ProductServiceImpl productService;
+    private final ProductService productService;
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/add")
@@ -55,19 +55,16 @@ public class ProductController {
     }
 
     @GetMapping("/viewproductdetails/{productId}/{ProductType}")
-    private ResponseEntity<ProductResponseDto> viewProductDetail(@PathVariable("productId") Long productId,
+    public ResponseEntity<ProductResponseDto> viewProductDetail(@PathVariable("productId") Long productId,
                                                                   @PathVariable("ProductType") String productType){
-        System.out.println(productType);
-        System.out.println(productId);
-        System.out.println("ooop");
-        ResponseEntity<ProductResponseDto> productResponseDto = productService.viewProductDetails(productId, productType);
-        productResponseDto.getBody().setStockKeepingUnit(null);
-        return productResponseDto;
+        ProductResponseDto productResponseDto = productService.viewProductDetails(productId, productType).getBody();
+        productResponseDto.setStock(null);
+        return ResponseEntity.ok().body(productResponseDto);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/admin/viewproductdetails/{Id}/{producttype}")
-    private ResponseEntity<ProductResponseDto> viewProductDetailForAdmin(@PathVariable("Id") Long productId,
+    public ResponseEntity<ProductResponseDto> viewProductDetailForAdmin(@PathVariable("Id") Long productId,
                                                                   @PathVariable("producttype") String productType){
         return productService.viewProductDetails(productId, productType);
     }

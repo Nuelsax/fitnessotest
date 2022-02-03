@@ -26,6 +26,7 @@ public class ShoppingItem {
     @JoinColumn(name = "tangible_product_id", referencedColumnName = "id")
     private List<TangibleProduct> tangibleProducts;
 
+    //Todo: dont think this is neccessary
     @NotNull
     @Column(nullable = false)
     private Integer quantity;
