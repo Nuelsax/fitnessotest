@@ -14,6 +14,7 @@ public class ProductResponseDto {
     private String productName;
     private BigDecimal price;
     private String description;
+    private Long stock;
     private String ProductType;
     private String image;
     private Integer durationInHoursPerDay;
