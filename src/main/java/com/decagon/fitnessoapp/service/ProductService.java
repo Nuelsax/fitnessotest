@@ -2,6 +2,7 @@ package com.decagon.fitnessoapp.service;
 
 import com.decagon.fitnessoapp.dto.ProductRequestDto;
 import com.decagon.fitnessoapp.dto.ProductResponseDto;
+import com.decagon.fitnessoapp.dto.UserProductDto;
 import com.decagon.fitnessoapp.model.product.IntangibleProduct;
 import com.decagon.fitnessoapp.model.product.TangibleProduct;
 import org.springframework.data.domain.Page;
@@ -21,4 +22,6 @@ public interface ProductService {
     ResponseEntity<ProductResponseDto> getProduct(Long id);
 
     ResponseEntity<ProductResponseDto> viewProductDetails(Long id, String productType);
+
+    Page<UserProductDto> getAllProducts(int pageNumber);
 }

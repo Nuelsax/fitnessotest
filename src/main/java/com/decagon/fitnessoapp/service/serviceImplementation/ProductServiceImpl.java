@@ -2,17 +2,22 @@ package com.decagon.fitnessoapp.service.serviceImplementation;
 
 import com.decagon.fitnessoapp.dto.ProductRequestDto;
 import com.decagon.fitnessoapp.dto.ProductResponseDto;
+import com.decagon.fitnessoapp.dto.UserProductDto;
 import com.decagon.fitnessoapp.model.product.IntangibleProduct;
 import com.decagon.fitnessoapp.model.product.TangibleProduct;
 import com.decagon.fitnessoapp.repository.IntangibleProductRepository;
 import com.decagon.fitnessoapp.repository.TangibleProductRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ProductServiceImpl implements com.decagon.fitnessoapp.service.ProductService {
@@ -150,8 +155,59 @@ public class ProductServiceImpl implements com.decagon.fitnessoapp.service.Produ
             ProductResponseDto responseDto = new ProductResponseDto();
             modelMapper.map(intangibleProductRepository.getById(productId), responseDto);
             return ResponseEntity.ok().body(responseDto);
-
         }
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    }
+
+    /* ======================== */
+//    public ResponseEntity<List<Page>> getAllProducts(int pageNumber) {
+//        int pageSize = 5;
+//        String sortBy = "productName";
+//        Pageable productPage = PageRequest.of(pageNumber, pageSize, Sort.by(sortBy).ascending());
+//        Page<IntangibleProduct> intangibleProducts = intangibleProductRepository.findAll(productPage);
+//        Page<TangibleProduct> tangibleProducts = tangibleProductRepository.findAll(productPage);
+//        List<Page> listOfProducts = new ArrayList<>();
+//        listOfProducts.add(intangibleProducts);
+//        listOfProducts.add(tangibleProducts);
+//        return new ResponseEntity<>(listOfProducts, HttpStatus.ACCEPTED);
+//    }
+
+    @Override
+    public Page<UserProductDto> getAllProducts(int pageNumber) {
+         List<UserProductDto> dtoList = getDtoList();
+
+        int pageSize = 10;
+        int skipCount = (pageNumber - 1) * pageSize;
+
+        List<UserProductDto> activityPage = dtoList
+                .stream()
+                .skip(skipCount)
+                .limit(pageSize)
+                .collect(Collectors.toList());
+
+        Pageable productPage = PageRequest.of(pageNumber, pageSize, Sort.by("productName").ascending());
+
+        return (Page<UserProductDto>) new PageImpl(activityPage, productPage, dtoList.size());
+    }
+
+    private List<UserProductDto> getDtoList() {
+        List<IntangibleProduct> intangibleProducts = intangibleProductRepository.findAll();
+        List<TangibleProduct> tangibleProducts = tangibleProductRepository.findAll();
+
+        List<UserProductDto> intangibleDtos = intangibleProducts.stream()
+                .map(x -> modelMapper.map(x, UserProductDto.class))
+                .collect(Collectors.toList());
+
+        List<UserProductDto> tangibleDtos = tangibleProducts.stream()
+                .map(x -> modelMapper.map(x, UserProductDto.class))
+                .collect(Collectors.toList());
+
+        Collections.sort(intangibleDtos);
+        Collections.sort(tangibleDtos);
+
+        List<UserProductDto> productDtos = new ArrayList<>(intangibleDtos);
+        productDtos.addAll(tangibleDtos);
+
+        return productDtos;
     }
 }

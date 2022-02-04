@@ -2,6 +2,7 @@ package com.decagon.fitnessoapp.controller;
 
 import com.decagon.fitnessoapp.dto.ProductRequestDto;
 import com.decagon.fitnessoapp.dto.ProductResponseDto;
+import com.decagon.fitnessoapp.dto.UserProductDto;
 import com.decagon.fitnessoapp.model.product.IntangibleProduct;
 import com.decagon.fitnessoapp.model.product.TangibleProduct;
 import com.decagon.fitnessoapp.service.ProductService;
@@ -67,5 +68,11 @@ public class ProductController {
     public ResponseEntity<ProductResponseDto> viewProductDetailForAdmin(@PathVariable("Id") Long productId,
                                                                   @PathVariable("producttype") String productType){
         return productService.viewProductDetails(productId, productType);
+    }
+
+    @GetMapping("/viewproducts/{pageNumber}")
+    public ResponseEntity<?> viewAllProducts(@PathVariable(value="pageNumber") int pageNumber) {
+        final Page<UserProductDto> allProducts = productService.getAllProducts(pageNumber);
+        return ResponseEntity.ok(allProducts);
     }
 }
