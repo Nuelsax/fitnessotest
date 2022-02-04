@@ -2,6 +2,7 @@ package com.decagon.fitnessoapp.service.serviceImplementation;
 
 import com.decagon.fitnessoapp.dto.OrderResponse;
 import com.decagon.fitnessoapp.dto.UserProductDto;
+import com.decagon.fitnessoapp.model.product.ORDER_STATUS;
 import com.decagon.fitnessoapp.model.product.Order;
 import com.decagon.fitnessoapp.model.user.Person;
 import com.decagon.fitnessoapp.repository.OrderRepository;
@@ -69,8 +70,9 @@ public class OrderServiceImpl implements OrderService {
                 .map(x -> modelMapper.map(x, OrderResponse.class))
                 .collect(Collectors.toList());
     }
+
     @Override
-    public Page<OrderResponse> getOrdersByStatus(String status, int pageNo) {
+    public Page<OrderResponse> getOrdersByStatus(ORDER_STATUS status, int pageNo) {
         int pageSize = 10;
         int skipCount = (pageNo - 1) * pageSize;
 
@@ -85,7 +87,7 @@ public class OrderServiceImpl implements OrderService {
         return new PageImpl<>(orderList, orderPage, orderList.size());
     }
 
-    private List<OrderResponse> getOrderListByStatus(String status) {
+    private List<OrderResponse> getOrderListByStatus(ORDER_STATUS status) {
         List<Order> orderList = orderRepository.findAllByOrderStatus(status);
 
         return orderList.stream()

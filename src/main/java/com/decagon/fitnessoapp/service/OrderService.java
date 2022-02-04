@@ -1,6 +1,7 @@
 package com.decagon.fitnessoapp.service;
 
 import com.decagon.fitnessoapp.dto.OrderResponse;
+import com.decagon.fitnessoapp.model.product.ORDER_STATUS;
 import com.decagon.fitnessoapp.model.product.Order;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -13,7 +14,7 @@ public interface OrderService {
 
     Page<OrderResponse> getAllOrders(int pageNo);
 
-    Page<OrderResponse> getOrdersByStatus(String status, int pageNo);
+    Page<OrderResponse> getOrdersByStatus(ORDER_STATUS status, int pageNo);
 
 //    ResponseEntity<List<Order>> getAllOrders();
 //

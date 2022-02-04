@@ -1,6 +1,7 @@
 package com.decagon.fitnessoapp.controller;
 
 import com.decagon.fitnessoapp.dto.OrderResponse;
+import com.decagon.fitnessoapp.model.product.ORDER_STATUS;
 import com.decagon.fitnessoapp.model.product.Order;
 import com.decagon.fitnessoapp.service.OrderService;
 import lombok.AllArgsConstructor;
@@ -37,7 +38,7 @@ public class OrderController {
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/admin/viewOrdersBy/{status}/{pageNo}")
-    public ResponseEntity<Page<OrderResponse>> viewOrdersByStatus(@PathVariable(value = "status") String status, @PathVariable(value = "pageNo") int pageNo) {
+    public ResponseEntity<Page<OrderResponse>> viewOrdersByStatus(@PathVariable(value = "status") ORDER_STATUS status, @PathVariable(value = "pageNo") int pageNo) {
         final Page<OrderResponse> ordersByStatus = orderService.getOrdersByStatus(status, pageNo);
         return ResponseEntity.ok(ordersByStatus);
     }
