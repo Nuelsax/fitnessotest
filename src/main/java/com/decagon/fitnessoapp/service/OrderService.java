@@ -16,7 +16,7 @@ public interface OrderService {
 
     Page<OrderResponse> getOrdersByStatus(ORDER_STATUS status, int pageNo);
 
-//    ResponseEntity<List<Order>> getAllOrders();
-//
-//    ResponseEntity<List<Order>> getOrdersByStatus(String status);
+   // ResponseEntity<List<Order>> getAllOrders();
+
+    ResponseEntity<List<Order>> getOrdersByStatus(String status);
 }
