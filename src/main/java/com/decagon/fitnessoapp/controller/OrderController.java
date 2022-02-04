@@ -23,7 +23,7 @@ public class OrderController {
 
     private final OrderService orderService;
 
-    @PreAuthorize("hasRole('PREMIUM')"+ "|| hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_PREMIUM', 'ROLE_ADMIN')")
     @GetMapping("/viewOrder")
     public ResponseEntity<OrderResponse> viewOrder(Authentication authentication){
         return orderService.getOrder(authentication);
