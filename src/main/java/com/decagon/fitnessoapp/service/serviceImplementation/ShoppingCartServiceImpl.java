@@ -52,8 +52,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
             cartItems.setTangibleProducts(Collections.singletonList(tang));
             cartItems.setQuantity(quantity);
             shoppingCartRepository.save(cartItems);
-        }
-        if (intangibleProduct.isPresent()) {
+        } else if (intangibleProduct.isPresent()) {
 
             cartItems.setQuantity(quantity);
             cartItems.setIntangibleProducts(Collections.singletonList(intang));
