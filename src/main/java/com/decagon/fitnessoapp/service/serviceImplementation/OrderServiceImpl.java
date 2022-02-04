@@ -63,6 +63,11 @@ public class OrderServiceImpl implements OrderService {
         return new PageImpl<>(orderList, orderPage, orderList.size());
     }
 
+    @Override
+    public ResponseEntity<List<Order>> getOrdersByStatus(String status) {
+        return null;
+    }
+
     private List<OrderResponse> getOrderList() {
         List<Order> orderList = orderRepository.findAll();
 
