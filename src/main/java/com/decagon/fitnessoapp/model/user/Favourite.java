@@ -3,18 +3,15 @@ package com.decagon.fitnessoapp.model.user;
 import com.decagon.fitnessoapp.model.product.IntangibleProduct;
 import com.decagon.fitnessoapp.model.product.Product;
 import com.decagon.fitnessoapp.model.product.TangibleProduct;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.List;
 
-@Getter
-@Setter
-@AllArgsConstructor
+
+
 @NoArgsConstructor
+@Data
 @Entity
 public class Favourite {
 
@@ -34,16 +31,17 @@ public class Favourite {
 //    @JoinColumn(name = "IntangibleProduct_id", referencedColumnName = "id")
 //    private IntangibleProduct intangibleProduct;
 
+    @Column(nullable = false)
     private Long productId;
 
 
-    @Override
-    public String toString() {
-        return "Favourite{" +
-                "id=" + id +
-//                ", personList=" + personList +
-//                ", tangibleProductList=" + tangibleProductList +
-//                ", intangibleProductList=" + intangibleProductList +
-                '}';
-    }
+//    @Override
+//    public String toString() {
+//        return "Favourite{" +
+//                "id=" + id +
+////                ", personList=" + personList +
+////                ", tangibleProductList=" + tangibleProductList +
+////                ", intangibleProductList=" + intangibleProductList +
+//                '}';
+//    }
 }

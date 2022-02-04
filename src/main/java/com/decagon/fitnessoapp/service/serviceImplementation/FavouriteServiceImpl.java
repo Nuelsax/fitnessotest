@@ -1,6 +1,7 @@
 package com.decagon.fitnessoapp.service.serviceImplementation;
 
-import com.decagon.fitnessoapp.dto.FavouriteResponse;
+
+import com.decagon.fitnessoapp.dto.ProductResponseDto;
 import com.decagon.fitnessoapp.model.user.Favourite;
 import com.decagon.fitnessoapp.model.user.Person;
 import com.decagon.fitnessoapp.repository.FavouriteRepository;
@@ -8,6 +9,7 @@ import com.decagon.fitnessoapp.repository.IntangibleProductRepository;
 import com.decagon.fitnessoapp.repository.PersonRepository;
 import com.decagon.fitnessoapp.repository.TangibleProductRepository;
 import com.decagon.fitnessoapp.service.FavouriteService;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -15,10 +17,12 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
+
 
 @Service
+
 public class FavouriteServiceImpl implements FavouriteService {
 
     private PersonRepository personRepository;
@@ -45,15 +49,18 @@ public class FavouriteServiceImpl implements FavouriteService {
         Person person = personRepository.findPersonByUserName(authentication.getName())
                 .orElseThrow(()-> new UsernameNotFoundException("User not found in favourite Service Implementation"));
 
-//        FavouriteResponse favouriteResponse = new FavouriteResponse();
-       Favourite favourite = new Favourite();
-        Optional<Favourite> itemToDelete = favouriteRepository.findFavouriteByProductId(productId);
-        if(itemToDelete.isPresent()){
-            favouriteRepository.deleteFavouriteByProductId(productId);
+        Favourite favourite = new Favourite();
+
+        favourite.setProductId(productId);
+
+
+        boolean existsFavourite = favouriteRepository.existsFavouriteByPersonAndProductId(person, productId);
+
+        if(existsFavourite){
+            favouriteRepository.deleteFavouriteByPersonAndProductId(person, productId);
             return ResponseEntity.ok().body("Item successfully deleted from favourite");
         }
         else{
-            favourite.setId(productId);
             favourite.setPerson(person);
             favouriteRepository.save(favourite);
         }
@@ -63,30 +70,32 @@ public class FavouriteServiceImpl implements FavouriteService {
     }
 
     @Override
-    public FavouriteResponse viewFavourites(Person person, Authentication authentication) {
-       FavouriteResponse favouriteResponse = new FavouriteResponse();
+    public List<ProductResponseDto> viewFavourites(Authentication authentication) {
+
+//        ProductResponseDto productResponseDto = new ProductResponseDto();
+        List<ProductResponseDto> responseDtos = new ArrayList<>();
+
         Person person1 = personRepository.findPersonByUserName(authentication.getName())
                 .orElseThrow(() -> new UsernameNotFoundException("User not found in favourite Service Implementation"));
 
-        List<Favourite> favouriteResponseList = favouriteRepository.findFavouritesByPersonId(person1.getId());
-//        FavouriteResponse favouriteResponse = new FavouriteResponse();
-        Favourite favourite = new Favourite();
-        favourite.setPerson(person1);
-        for (Favourite perFavourite : favouriteResponseList) {
-//            modelMapper.map(tangibleProductRepository.findById(perFavourite.getProductId()), );
-//            Optional<IntangibleProduct> intangibleProduct = intangibleProductRepository.findById(perFavourite.getProductId());
-//            if(tangibleProduct.isPresent())
-//
-//
-//            if(tangibleProduct == null){
-//
-//            }
-//
-//
-//
-//            return perFavouriteResponse;
-        }
+        List<Favourite> favouriteResponseList = favouriteRepository.findFavouritesByPerson(person1);
 
-return favouriteResponse;
-}
+        for (Favourite perFavourite : favouriteResponseList) {
+
+            final Long productId = perFavourite.getProductId();
+
+            ProductResponseDto productResponseDto = modelMapper.map(tangibleProductRepository.findById(perFavourite.getProductId()).get(), ProductResponseDto.class);
+
+            if(productResponseDto != null){
+                productResponseDto.setProductType("PRODUCT");
+                responseDtos.add(productResponseDto);
+            }
+            else{
+
+                ProductResponseDto productResponseDto1 = modelMapper.map(intangibleProductRepository.findById(perFavourite.getProductId()).get(), ProductResponseDto.class);
+                productResponseDto.setProductType("SERVICE");
+                responseDtos.add(productResponseDto1);}
+        }
+        return responseDtos;
+    }
 }
