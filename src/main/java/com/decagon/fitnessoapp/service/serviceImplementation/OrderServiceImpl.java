@@ -52,7 +52,10 @@ public class OrderServiceImpl implements OrderService {
         int pageSize = 10;
         int skipCount = (pageNo - 1) * pageSize;
 
-        List<OrderResponse> orderList = getOrderList()
+        List<OrderResponse> orderList = orderRepository.findAll()
+                .stream()
+                .map(x -> modelMapper.map(x, OrderResponse.class))
+                .collect(Collectors.toList())
                 .stream()
                 .skip(skipCount)
                 .limit(pageSize)
@@ -61,14 +64,6 @@ public class OrderServiceImpl implements OrderService {
         Pageable orderPage = PageRequest.of(pageNo, pageSize, Sort.by("productName").ascending());
 
         return new PageImpl<>(orderList, orderPage, orderList.size());
-    }
-
-    private List<OrderResponse> getOrderList() {
-        List<Order> orderList = orderRepository.findAll();
-
-        return orderList.stream()
-                .map(x -> modelMapper.map(x, OrderResponse.class))
-                .collect(Collectors.toList());
     }
 
     @Override
@@ -76,7 +71,10 @@ public class OrderServiceImpl implements OrderService {
         int pageSize = 10;
         int skipCount = (pageNo - 1) * pageSize;
 
-        List<OrderResponse> orderList = getOrderListByStatus(status)
+        List<OrderResponse> orderList = orderRepository.findAllByOrderStatus(status)
+                .stream()
+                .map(x -> modelMapper.map(x, OrderResponse.class))
+                .collect(Collectors.toList())
                 .stream()
                 .skip(skipCount)
                 .limit(pageSize)
@@ -85,13 +83,5 @@ public class OrderServiceImpl implements OrderService {
         Pageable orderPage = PageRequest.of(pageNo, pageSize, Sort.by("productName").ascending());
 
         return new PageImpl<>(orderList, orderPage, orderList.size());
-    }
-
-    private List<OrderResponse> getOrderListByStatus(ORDER_STATUS status) {
-        List<Order> orderList = orderRepository.findAllByOrderStatus(status);
-
-        return orderList.stream()
-                .map(x -> modelMapper.map(x, OrderResponse.class))
-                .collect(Collectors.toList());
     }
 }
