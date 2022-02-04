@@ -1,6 +1,7 @@
 package com.decagon.fitnessoapp.service.serviceImplementation;
 
-import com.decagon.fitnessoapp.model.product.ShoppingItem;
+import com.decagon.fitnessoapp.model.product.Product;
+import com.decagon.fitnessoapp.model.product.TangibleProduct;
 import com.decagon.fitnessoapp.repository.IntangibleProductRepository;
 import com.decagon.fitnessoapp.repository.ShoppingCartRepository;
 import com.decagon.fitnessoapp.repository.TangibleProductRepository;
@@ -9,6 +10,10 @@ import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 
 @Service
@@ -25,17 +30,29 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     private IntangibleProductRepository intangibleProductRepository;
 
     @Override
-    public ResponseEntity<ShoppingItem> addProductAsShoppingItem(Long productId, int quantity) {
-        boolean isTangibleProduct = tangibleProductRepository.findById(productId).isPresent();
-        boolean isInTangibleProduct = intangibleProductRepository.findById(productId).isPresent();
+    public ResponseEntity<List<Optional<? extends Product>>> addProductAsShoppingItem(Long productId, int quantity) {
+        Optional<TangibleProduct> tangibleProduct = tangibleProductRepository.findById(productId);
+        Optional<TangibleProduct> intangibleProduct = tangibleProductRepository.findById(productId);
 
-        ShoppingItem savedItem = null;
+        List<Optional<? extends Product>> cart = new ArrayList<>();
+
+        if(tangibleProduct.isPresent()) {
+            cart.add(tangibleProduct);
+        }
+        if (intangibleProduct.isPresent()) {
+            cart.add(intangibleProduct);
+        }
+
+
+        /*hoppingItem savedItem = null;
         if (isTangibleProduct || isInTangibleProduct) {
+
+            cart.add((ProductResponseDto) )
             ShoppingItem shoppingItem = new ShoppingItem(intangibleProductRepository.getById(productId),tangibleProductRepository.getById(productId), quantity);
 
             savedItem = shoppingCartRepository.save(shoppingItem);
-        }
-        return ResponseEntity.ok().body(savedItem);
+        }*/
+        return ResponseEntity.ok().body(cart);
     }
 
     @Override

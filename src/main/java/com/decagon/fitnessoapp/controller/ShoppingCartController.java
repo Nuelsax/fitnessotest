@@ -12,7 +12,7 @@ public class ShoppingCartController {
 
     private final ShoppingCartService shoppingCartService;
 
-   @PutMapping("/{productId}")
+   @PutMapping("/add/{productId}")
     public ResponseEntity<?> addItemToCart(@PathVariable(value = "productId") Long productId, int quantity) {
        return ResponseEntity.ok(shoppingCartService.addProductAsShoppingItem(productId, quantity));
    }
