@@ -1,5 +1,6 @@
 package com.decagon.fitnessoapp.model.product;
 
+import com.decagon.fitnessoapp.model.user.Person;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,7 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 @Data
 @Entity
-public class ShoppingItem {
+public class Cart {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,6 +26,10 @@ public class ShoppingItem {
    @OneToMany(fetch = FetchType.LAZY)
    @JoinColumn(name = "tangible_product_id", referencedColumnName = "id")
     private List<TangibleProduct> tangibleProducts;
+
+   @OneToOne
+   @JoinColumn(name = "person_id", referencedColumnName = "id")
+   private Person person;
 
     //Todo: dont think this is neccessary
     @NotNull

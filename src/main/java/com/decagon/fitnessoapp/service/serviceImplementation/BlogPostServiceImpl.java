@@ -11,6 +11,7 @@ import com.decagon.fitnessoapp.repository.AuthorRepository;
 import com.decagon.fitnessoapp.repository.BlogPostRepository;
 import com.decagon.fitnessoapp.repository.PersonRepository;
 import com.decagon.fitnessoapp.service.BlogPostService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -29,6 +30,7 @@ public class BlogPostServiceImpl implements BlogPostService {
     private final BlogPostRepository blogPostRepository;
     private final AuthorRepository authorRepository;
     private final PersonRepository personRepository;
+    private ObjectMapper mapper;
 
     @Override
     public List<BlogPostResponse> getAllPosts(Integer pageNo, Integer pageSize, String sortBy) {
@@ -89,3 +91,4 @@ public class BlogPostServiceImpl implements BlogPostService {
         return ResponseEntity.ok().body("Post saved successfully");
     }
 }
+
