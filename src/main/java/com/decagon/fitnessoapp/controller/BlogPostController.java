@@ -53,9 +53,7 @@ public class BlogPostController {
 
     @GetMapping("/blogposts/{number}")
     public ResponseEntity<?> getBlogPosts(@PathVariable (name = "number") int pageNumber) {
-        int pageSize = 10;
-        String sortBy = "id";
-        List<BlogPostResponse> blogPosts = blogPostService.getAllPosts(pageNumber, pageSize, sortBy);
+        final Page<BlogPostResponse> blogPosts = blogPostService.getAllBlogPosts(pageNumber);
         return new ResponseEntity<>(blogPosts, HttpStatus.OK);
     }
 }

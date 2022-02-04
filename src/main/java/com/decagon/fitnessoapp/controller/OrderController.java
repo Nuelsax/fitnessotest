@@ -30,7 +30,7 @@ public class OrderController {
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @GetMapping("/admin/vieworders/{pageNo}")
+    @GetMapping("/admin/viewOrders/{pageNo}")
     public ResponseEntity<Page<OrderResponse>> viewAllOrders(@PathVariable(value = "pageNo") int pageNo) {
         final Page<OrderResponse> allOrders = orderService.getAllOrders(pageNo);
         return ResponseEntity.ok(allOrders);
