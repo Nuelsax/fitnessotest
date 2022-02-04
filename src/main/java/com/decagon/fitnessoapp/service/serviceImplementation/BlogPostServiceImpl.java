@@ -49,6 +49,11 @@ public class BlogPostServiceImpl implements BlogPostService {
         return listOfBlogs;
 
     }
+   /* @Override
+    public ResponseEntity<Page<BlogPost>> getBlogPosts(int pageSize, int pageNumber) {
+        Page<BlogPost> products = blogPostRepository.findAll(PageRequest.of(pageNumber, pageSize));
+        return  ResponseEntity.ok().body(products);
+    }*/
 
 
     @Override
