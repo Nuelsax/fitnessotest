@@ -13,12 +13,14 @@ public class ShoppingCartController {
     private final ShoppingCartService shoppingCartService;
 
    @PutMapping("/add/{productId}")
-    public ResponseEntity<?> addItemToCart(@PathVariable(value = "productId") Long productId, int quantity) {
+    public ResponseEntity<?> addItemToCart(@PathVariable(value = "productId") Long productId) {
+       int quantity = 5;
        return ResponseEntity.ok(shoppingCartService.addProductAsShoppingItem(productId, quantity));
    }
 
    @DeleteMapping("/{productId}")
     public ResponseEntity<?> removeItemFromCart(@PathVariable(value = "productId") Long productId){
-       return ResponseEntity.ok(shoppingCartService.removeProductAsShoppingItem(productId));
+       return ResponseEntity.ok(
+               shoppingCartService.removeProductAsShoppingItem(productId));
    }
 }

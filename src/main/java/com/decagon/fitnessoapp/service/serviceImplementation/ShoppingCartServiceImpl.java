@@ -1,17 +1,21 @@
 package com.decagon.fitnessoapp.service.serviceImplementation;
 
+import com.decagon.fitnessoapp.model.product.IntangibleProduct;
 import com.decagon.fitnessoapp.model.product.Product;
+import com.decagon.fitnessoapp.model.product.ShoppingItem;
 import com.decagon.fitnessoapp.model.product.TangibleProduct;
 import com.decagon.fitnessoapp.repository.IntangibleProductRepository;
 import com.decagon.fitnessoapp.repository.ShoppingCartRepository;
 import com.decagon.fitnessoapp.repository.TangibleProductRepository;
 import com.decagon.fitnessoapp.service.ShoppingCartService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,20 +33,32 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     @Autowired
     private IntangibleProductRepository intangibleProductRepository;
 
-    @Override
-    public ResponseEntity<List<Optional<? extends Product>>> addProductAsShoppingItem(Long productId, int quantity) {
-        Optional<TangibleProduct> tangibleProduct = tangibleProductRepository.findById(productId);
-        Optional<TangibleProduct> intangibleProduct = tangibleProductRepository.findById(productId);
+    @Autowired
+    private ObjectMapper mapper;
 
-        List<Optional<? extends Product>> cart = new ArrayList<>();
+    @Override
+    public ResponseEntity<?> addProductAsShoppingItem(Long productId, int quantity) {
+        Optional<TangibleProduct> tangibleProduct = tangibleProductRepository.findById(productId);
+        Optional<IntangibleProduct> intangibleProduct = intangibleProductRepository.findById(productId);
+        TangibleProduct tang = mapper.convertValue(tangibleProduct, TangibleProduct.class);
+        IntangibleProduct intang = mapper.convertValue(intangibleProduct, IntangibleProduct.class);
+
+
+       // List<Optional<? extends Product>> cart = new ArrayList<>();
+        ShoppingItem cartItems = new ShoppingItem();
 
         if(tangibleProduct.isPresent()) {
-            cart.add(tangibleProduct);
+           // cart.add(tangibleProduct);
+            cartItems.setTangibleProducts(Collections.singletonList(tang));
+            cartItems.setQuantity(quantity);
+            shoppingCartRepository.save(cartItems);
         }
         if (intangibleProduct.isPresent()) {
-            cart.add(intangibleProduct);
-        }
 
+            cartItems.setQuantity(quantity);
+            cartItems.setIntangibleProducts(Collections.singletonList(intang));
+            shoppingCartRepository.save(cartItems);
+        }
 
         /*hoppingItem savedItem = null;
         if (isTangibleProduct || isInTangibleProduct) {
@@ -52,7 +68,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
 
             savedItem = shoppingCartRepository.save(shoppingItem);
         }*/
-        return ResponseEntity.ok().body(cart);
+        return ResponseEntity.ok().body(shoppingCartRepository.findAll());
     }
 
     @Override
@@ -68,4 +84,3 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
         return ResponseEntity.ok("Product: " + productId + " has been deleted successfully");
     }
 }
-

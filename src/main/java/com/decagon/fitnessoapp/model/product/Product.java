@@ -22,7 +22,7 @@ public abstract class Product {
     private String stockKeepingUnit = UUID.randomUUID().toString();
 
     @NotNull
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private Long stock;
 
     @NotNull
