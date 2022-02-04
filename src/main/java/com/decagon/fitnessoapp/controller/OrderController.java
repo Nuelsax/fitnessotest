@@ -36,8 +36,9 @@ public class OrderController {
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @GetMapping("/admin/viewOrdersBy/{status}")
-    public ResponseEntity<List<Order>> viewOrdersByStatus(@PathVariable String status) {
-        return orderService.getOrdersByStatus(status);
+    @GetMapping("/admin/viewOrdersBy/{status}/{pageNo}")
+    public ResponseEntity<Page<OrderResponse>> viewOrdersByStatus(@PathVariable(value = "status") String status, @PathVariable(value = "pageNo") int pageNo) {
+        final Page<OrderResponse> ordersByStatus = orderService.getOrdersByStatus(status, pageNo);
+        return ResponseEntity.ok(ordersByStatus);
     }
 }

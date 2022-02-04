@@ -13,6 +13,8 @@ public interface OrderService {
 
     Page<OrderResponse> getAllOrders(int pageNo);
 
+    Page<OrderResponse> getOrdersByStatus(String status, int pageNo);
+
 //    ResponseEntity<List<Order>> getAllOrders();
 //
 //    ResponseEntity<List<Order>> getOrdersByStatus(String status);

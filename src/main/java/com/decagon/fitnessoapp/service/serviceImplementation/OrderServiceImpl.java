@@ -69,9 +69,27 @@ public class OrderServiceImpl implements OrderService {
                 .map(x -> modelMapper.map(x, OrderResponse.class))
                 .collect(Collectors.toList());
     }
+    @Override
+    public Page<OrderResponse> getOrdersByStatus(String status, int pageNo) {
+        int pageSize = 10;
+        int skipCount = (pageNo - 1) * pageSize;
 
+        List<OrderResponse> orderList = getOrderListByStatus(status)
+                .stream()
+                .skip(skipCount)
+                .limit(pageSize)
+                .collect(Collectors.toList());
 
+        Pageable orderPage = PageRequest.of(pageNo, pageSize, Sort.by("productName").ascending());
 
+        return new PageImpl<>(orderList, orderPage, orderList.size());
+    }
 
+    private List<OrderResponse> getOrderListByStatus(String status) {
+        List<Order> orderList = orderRepository.findAllByOrderStatus(status);
 
+        return orderList.stream()
+                .map(x -> modelMapper.map(x, OrderResponse.class))
+                .collect(Collectors.toList());
+    }
 }
