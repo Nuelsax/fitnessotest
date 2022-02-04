@@ -4,6 +4,7 @@ import com.decagon.fitnessoapp.dto.OrderResponse;
 import com.decagon.fitnessoapp.model.product.Order;
 import com.decagon.fitnessoapp.service.OrderService;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -28,9 +29,10 @@ public class OrderController {
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @GetMapping("/admin/viewOrders")
-    public ResponseEntity<List<Order>> viewAllOrders() {
-        return orderService.getAllOrders();
+    @GetMapping("/admin/vieworders/{pageNo}")
+    public ResponseEntity<Page<OrderResponse>> viewAllOrders(@PathVariable(value = "pageNo") int pageNo) {
+        final Page<OrderResponse> allOrders = orderService.getAllOrders(pageNo);
+        return ResponseEntity.ok(allOrders);
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")

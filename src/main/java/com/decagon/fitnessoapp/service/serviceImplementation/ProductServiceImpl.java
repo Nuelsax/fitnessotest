@@ -108,13 +108,11 @@ public class ProductServiceImpl implements com.decagon.fitnessoapp.service.Produ
         return  ResponseEntity.ok().body(products);
     }
 
-
     @Override
     public ResponseEntity<Page<IntangibleProduct>> getAllServices(int pageSize, int pageNumber) {
         Page<IntangibleProduct> products = intangibleProductRepository.findAll(PageRequest.of(pageNumber, pageSize));
         return  ResponseEntity.ok().body(products);
     }
-
 
     @Override
     public ResponseEntity<ProductResponseDto> updateProduct(Long productId, ProductRequestDto requestDto) {
@@ -159,19 +157,6 @@ public class ProductServiceImpl implements com.decagon.fitnessoapp.service.Produ
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
-    /* ======================== */
-//    public ResponseEntity<List<Page>> getAllProducts(int pageNumber) {
-//        int pageSize = 5;
-//        String sortBy = "productName";
-//        Pageable productPage = PageRequest.of(pageNumber, pageSize, Sort.by(sortBy).ascending());
-//        Page<IntangibleProduct> intangibleProducts = intangibleProductRepository.findAll(productPage);
-//        Page<TangibleProduct> tangibleProducts = tangibleProductRepository.findAll(productPage);
-//        List<Page> listOfProducts = new ArrayList<>();
-//        listOfProducts.add(intangibleProducts);
-//        listOfProducts.add(tangibleProducts);
-//        return new ResponseEntity<>(listOfProducts, HttpStatus.ACCEPTED);
-//    }
-
     @Override
     public Page<UserProductDto> getAllProducts(int pageNumber) {
          List<UserProductDto> dtoList = getDtoList();
@@ -187,7 +172,7 @@ public class ProductServiceImpl implements com.decagon.fitnessoapp.service.Produ
 
         Pageable productPage = PageRequest.of(pageNumber, pageSize, Sort.by("productName").ascending());
 
-        return (Page<UserProductDto>) new PageImpl(activityPage, productPage, dtoList.size());
+        return new PageImpl<>(activityPage, productPage, dtoList.size());
     }
 
     private List<UserProductDto> getDtoList() {
