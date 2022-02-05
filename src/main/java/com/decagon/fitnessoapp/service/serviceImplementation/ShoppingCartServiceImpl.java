@@ -55,12 +55,51 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
 
 
         Cart cart = getCarts(person);
+        /*Integer currQuantity = cart.getQuantity();
+        cart.setQuantity(currQuantity + quantity);*/
         if(tangibleProduct.isPresent()) {
             TangibleProduct product = mapper.convertValue(tangibleProduct, TangibleProduct.class);
-            cart.getTangibleProduct().putIfAbsent(product, quantity);
+            Map<TangibleProduct, Integer> tangibleProductIntegerMap = cart.getTangibleProduct();
+
+            String sku = product.getStockKeepingUnit();
+            //if(sku.equals(tangibleProductIntegerMap.entrySet().))
+            for (Map.Entry<TangibleProduct, Integer> entry : tangibleProductIntegerMap.entrySet()) {
+                if (sku.equals(entry.getKey().getStockKeepingUnit())) {
+                    Integer currQuantity = entry.getValue();
+                    entry.setValue(currQuantity + quantity);
+                } else {
+                    tangibleProductIntegerMap.put(product, quantity);
+                }
+            }
+        }
+
+        if(intangibleProduct.isPresent()) {
+            TangibleProduct product = mapper.convertValue(tangibleProduct, TangibleProduct.class);
+            Map<TangibleProduct, Integer> tangibleProductIntegerMap = cart.getTangibleProduct();
+
+            String sku = product.getStockKeepingUnit();
+            //if(sku.equals(tangibleProductIntegerMap.entrySet().))
+            for (Map.Entry<TangibleProduct, Integer> entry : tangibleProductIntegerMap.entrySet()) {
+                if (sku.equals(entry.getKey().getStockKeepingUnit())) {
+                    Integer currQuantity = entry.getValue();
+                    entry.setValue(currQuantity + quantity);
+                } else {
+                    tangibleProductIntegerMap.put(product, quantity);
+                }
+            }
+        }
+
+
+
+            Integer currQuantity = tangibleProductIntegerMap.;
+            cart.setQuantity(currQuantity + quantity);*/
+            tangibleProductIntegerMap.putIfAbsent(product, quantity);
+            cart.setTangibleProduct(tangibleProductIntegerMap);
         } else if(intangibleProduct.isPresent()) {
             IntangibleProduct product = mapper.convertValue(intangibleProduct, IntangibleProduct.class);
-            cart.getIntangibleProduct().putIfAbsent(product, quantity);
+            Map<IntangibleProduct, Integer> intangibleProductIntegerMap = cart.getIntangibleProduct();
+            intangibleProductIntegerMap.putIfAbsent(product, quantity);
+            cart.setIntangibleProduct(intangibleProductIntegerMap);
         }
 
         System.out.println("The cart: " + cart);
@@ -71,6 +110,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     private Cart getCarts(Person person) {
         Cart cart = shoppingCartRepository.findByPerson(person).orElse(null);
         Cart newCart = new Cart();
+        newCart.setQuantity(0);
         if(cart == null) {
             newCart.setPerson(person);
             return newCart;
