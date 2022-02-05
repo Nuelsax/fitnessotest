@@ -19,15 +19,13 @@ public class ShoppingCartController {
     private final PersonDetailsService userService;
     private final JwtUtils jwtTokenUtils;
 
-   @PutMapping("/add/{productId}")
-    public ResponseEntity<?> addItemToCart(@PathVariable(value = "productId") Long productId, HttpServletRequest request) {
+   @PutMapping("/add/{productId}/{quantity}")
+    public ResponseEntity<?> addItemToCart(@PathVariable(value = "productId") Long productId, @PathVariable(value = "quantity") int quantity, HttpServletRequest request) {
        final String requestHeader = request.getHeader("Authorization");
        String jwt = requestHeader.substring(7);
        String username = jwtTokenUtils.extractUsername(jwt);
        final PersonDetails personDetails = userService.loadUserByUsername(username);
 
-
-       int quantity = 5;
        return ResponseEntity.ok(shoppingCartService.addToCart(productId, quantity, personDetails));
    }
 

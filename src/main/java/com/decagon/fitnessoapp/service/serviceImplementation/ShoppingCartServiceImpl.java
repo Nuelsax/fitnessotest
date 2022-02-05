@@ -9,6 +9,7 @@ import com.decagon.fitnessoapp.repository.TangibleProductRepository;
 import com.decagon.fitnessoapp.service.ShoppingCartService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.NoArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -53,9 +54,11 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
 
         Person person = personRepository.findPersonByUserName(authentication.getUsername())
                 .orElseThrow(()-> new UsernameNotFoundException("User Name does not Exist"));
+        System.out.println("Person in session: " + person);
 
-        Cart cart = shoppingCartRepository.findByPerson(person.getId()).orElse(null);
-        if (cart == null) cart.setPerson(person);
+        Cart cart = getCarts(person);
+
+//        if (cart == null) newCart.setPerson(person);
 
         if(tangibleProduct.isPresent()) {
             TangibleProduct product = mapper.convertValue(tangibleProduct, TangibleProduct.class);
@@ -65,12 +68,23 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
             addIntangibleToCart(product, quantity, cart);
         }
 
+        System.out.println("The cart: " + cart);
         return shoppingCartRepository.findAll();
+    }
+
+    @NotNull
+    private Cart getCarts(Person person) {
+        Cart cart = shoppingCartRepository.findByPerson(person).orElse(null);
+        Cart newCart = new Cart();
+        if(cart == null) {
+            newCart.setPerson(person);
+            return newCart;
+        } else return cart;
     }
 
     private Cart addTangibleToCart(TangibleProduct product, int quantity, Cart cart) {
         String sku = product.getStockKeepingUnit();
-        if(cart.getTangibleProducts().size() > 0) {
+        if(cart.getTangibleProducts() != null) {
             final long count = cart.getTangibleProducts()
                     .stream()
                     .filter(x -> x.getStockKeepingUnit().equals(sku))
@@ -79,15 +93,16 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
                 Integer currQuantity = cart.getQuantity();
                 cart.setQuantity(currQuantity + quantity);
             }
-        } else if (cart.getTangibleProducts().isEmpty()) {
+        } else {
             cart.setTangibleProducts(Collections.singletonList(product));
+            cart.setQuantity(quantity);
         }
         return shoppingCartRepository.save(cart);
     }
 
     private Cart addIntangibleToCart(IntangibleProduct product, int quantity, Cart cart) {
         String sku = product.getStockKeepingUnit();
-        if(cart.getIntangibleProducts().size() > 0) {
+        if(cart.getIntangibleProducts() != null) {
             final long count = cart.getIntangibleProducts()
                     .stream()
                     .filter(x -> x.getStockKeepingUnit().equals(sku))
@@ -96,8 +111,9 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
                 Integer currQuantity = cart.getQuantity();
                 cart.setQuantity(currQuantity + quantity);
             }
-        } else if (cart.getIntangibleProducts().isEmpty()) {
+        } else {
             cart.setIntangibleProducts(Collections.singletonList(product));
+            cart.setQuantity(quantity);
         }
         return shoppingCartRepository.save(cart);
     }

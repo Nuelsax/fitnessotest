@@ -1,6 +1,7 @@
 package com.decagon.fitnessoapp.repository;
 
 import com.decagon.fitnessoapp.model.product.Cart;
+import com.decagon.fitnessoapp.model.user.Person;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -11,5 +12,5 @@ import java.util.Optional;
 public interface ShoppingCartRepository extends JpaRepository<Cart, Long> {
     List<Cart> findAll();
 
-    Optional<Cart> findByPerson(Long id);
+    Optional<Cart> findByPerson(Person person);
 }
