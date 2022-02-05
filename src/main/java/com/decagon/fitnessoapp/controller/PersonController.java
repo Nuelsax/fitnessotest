@@ -7,13 +7,11 @@ import com.mailjet.client.errors.MailjetException;
 import com.mailjet.client.errors.MailjetSocketTimeoutException;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
 import com.decagon.fitnessoapp.dto.*;
 import com.decagon.fitnessoapp.service.VerificationService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -33,6 +31,7 @@ public class PersonController {
             return ResponseEntity.ok().body( personService.updateUserDetails(updatePersonDetails));
         }
 
+        @PreAuthorize("hasRole('PREMIUM') or hasRole('ADMIN')")
         @PutMapping("/profile/edit/password")
         public  ResponseEntity<ChangePasswordResponse> editUserPassword(@RequestBody ChangePasswordRequest changePassword) {
             return ResponseEntity.ok().body(personService.updateCurrentPassword(changePassword));
@@ -61,7 +60,7 @@ public class PersonController {
         }
 
         @PostMapping("/reset_password")
-        public ResponseEntity<String> processResetPassword (@RequestBody EmailRequest resetEmail) throws MailjetSocketTimeoutException, MailjetException {
+        public ResponseEntity<?> processResetPassword (@RequestBody EmailRequest resetEmail) throws MailjetSocketTimeoutException, MailjetException {
             return ResponseEntity.ok().body(personService.resetPasswordToken(resetEmail.getEmail()));
         }
 
@@ -79,7 +78,6 @@ public class PersonController {
         public ResponseEntity<?> adminUpdatePassword(@RequestBody ResetPasswordRequest passwordRequest, @RequestParam(value = "token") String token){
             return ResponseEntity.ok().body(personService.updateResetPassword(passwordRequest, token));
         }
-
         @PostMapping("/add_or_delete_favourite/{productId}")
         public ResponseEntity<String> addOrDeleteFavourite(@PathVariable("productId") Long productId, Authentication authentication){
             return favouriteService.addOrDeleteFavourite(productId, authentication);
@@ -89,5 +87,6 @@ public class PersonController {
          public ResponseEntity<List<ProductResponseDto>> viewFavourites(Authentication authentication){
             return ResponseEntity.ok().body(favouriteService.viewFavourites(authentication));
         }
+
 }
 

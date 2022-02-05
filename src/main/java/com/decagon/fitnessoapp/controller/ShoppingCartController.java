@@ -21,4 +21,14 @@ public class ShoppingCartController {
     public ResponseEntity<?> removeItemFromCart(@PathVariable(value = "productId") Long productId){
        return ResponseEntity.ok(shoppingCartService.removeProductAsShoppingItem(productId));
    }
+
+   @GetMapping("/viewCartItems/{id}")
+   public ResponseEntity<?> getCartById(@PathVariable(value = "id") Long productId){
+       return ResponseEntity.ok(shoppingCartService.getCartById(productId));
+   }
+
+    @GetMapping("/viewCartItems")
+    public ResponseEntity<?> viewCartItems(){
+        return ResponseEntity.ok(shoppingCartService.viewCartItems());
+    }
 }
