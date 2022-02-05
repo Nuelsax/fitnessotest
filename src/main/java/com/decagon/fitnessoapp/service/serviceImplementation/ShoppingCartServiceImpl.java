@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -54,11 +55,8 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
 
         Person person = personRepository.findPersonByUserName(authentication.getUsername())
                 .orElseThrow(()-> new UsernameNotFoundException("User Name does not Exist"));
-        System.out.println("Person in session: " + person);
 
         Cart cart = getCarts(person);
-
-//        if (cart == null) newCart.setPerson(person);
 
         if(tangibleProduct.isPresent()) {
             TangibleProduct product = mapper.convertValue(tangibleProduct, TangibleProduct.class);
@@ -94,7 +92,9 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
                 cart.setQuantity(currQuantity + quantity);
             }
         } else {
-            cart.setTangibleProducts(Collections.singletonList(product));
+            List<TangibleProduct> cartList = new ArrayList<TangibleProduct>();
+            cartList.add(product);
+            cart.setTangibleProducts(cartList);
             cart.setQuantity(quantity);
         }
         return shoppingCartRepository.save(cart);
@@ -112,7 +112,9 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
                 cart.setQuantity(currQuantity + quantity);
             }
         } else {
-            cart.setIntangibleProducts(Collections.singletonList(product));
+            List<IntangibleProduct> cartList = new ArrayList<IntangibleProduct>();
+            cartList.add(product);
+            cart.setIntangibleProducts(cartList);
             cart.setQuantity(quantity);
         }
         return shoppingCartRepository.save(cart);
