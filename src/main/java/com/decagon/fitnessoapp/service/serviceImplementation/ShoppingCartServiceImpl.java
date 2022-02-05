@@ -69,11 +69,11 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     }
 
     private Cart addTangibleToCart(TangibleProduct product, int quantity, Cart cart) {
-        String s = product.getStockKeepingUnit();
+        String sku = product.getStockKeepingUnit();
         if(cart.getTangibleProducts().size() > 0) {
             final long count = cart.getTangibleProducts()
                     .stream()
-                    .filter(x -> x.getStockKeepingUnit().equals(s))
+                    .filter(x -> x.getStockKeepingUnit().equals(sku))
                     .count();
             if(count > 0) {
                 Integer currQuantity = cart.getQuantity();
@@ -86,11 +86,11 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     }
 
     private Cart addIntangibleToCart(IntangibleProduct product, int quantity, Cart cart) {
-        String s = product.getStockKeepingUnit();
+        String sku = product.getStockKeepingUnit();
         if(cart.getIntangibleProducts().size() > 0) {
             final long count = cart.getIntangibleProducts()
                     .stream()
-                    .filter(x -> x.getStockKeepingUnit().equals(s))
+                    .filter(x -> x.getStockKeepingUnit().equals(sku))
                     .count();
             if(count > 0) {
                 Integer currQuantity = cart.getQuantity();
