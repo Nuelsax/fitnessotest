@@ -56,14 +56,13 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
 
         Cart cart = shoppingCartRepository.findByPerson(person.getId()).orElse(null);
         if (cart == null) cart.setPerson(person);
-        Cart addedItem = new Cart();
 
         if(tangibleProduct.isPresent()) {
             TangibleProduct product = mapper.convertValue(tangibleProduct, TangibleProduct.class);
-            addedItem = addTangibleToCart(product, quantity, cart);
+            addTangibleToCart(product, quantity, cart);
         } else if(intangibleProduct.isPresent()) {
             IntangibleProduct product = mapper.convertValue(intangibleProduct, IntangibleProduct.class);
-            addedItem = addIntangibleToCart(product, quantity, cart);
+            addIntangibleToCart(product, quantity, cart);
         }
 
         return shoppingCartRepository.findAll();
