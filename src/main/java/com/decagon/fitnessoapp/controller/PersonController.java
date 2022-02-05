@@ -1,11 +1,12 @@
 package com.decagon.fitnessoapp.controller;
 
-import com.decagon.fitnessoapp.dto.ChangePasswordRequest;
-import com.decagon.fitnessoapp.dto.UpdatePersonRequest;
 import com.decagon.fitnessoapp.model.user.ROLE_DETAIL;
+import com.decagon.fitnessoapp.service.FavouriteService;
 import com.decagon.fitnessoapp.service.PersonService;
 import com.mailjet.client.errors.MailjetException;
 import com.mailjet.client.errors.MailjetSocketTimeoutException;
+import org.springframework.http.MediaType;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -16,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequestMapping("/person")
@@ -23,16 +25,17 @@ import javax.validation.Valid;
 public class PersonController {
 
     private final PersonService personService;
+    private final FavouriteService favouriteService;
     public final VerificationService verificationTokenService;
 
         @PutMapping("/profile/edit/personinfo")
-        public ResponseEntity<UpdatePersonResponse> editUserDetails(@RequestBody UpdatePersonRequest updatePersonRequest) {
-            return ResponseEntity.ok().body( personService.updateUserDetails(updatePersonRequest));
+        public ResponseEntity<UpdatePersonResponse> editUserDetails(@RequestBody UpdatePersonRequest updatePersonDetails) {
+            return ResponseEntity.ok().body( personService.updateUserDetails(updatePersonDetails));
         }
 
         @PutMapping("/profile/edit/password")
-        public  ResponseEntity<ChangePasswordResponse> editUserPassword(@RequestBody ChangePasswordRequest changePasswordRequest) {
-            return ResponseEntity.ok().body(personService.updateCurrentPassword(changePasswordRequest));
+        public  ResponseEntity<ChangePasswordResponse> editUserPassword(@RequestBody ChangePasswordRequest changePassword) {
+            return ResponseEntity.ok().body(personService.updateCurrentPassword(changePassword));
         }
 
         @PostMapping("/register")
@@ -52,7 +55,7 @@ public class PersonController {
             return verificationTokenService.confirmToken(token);
         }
 
-        @PostMapping("/login")
+        @PostMapping(path="/login", produces = MediaType.APPLICATION_JSON_VALUE)
         public ResponseEntity<AuthResponse> login(@RequestBody AuthRequest req) throws Exception {
             return personService.loginUser(req);
         }
@@ -77,5 +80,14 @@ public class PersonController {
             return ResponseEntity.ok().body(personService.updateResetPassword(passwordRequest, token));
         }
 
+        @PostMapping("/add_or_delete_favourite/{productId}")
+        public ResponseEntity<String> addOrDeleteFavourite(@PathVariable("productId") Long productId, Authentication authentication){
+            return favouriteService.addOrDeleteFavourite(productId, authentication);
+        }
+
+        @GetMapping("/view_favourites")
+         public ResponseEntity<List<ProductResponseDto>> viewFavourites(Authentication authentication){
+            return ResponseEntity.ok().body(favouriteService.viewFavourites(authentication));
+        }
 }
 
