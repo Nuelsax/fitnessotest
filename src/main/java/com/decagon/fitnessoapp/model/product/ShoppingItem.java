@@ -28,7 +28,7 @@ public class ShoppingItem {
     @OneToOne
     private TangibleProduct tangibleProducts;
 
-    //Todo: dont think this is neccessary
+    //Todo: dont think this is necessary
     @NotNull
     @Column(nullable = false)
     private Integer quantity;

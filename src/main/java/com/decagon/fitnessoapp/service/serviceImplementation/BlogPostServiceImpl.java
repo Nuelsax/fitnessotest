@@ -2,9 +2,11 @@ package com.decagon.fitnessoapp.service.serviceImplementation;
 
 import com.decagon.fitnessoapp.dto.BlogPostResponse;
 import com.decagon.fitnessoapp.dto.BlogRequest;
+import com.decagon.fitnessoapp.dto.OrderResponse;
 import com.decagon.fitnessoapp.exception.CustomServiceExceptions;
 import com.decagon.fitnessoapp.exception.PersonNotFoundException;
 import com.decagon.fitnessoapp.model.blog.BlogPost;
+import com.decagon.fitnessoapp.model.product.Order;
 import com.decagon.fitnessoapp.model.user.Author;
 import com.decagon.fitnessoapp.model.user.Person;
 import com.decagon.fitnessoapp.repository.AuthorRepository;
@@ -12,16 +14,15 @@ import com.decagon.fitnessoapp.repository.BlogPostRepository;
 import com.decagon.fitnessoapp.repository.PersonRepository;
 import com.decagon.fitnessoapp.service.BlogPostService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -29,6 +30,7 @@ public class BlogPostServiceImpl implements BlogPostService {
     private final BlogPostRepository blogPostRepository;
     private final AuthorRepository authorRepository;
     private final PersonRepository personRepository;
+    private final ModelMapper modelMapper;
 
     @Override
     public List<BlogPostResponse> getAllPosts(Integer pageNo, Integer pageSize, String sortBy) {
@@ -50,6 +52,25 @@ public class BlogPostServiceImpl implements BlogPostService {
 
     }
 
+    @Override
+    public Page<BlogPostResponse> getAllBlogPosts(int pageNo) {
+        int pageSize = 10;
+        int skipCount = (pageNo - 1) * pageSize;
+
+        List<BlogPost> blogList = blogPostRepository.findAll();
+
+        final List<BlogPostResponse> blogPostDtoList = blogList.stream()
+                .map(x -> modelMapper.map(x, BlogPostResponse.class))
+                .collect(Collectors.toList())
+                .stream()
+                .skip(skipCount)
+                .limit(pageSize)
+                .collect(Collectors.toList());
+
+        Pageable blogPage = PageRequest.of(pageNo, pageSize, Sort.by("productName").ascending());
+
+        return new PageImpl<>(blogPostDtoList, blogPage, blogList.size());
+    }
 
     @Override
     public ResponseEntity<String> updatePost(BlogPostResponse blogPostUpdated, Long id){

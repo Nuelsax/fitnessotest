@@ -30,7 +30,7 @@ public class Order {
 
     @NotNull
     @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "shoppingCart_id", referencedColumnName = "id", nullable = false)
+//    @JoinColumn(name = "shoppingCart_id", referencedColumnName = "id", nullable = false)
     private List<ShoppingItem> shoppingItems;
 
     @NotNull

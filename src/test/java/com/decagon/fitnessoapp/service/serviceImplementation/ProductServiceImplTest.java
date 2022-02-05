@@ -3,10 +3,15 @@ package com.decagon.fitnessoapp.service.serviceImplementation;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import com.decagon.fitnessoapp.dto.ProductResponseDto;
 import com.decagon.fitnessoapp.repository.IntangibleProductRepository;
 import com.decagon.fitnessoapp.repository.TangibleProductRepository;
+
+import java.util.ArrayList;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.modelmapper.ModelMapper;
@@ -40,6 +45,15 @@ class ProductServiceImplTest {
         assertEquals("<400 BAD_REQUEST Bad Request,[]>", actualViewProductDetailsResult.toString());
         assertEquals(HttpStatus.BAD_REQUEST, actualViewProductDetailsResult.getStatusCode());
         assertTrue(actualViewProductDetailsResult.getHeaders().isEmpty());
+    }
+
+    @Test
+    void testGetAllProducts() {
+        when(this.tangibleProductRepository.findAll()).thenReturn(new ArrayList<>());
+        when(this.intangibleProductRepository.findAll()).thenReturn(new ArrayList<>());
+        assertTrue(this.productServiceImpl.getAllProducts(10).toList().isEmpty());
+        verify(this.tangibleProductRepository).findAll();
+        verify(this.intangibleProductRepository).findAll();
     }
 }
 

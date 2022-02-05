@@ -17,15 +17,13 @@ public class PersonDetails implements UserDetails {
     private String name;
     private String password;
     private boolean active;
-    private List<GrantedAuthority> authorities;
+    private List<SimpleGrantedAuthority> authorities;
 
     public PersonDetails(Person person) {
         this.name = person.getUserName();
         this.password = person.getPassword();
         this.active = person.isVerifyEmail();
-        this.authorities = Arrays.stream(person.getRoleDetail().toString().split(","))
-                .map(SimpleGrantedAuthority::new)
-                .collect(Collectors.toList());
+        this.authorities = person.getRoleDetail().getGrantedAuthorities();
     }
 
     public PersonDetails() {
