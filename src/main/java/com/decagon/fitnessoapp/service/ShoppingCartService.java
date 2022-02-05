@@ -6,7 +6,7 @@ import org.springframework.http.ResponseEntity;
 
 public interface ShoppingCartService {
 
-     Cart addToCart(Long productId, int quantity, PersonDetails authentication);
+     Cart addToCart(Long productId, int quantity, PersonDetails authentication) throws Exception;
 
      ResponseEntity<String> removeProductAsShoppingItem(Long productId);
 }
