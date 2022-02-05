@@ -15,10 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 
 @Service
@@ -49,25 +46,25 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     }
 
     @Override
-    public List<Cart> addToCart(Long productId, int quantity, PersonDetails authentication) {
+    public Cart addToCart(Long productId, int quantity, PersonDetails authentication) {
         Optional<TangibleProduct> tangibleProduct = tangibleProductRepository.findById(productId);
         Optional<IntangibleProduct> intangibleProduct = intangibleProductRepository.findById(productId);
 
         Person person = personRepository.findPersonByUserName(authentication.getUsername())
                 .orElseThrow(()-> new UsernameNotFoundException("User Name does not Exist"));
 
-        Cart cart = getCarts(person);
 
+        Cart cart = getCarts(person);
         if(tangibleProduct.isPresent()) {
             TangibleProduct product = mapper.convertValue(tangibleProduct, TangibleProduct.class);
-            addTangibleToCart(product, quantity, cart);
+            cart.getTangibleProduct().putIfAbsent(product, quantity);
         } else if(intangibleProduct.isPresent()) {
             IntangibleProduct product = mapper.convertValue(intangibleProduct, IntangibleProduct.class);
-            addIntangibleToCart(product, quantity, cart);
+            cart.getIntangibleProduct().putIfAbsent(product, quantity);
         }
 
         System.out.println("The cart: " + cart);
-        return shoppingCartRepository.findAll();
+        return shoppingCartRepository.save(cart);
     }
 
     @NotNull
@@ -80,7 +77,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
         } else return cart;
     }
 
-    private Cart addTangibleToCart(TangibleProduct product, int quantity, Cart cart) {
+   /* private Cart addTangibleToCart(TangibleProduct product, int quantity, Cart cart) {
         String sku = product.getStockKeepingUnit();
         if(cart.getTangibleProducts() != null) {
             final long count = cart.getTangibleProducts()
@@ -92,7 +89,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
                 cart.setQuantity(currQuantity + quantity);
             }
         } else {
-            List<TangibleProduct> cartList = new ArrayList<TangibleProduct>();
+            Set<TangibleProduct> cartList = new HashSet<>();
             cartList.add(product);
             cart.setTangibleProducts(cartList);
             cart.setQuantity(quantity);
@@ -112,14 +109,14 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
                 cart.setQuantity(currQuantity + quantity);
             }
         } else {
-            List<IntangibleProduct> cartList = new ArrayList<IntangibleProduct>();
+            Set<IntangibleProduct> cartList = new HashSet<>();
             cartList.add(product);
             cart.setIntangibleProducts(cartList);
             cart.setQuantity(quantity);
         }
         return shoppingCartRepository.save(cart);
     }
-
+*/
     @Override
     public ResponseEntity<String> removeProductAsShoppingItem(Long productId) {
         boolean exists = shoppingCartRepository.findById(productId).isPresent();
@@ -134,35 +131,3 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     }
 }
 
-
-// List<Optional<? extends Product>> cart = new ArrayList<>();
-        /*if (tangibleProduct.isPresent() && cart.getTangibleProducts().isEmpty()) {
-            cart.setTangibleProducts(Collections.singletonList(good));
-        } else if(intangibleProduct.isPresent() && cart.getIntangibleProducts().isEmpty()) {
-            cart.setIntangibleProducts(Collections.singletonList(service));
-        }
-        if(tangibleProduct.isPresent() && cart.getTangibleProducts().contains(good)) {
-            cart.getTangibleProducts().forEach(x -> x.getStockKeepingUnit().equals(good.getStockKeepingUnit()));
-        }
-
-            if(cart.getTangibleProducts().contains(good)) {
-
-            }
-            cartItems.setTangibleProducts(Collections.singletonList(tang));
-            cartItems.setQuantity(quantity);
-            shoppingCartRepository.save(cartItems);
-        } else if (intangibleProduct.isPresent()) {
-
-            cartItems.setQuantity(quantity);
-            cartItems.setIntangibleProducts(Collections.singletonList(intang));
-              .save(cartItems);
-        }
-*/
-        /*hoppingItem savedItem = null;
-        if (isTangibleProduct || isInTangibleProduct) {
-
-            cart.add((ProductResponseDto) )
-            ShoppingItem shoppingItem = new ShoppingItem(intangibleProductRepository.getById(productId),tangibleProductRepository.getById(productId), quantity);
-
-            savedItem = shoppingCartRepository.save(shoppingItem);
-        }*/

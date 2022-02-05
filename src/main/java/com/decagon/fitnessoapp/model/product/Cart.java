@@ -1,17 +1,21 @@
 package com.decagon.fitnessoapp.model.product;
 
 import com.decagon.fitnessoapp.model.user.Person;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.hibernate.Hibernate;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 
 //@AllArgsConstructor
 @NoArgsConstructor
-@Data
+@Getter
+@Setter
+@ToString
 @Entity
 public class Cart {
 
@@ -19,13 +23,17 @@ public class Cart {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-   @OneToMany(fetch = FetchType.LAZY)
-   @JoinColumn(name = "intangible_product_id", referencedColumnName = "id")
-    private List<IntangibleProduct> intangibleProducts;
+    @ElementCollection(fetch = FetchType.EAGER)
+    @MapKeyColumn(name="product")
+    @Column(name="quantity")
+    @CollectionTable(name="intangible", joinColumns=@JoinColumn(name = "intangible_product_id"))
+    private Map<IntangibleProduct, Integer> intangibleProduct = new HashMap<IntangibleProduct, Integer>();
 
-   @OneToMany(fetch = FetchType.LAZY)
-   @JoinColumn(name = "tangible_product_id", referencedColumnName = "id")
-    private List<TangibleProduct> tangibleProducts;
+    @ElementCollection(fetch = FetchType.EAGER)
+    @MapKeyColumn(name="product")
+    @Column(name="quantity")
+    @CollectionTable(name="tangible", joinColumns=@JoinColumn(name = "tangible_product_id"))
+    private Map<TangibleProduct, Integer> tangibleProduct = new HashMap<TangibleProduct, Integer>();
 
    @OneToOne
    @JoinColumn(name = "person_id", referencedColumnName = "id")
@@ -35,6 +43,5 @@ public class Cart {
     @NotNull
     @Column(nullable = false)
     private Integer quantity;
-
 
 }
