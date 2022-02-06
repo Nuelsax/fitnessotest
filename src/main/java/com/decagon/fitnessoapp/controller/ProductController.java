@@ -6,8 +6,10 @@ import com.decagon.fitnessoapp.dto.UserProductDto;
 import com.decagon.fitnessoapp.model.product.IntangibleProduct;
 import com.decagon.fitnessoapp.model.product.TangibleProduct;
 import com.decagon.fitnessoapp.service.ProductService;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +21,7 @@ public class ProductController {
 
     private final ProductService productService;
 
-    @PreAuthorize("hasRole('ADMIN')")
+//    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/add")
     public ResponseEntity<ProductResponseDto> addProduct(@RequestBody ProductRequestDto requestDto) {
         return productService.addProduct(requestDto);
@@ -74,5 +76,14 @@ public class ProductController {
     public ResponseEntity<?> viewAllProducts(@PathVariable(value="pageNumber") int pageNumber) {
         final Page<UserProductDto> allProducts = productService.getAllProducts(pageNumber);
         return ResponseEntity.ok(allProducts);
+    }
+
+    @GetMapping("/search/{freeText}")
+    public ResponseEntity<List<?>> searchProduct(@PathVariable String freeText){
+        List<?> products = productService.searchProduct(freeText);
+        if(products.isEmpty()){
+            return new ResponseEntity<>(List.of("Product not found"), HttpStatus.NOT_FOUND);
+        }
+        return  new ResponseEntity<>(products, HttpStatus.OK);
     }
 }

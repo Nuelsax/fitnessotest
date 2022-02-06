@@ -7,6 +7,7 @@ import com.decagon.fitnessoapp.model.product.IntangibleProduct;
 import com.decagon.fitnessoapp.model.product.TangibleProduct;
 import com.decagon.fitnessoapp.repository.IntangibleProductRepository;
 import com.decagon.fitnessoapp.repository.TangibleProductRepository;
+import java.util.Optional;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
@@ -194,5 +195,30 @@ public class ProductServiceImpl implements com.decagon.fitnessoapp.service.Produ
         productDtos.addAll(tangibleDtos);
 
         return productDtos;
+    }
+    @Override
+    public List<?> searchProduct(String text) {
+        List<ProductResponseDto> searchResult = new ArrayList<>();
+        String freeText = text.toLowerCase();
+        if (freeText != null) {
+            List<TangibleProduct> tangibleProducts = tangibleProductRepository.findTangibleProductByCategoryOrProductNameOrByDescription(freeText);
+
+            List<IntangibleProduct> intangibleProducts = intangibleProductRepository.findTangibleProductByCategoryOrProductNameOrByDescription(freeText);
+
+            if(tangibleProducts.size() > 0){
+                tangibleProducts.forEach(product->{
+                    ProductResponseDto productResponseDto = modelMapper.map(product,ProductResponseDto.class);
+                      searchResult.add(productResponseDto);
+                });
+            }
+            if(intangibleProducts.size() > 0){
+                intangibleProducts.forEach(product->{
+                    ProductResponseDto productResponseDto1 = modelMapper.map(product,ProductResponseDto.class);
+                    searchResult.add(productResponseDto1);
+                });
+            }
+
+        }
+        return searchResult;
     }
 }
