@@ -94,7 +94,7 @@ class OrderServiceImplTest {
         order.setPerson(person);
         order.setShippingAddress(address);
         order.setShippingMethod(SHIPPING_METHOD.FLAT_RATE);
-        order.setShoppingItems(new ArrayList<>());
+        order.setCarts(new ArrayList<>());
         order.setTotalPrice(10.0);
 
     }
