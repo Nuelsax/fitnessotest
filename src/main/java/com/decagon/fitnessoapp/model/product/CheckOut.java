@@ -18,7 +18,7 @@ import java.util.List;
 @NoArgsConstructor
 @Data
 @Entity
-@Table(name = "orders")
+@Table(name = "check_out")
 public class CheckOut {
 
     @Id
