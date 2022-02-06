@@ -50,11 +50,13 @@ public class PersonController {
         }
 
 
+        
         @PreAuthorize("hasRole('ROLE_ADMIN')")
         @PutMapping("/trainer/register")
         public ResponseEntity<?> addTrainer (@Valid @RequestBody PersonRequest personRequest){
         return ResponseEntity.ok(personService.addTrainer(personRequest));
         }
+
 
         @PreAuthorize("hasRole('ROLE_ADMIN')")
         @DeleteMapping("/trainer/delete/{id}")
