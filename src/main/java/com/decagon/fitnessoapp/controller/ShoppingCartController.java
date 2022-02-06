@@ -20,7 +20,7 @@ public class ShoppingCartController {
     private final JwtUtils jwtTokenUtils;
 
    @PutMapping("/add/{productId}/{quantity}")
-    public ResponseEntity<?> addItemToCart(@PathVariable(value = "productId") Long productId, @PathVariable(value = "quantity") int quantity, HttpServletRequest request) {
+    public ResponseEntity<?> addItemToCart(@PathVariable(value = "productId") Long productId, @PathVariable(value = "quantity") int quantity, HttpServletRequest request) throws Exception {
        final String requestHeader = request.getHeader("Authorization");
        String jwt = requestHeader.substring(7);
        String username = jwtTokenUtils.extractUsername(jwt);

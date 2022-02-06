@@ -46,20 +46,22 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     }
 
     @Override
-    public Cart addToCart(Long productId, int quantity, PersonDetails authentication) throws Exception {
+    public Cart addToCart(Long productId, int quantity, PersonDetails authentication) {
         Optional<TangibleProduct> tangibleProduct = tangibleProductRepository.findById(productId);
         Optional<IntangibleProduct> intangibleProduct = intangibleProductRepository.findById(productId);
+        TangibleProduct product = mapper.convertValue(tangibleProduct, TangibleProduct.class);
+        IntangibleProduct service = mapper.convertValue(intangibleProduct, IntangibleProduct.class);
+
         Person person = personRepository.findPersonByUserName(authentication.getUsername())
                 .orElseThrow(() -> new UsernameNotFoundException("User Name does not Exist"));
         Cart cart = getCarts(person);
         if(tangibleProduct.isPresent()) {
-            setTangibleMap(quantity,tangibleProduct, cart);
+            cart.getTangibleProduct().put(product.getProductName(), quantity);
         } else if(intangibleProduct.isPresent()) {
-            setIntangibleMap(quantity, intangibleProduct, cart);
+            cart.getIntangibleProduct().put(service.getProductName(), quantity);
         } else {
-            throw new Exception("Out of stock");
+            throw new IllegalStateException("Product with id " + productId + " does not exist");
         }
-        System.out.println("The cart: " + cart);
         return shoppingCartRepository.save(cart);
     }
 
@@ -74,38 +76,6 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
         } else return cart;
     }
 
-    private Cart setTangibleMap(int quantity, Optional<TangibleProduct> tangibleProduct, Cart cart) {
-        Map<TangibleProduct, Integer> tangibleProductIntegerMap = cart.getTangibleProduct();
-        TangibleProduct product = mapper.convertValue(tangibleProduct, TangibleProduct.class);
-        String sku = product.getStockKeepingUnit();
-        for (Map.Entry<TangibleProduct, Integer> entry : tangibleProductIntegerMap.entrySet()) {
-            if (sku.equals(entry.getKey().getStockKeepingUnit())) {
-                Integer currQuantity = entry.getValue();
-                entry.setValue(currQuantity + quantity);
-            } else {
-                tangibleProductIntegerMap.put(product, quantity);
-            }
-        }
-        cart.setTangibleProduct(tangibleProductIntegerMap);
-        return cart;
-    }
-
-    private Cart setIntangibleMap(int quantity, Optional<IntangibleProduct> intangibleProduct, Cart cart) {
-        Map<IntangibleProduct, Integer> intangibleProductIntegerMap = cart.getIntangibleProduct();
-        IntangibleProduct product = mapper.convertValue(intangibleProduct, IntangibleProduct.class);
-        String sku = product.getStockKeepingUnit();
-        for (Map.Entry<IntangibleProduct, Integer> entry : intangibleProductIntegerMap.entrySet()) {
-            if (sku.equals(entry.getKey().getStockKeepingUnit())) {
-                Integer currQuantity = entry.getValue();
-                entry.setValue(currQuantity + quantity);
-            } else {
-                intangibleProductIntegerMap.put(product, quantity);
-            }
-        }
-        cart.setIntangibleProduct(intangibleProductIntegerMap);
-        return cart;
-    }
-
         @Override
         public ResponseEntity<String> removeProductAsShoppingItem (Long productId){
             boolean exists = shoppingCartRepository.findById(productId).isPresent();
@@ -117,37 +87,3 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
         }
 }
 
-/*
-*  if(tangibleProduct.isPresent()) {
-            TangibleProduct product = mapper.convertValue(tangibleProduct, TangibleProduct.class);
-            Map<TangibleProduct, Integer> tangibleProductIntegerMap = cart.getTangibleProduct();
-
-            String sku = product.getStockKeepingUnit();
-            //if(sku.equals(tangibleProductIntegerMap.entrySet().))
-            for (Map.Entry<TangibleProduct, Integer> entry : tangibleProductIntegerMap.entrySet()) {
-                if (sku.equals(entry.getKey().getStockKeepingUnit())) {
-                    Integer currQuantity = entry.getValue();
-                    entry.setValue(currQuantity + quantity);
-                } else {
-                    tangibleProductIntegerMap.put(product, quantity);
-                }
-            }
-            cart.setTangibleProduct(tangibleProductIntegerMap);
-        }
-
-        if(intangibleProduct.isPresent()) {
-            IntangibleProduct product = mapper.convertValue(intangibleProduct, IntangibleProduct.class);
-            Map<IntangibleProduct, Integer> intangibleProductIntegerMap = cart.getIntangibleProduct():
-
-            String sku = product.getStockKeepingUnit();
-            //if(sku.equals(tangibleProductIntegerMap.entrySet().))
-            for (Map.Entry<TangibleProduct, Integer> entry : tangibleProductIntegerMap.entrySet()) {
-                if (sku.equals(entry.getKey().getStockKeepingUnit())) {
-                    Integer currQuantity = entry.getValue();
-                    entry.setValue(currQuantity + quantity);
-                } else {
-                    tangibleProductIntegerMap.put(product, quantity);
-                }
-            }
-        }
-* */

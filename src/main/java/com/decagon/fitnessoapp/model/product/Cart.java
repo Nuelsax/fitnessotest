@@ -27,13 +27,13 @@ public class Cart {
     @MapKeyColumn(name="product")
     @Column(name="quantity")
     @CollectionTable(name="intangible", joinColumns=@JoinColumn(name = "intangible_product_id"))
-    private Map<IntangibleProduct, Integer> intangibleProduct = new HashMap<IntangibleProduct, Integer>();
+    private Map<String, Integer> intangibleProduct = new HashMap<String, Integer>();
 
     @ElementCollection(fetch = FetchType.EAGER)
     @MapKeyColumn(name="product")
     @Column(name="quantity")
     @CollectionTable(name="tangible", joinColumns=@JoinColumn(name = "tangible_product_id"))
-    private Map<TangibleProduct, Integer> tangibleProduct = new HashMap<TangibleProduct, Integer>();
+    private Map<String, Integer> tangibleProduct = new HashMap<String, Integer>();
 
    @OneToOne
    @JoinColumn(name = "person_id", referencedColumnName = "id")
