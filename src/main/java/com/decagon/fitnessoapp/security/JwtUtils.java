@@ -1,5 +1,6 @@
 package com.decagon.fitnessoapp.security;
 
+import com.decagon.fitnessoapp.service.serviceImplementation.PersonDetails;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -36,8 +37,9 @@ public class JwtUtils {
         return extractExpiration(token).before(new Date());
     }
 
-    public String generateToken(UserDetails userDetails) {
+    public String generateToken(PersonDetails userDetails) {
         Map<String, Object> claims = new HashMap<>();
+        claims.put("Authorities", userDetails.getAuthorities());
         return createToken(claims, userDetails.getUsername());
     }
 

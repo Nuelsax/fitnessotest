@@ -2,14 +2,11 @@ package com.decagon.fitnessoapp.service;
 
 import com.decagon.fitnessoapp.dto.ProductRequestDto;
 import com.decagon.fitnessoapp.dto.ProductResponseDto;
+import com.decagon.fitnessoapp.dto.UserProductDto;
 import com.decagon.fitnessoapp.model.product.IntangibleProduct;
-import com.decagon.fitnessoapp.model.product.Product;
 import com.decagon.fitnessoapp.model.product.TangibleProduct;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-
-import java.util.List;
 
 public interface ProductService {
     ResponseEntity<ProductResponseDto> addProduct(ProductRequestDto requestDto);
@@ -23,4 +20,8 @@ public interface ProductService {
     ResponseEntity<ProductResponseDto> updateProduct(Long id,  ProductRequestDto requestDto);
 
     ResponseEntity<ProductResponseDto> getProduct(Long id);
+
+    ResponseEntity<ProductResponseDto> viewProductDetails(Long id, String productType);
+
+    Page<UserProductDto> getAllProducts(int pageNumber);
 }

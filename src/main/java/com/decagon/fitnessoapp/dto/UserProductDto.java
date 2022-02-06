@@ -3,21 +3,25 @@ package com.decagon.fitnessoapp.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 
 import java.math.BigDecimal;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
-public class ProductResponseDto {
+@NoArgsConstructor
+public class UserProductDto implements Comparable<UserProductDto>{
     private String category;
     private String productName;
     private BigDecimal price;
     private String description;
-    private Long stock;
-    private String ProductType;
     private String image;
     private Integer durationInHoursPerDay;
     private Integer durationInDays;
     private Integer quantity;
+
+    @Override
+    public int compareTo(@NotNull UserProductDto o) {
+        return this.getProductName().compareTo(o.getProductName());
+    }
 }
