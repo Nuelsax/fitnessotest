@@ -49,6 +49,19 @@ public class PersonController {
             return ResponseEntity.ok(personService.register(personRequest));
         }
 
+
+//        @PreAuthorize("hasRole('ADMIN')")
+        @PutMapping("/trainer/register")
+        public ResponseEntity<?> addTrainer (@Valid @RequestBody PersonRequest personRequest){
+        return ResponseEntity.ok(personService.addTrainer(personRequest));
+        }
+
+//        @PreAuthorize("hasRole('ADMIN')")
+        @DeleteMapping("/trainer/delete/{id}")
+        public ResponseEntity<String> removeTrainer (@Valid @PathVariable ("id") Long id){
+        return personService.removeTrainer(id);
+    }
+
         @GetMapping("/confirm")
         public String confirm (@RequestParam("token") String token){
             return verificationTokenService.confirmToken(token);
