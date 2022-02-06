@@ -31,7 +31,7 @@ public class PersonController {
             return ResponseEntity.ok().body( personService.updateUserDetails(updatePersonDetails));
         }
 
-        @PreAuthorize("hasRole('PREMIUM') or hasRole('ADMIN')")
+        @PreAuthorize("hasRole('ROLE_PREMIUM') or hasRole('ROLE_ADMIN')")
         @PutMapping("/profile/edit/password")
         public  ResponseEntity<ChangePasswordResponse> editUserPassword(@RequestBody ChangePasswordRequest changePassword) {
             return ResponseEntity.ok().body(personService.updateCurrentPassword(changePassword));

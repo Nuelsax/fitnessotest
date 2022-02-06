@@ -10,6 +10,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface IntangibleProductRepository extends JpaRepository<IntangibleProduct, Long> {
 
-    @Query("SELECT i FROM TangibleProduct i WHERE CONCAT(i.category, i.productName, i.description) LIKE %?1%")
-    List<IntangibleProduct> findTangibleProductByCategoryOrProductNameOrByDescription(String freeText);
+    @Query("SELECT i FROM IntangibleProduct i WHERE CONCAT(i.category, i.productName, i.description) LIKE %?1%")
+    List<IntangibleProduct> findIntangibleProductByCategoryOrProductNameOrByDescription(String freeText);
 }

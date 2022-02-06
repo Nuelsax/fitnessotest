@@ -7,6 +7,7 @@ import com.decagon.fitnessoapp.model.product.IntangibleProduct;
 import com.decagon.fitnessoapp.model.product.TangibleProduct;
 import com.decagon.fitnessoapp.repository.IntangibleProductRepository;
 import com.decagon.fitnessoapp.repository.TangibleProductRepository;
+import java.math.BigDecimal;
 import java.util.Optional;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,21 +61,34 @@ public class ProductServiceImpl implements com.decagon.fitnessoapp.service.Produ
 
     @Override
     public ResponseEntity<ProductResponseDto> addProduct(ProductRequestDto requestDto) {
-
         ProductResponseDto responseDto;
-        if (requestDto.getProductType().equals("PRODUCT")) {
+        ProductRequestDto productDto = new ProductRequestDto();
 
+        productDto.setCategory(requestDto.getCategory().toUpperCase());
+        productDto.setProductName(requestDto.getProductName().toUpperCase());
+        productDto.setPrice(requestDto.getPrice());
+        productDto.setDescription(requestDto.getDescription().toUpperCase());
+        productDto.setProductType(requestDto.getProductType());
+        productDto.setImage(requestDto.getImage());
+        productDto.setDurationInHoursPerDay(requestDto.getDurationInHoursPerDay());
+        productDto.setDurationInDays(requestDto.getDurationInDays());
+        productDto.setQuantity(requestDto.getQuantity());
+        productDto.setStock(requestDto.getStock());
+
+
+        if (productDto.getProductType().equals("PRODUCT")) {
             TangibleProduct newProduct;
 
-            newProduct = tangibleProductRepository.save(modelMapper.map(requestDto, TangibleProduct.class));
+
+            newProduct = tangibleProductRepository.save(modelMapper.map(productDto, TangibleProduct.class));
             responseDto = modelMapper.map(newProduct, ProductResponseDto.class);
 
 
-        } else if (requestDto.getProductType().equals("SERVICE")) {
+        } else if (productDto.getProductType().equals("SERVICE")) {
 
             IntangibleProduct newProduct;
 
-            newProduct = intangibleProductRepository.save(modelMapper.map(requestDto, IntangibleProduct.class));
+            newProduct = intangibleProductRepository.save(modelMapper.map(productDto, IntangibleProduct.class));
             responseDto = modelMapper.map(newProduct, ProductResponseDto.class);
         } else{
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -199,11 +213,11 @@ public class ProductServiceImpl implements com.decagon.fitnessoapp.service.Produ
     @Override
     public List<?> searchProduct(String text) {
         List<ProductResponseDto> searchResult = new ArrayList<>();
-        String freeText = text.toLowerCase();
+        String freeText = text.toUpperCase();
         if (freeText != null) {
             List<TangibleProduct> tangibleProducts = tangibleProductRepository.findTangibleProductByCategoryOrProductNameOrByDescription(freeText);
 
-            List<IntangibleProduct> intangibleProducts = intangibleProductRepository.findTangibleProductByCategoryOrProductNameOrByDescription(freeText);
+            List<IntangibleProduct> intangibleProducts = intangibleProductRepository.findIntangibleProductByCategoryOrProductNameOrByDescription(freeText);
 
             if(tangibleProducts.size() > 0){
                 tangibleProducts.forEach(product->{
