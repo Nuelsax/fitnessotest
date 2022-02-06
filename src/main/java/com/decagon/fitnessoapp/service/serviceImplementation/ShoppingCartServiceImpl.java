@@ -69,7 +69,6 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     private Cart getCarts(Person person) {
         Cart cart = shoppingCartRepository.findByPerson(person).orElse(null);
         Cart newCart = new Cart();
-        newCart.setQuantity(0);
         if (cart == null) {
             newCart.setPerson(person);
             return newCart;

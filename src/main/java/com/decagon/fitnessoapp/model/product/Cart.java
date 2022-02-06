@@ -2,14 +2,11 @@ package com.decagon.fitnessoapp.model.product;
 
 import com.decagon.fitnessoapp.model.user.Person;
 import lombok.*;
-import org.hibernate.Hibernate;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+
 
 //@AllArgsConstructor
 @NoArgsConstructor
