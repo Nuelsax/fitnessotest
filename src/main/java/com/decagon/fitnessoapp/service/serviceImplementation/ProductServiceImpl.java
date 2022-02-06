@@ -60,7 +60,7 @@ public class ProductServiceImpl implements com.decagon.fitnessoapp.service.Produ
     }
 
     @Override
-    public ResponseEntity<ProductResponseDto> addProduct(ProductRequestDto requestDto) {
+    public ProductResponseDto addProduct(ProductRequestDto requestDto) {
         ProductResponseDto responseDto;
         ProductRequestDto productDto = new ProductRequestDto();
 
@@ -82,7 +82,7 @@ public class ProductServiceImpl implements com.decagon.fitnessoapp.service.Produ
 
             newProduct = tangibleProductRepository.save(modelMapper.map(productDto, TangibleProduct.class));
             responseDto = modelMapper.map(newProduct, ProductResponseDto.class);
-
+           return responseDto;
 
         } else if (productDto.getProductType().equals("SERVICE")) {
 
@@ -90,103 +90,91 @@ public class ProductServiceImpl implements com.decagon.fitnessoapp.service.Produ
 
             newProduct = intangibleProductRepository.save(modelMapper.map(productDto, IntangibleProduct.class));
             responseDto = modelMapper.map(newProduct, ProductResponseDto.class);
-        } else{
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return responseDto;
         }
-            return ResponseEntity.ok(responseDto);
+        throw new IllegalStateException("Check if all fields were filled properly");
     }
 
 
 
     @Override
-    public ResponseEntity<ProductResponseDto> deleteProduct(Long productId) {
+    public ProductResponseDto deleteProduct(Long productId) {
         boolean isTangiblePresent = tangibleProductRepository.findById(productId).isPresent();
         boolean isIntangiblePresent = intangibleProductRepository.findById(productId).isPresent();
-
         if(isTangiblePresent ) {
             TangibleProduct deletedProduct =  tangibleProductRepository.getById(productId);
             tangibleProductRepository.deleteById(productId);
-            return ResponseEntity.ok().body(modelMapper.map(deletedProduct, ProductResponseDto.class));
+            return modelMapper.map(deletedProduct, ProductResponseDto.class);
         }
-
         if(isIntangiblePresent) {
             IntangibleProduct deletedProduct =  intangibleProductRepository.getById(productId);
             intangibleProductRepository.deleteById(productId);
-            return ResponseEntity.ok().body(modelMapper.map(deletedProduct, ProductResponseDto.class));
+            return modelMapper.map(deletedProduct, ProductResponseDto.class);
         }
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        throw new IllegalArgumentException("Check if the product is available for delete");
     }
 
+
     @Override
-    public ResponseEntity<Page<TangibleProduct>> getAllProduct(int pageSize, int pageNumber) {
+    public Page<TangibleProduct> getAllProduct(int pageSize, int pageNumber) {
         Page<TangibleProduct> products = tangibleProductRepository.findAll(PageRequest.of(pageNumber, pageSize));
-        return  ResponseEntity.ok().body(products);
+        return  products;
     }
 
     @Override
-    public ResponseEntity<Page<IntangibleProduct>> getAllServices(int pageSize, int pageNumber) {
+    public Page<IntangibleProduct> getAllServices(int pageSize, int pageNumber) {
         Page<IntangibleProduct> products = intangibleProductRepository.findAll(PageRequest.of(pageNumber, pageSize));
-        return  ResponseEntity.ok().body(products);
+        return  products;
     }
 
     @Override
-    public ResponseEntity<ProductResponseDto> updateProduct(Long productId, ProductRequestDto requestDto) {
+    public ProductResponseDto updateProduct(Long productId, ProductRequestDto requestDto) {
         boolean isTangiblePresent = tangibleProductRepository.findById(productId).isPresent();
         boolean isIntangiblePresent = intangibleProductRepository.findById(productId).isPresent();
-
         if(isTangiblePresent){
             TangibleProduct product = tangibleProductRepository.getById(productId);
             modelMapper.map(requestDto, product);
-
-
             TangibleProduct updatedProduct = tangibleProductRepository.save(product);
-            return ResponseEntity.ok().body(modelMapper.map(updatedProduct, ProductResponseDto.class));
+            return modelMapper.map(updatedProduct, ProductResponseDto.class);
         }
         if(isIntangiblePresent){
             IntangibleProduct product = intangibleProductRepository.getById(productId);
             modelMapper.map(requestDto, product);
-
-
             IntangibleProduct updatedProduct = intangibleProductRepository.save(product);
-            return ResponseEntity.ok().body(modelMapper.map(updatedProduct, ProductResponseDto.class));
+            return modelMapper.map(updatedProduct, ProductResponseDto.class);
         }
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        throw new IllegalArgumentException("Check if the product is available for an update");
     }
 
+
     @Override
-    public ResponseEntity<ProductResponseDto> getProduct(Long productId) {
+    public ProductResponseDto getProduct(Long productId) {
         boolean isTangiblePresent = tangibleProductRepository.findById(productId).isPresent();
         boolean isIntangiblePresent = intangibleProductRepository.findById(productId).isPresent();
-
         if (isTangiblePresent) {
             ProductResponseDto responseDto = new ProductResponseDto();
             modelMapper.map(tangibleProductRepository.getById(productId), responseDto);
-            return ResponseEntity.ok().body(responseDto);
+            return responseDto;
         }
-
         if (isIntangiblePresent) {
             ProductResponseDto responseDto = new ProductResponseDto();
             modelMapper.map(intangibleProductRepository.getById(productId), responseDto);
-            return ResponseEntity.ok().body(responseDto);
+            return responseDto;
         }
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        throw new IllegalArgumentException("Check if the Id is correct");
     }
 
     @Override
     public Page<UserProductDto> getAllProducts(int pageNumber) {
-         List<UserProductDto> dtoList = getDtoList();
-
+        List<UserProductDto> dtoList = getDtoList();
         int pageSize = 10;
         int skipCount = (pageNumber - 1) * pageSize;
-
         List<UserProductDto> activityPage = dtoList
                 .stream()
                 .skip(skipCount)
                 .limit(pageSize)
                 .collect(Collectors.toList());
-
         Pageable productPage = PageRequest.of(pageNumber, pageSize, Sort.by("productName").ascending());
-
         return new PageImpl<>(activityPage, productPage, dtoList.size());
     }
 
