@@ -21,13 +21,13 @@ import java.util.List;
 public class BlogPostController {
 
     private final BlogPostService blogPostService;
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/admin/post")
     public ResponseEntity<String> createPost(@RequestBody BlogRequest blogRequest, Authentication authentication) {
         return blogPostService.addBlogPost(blogRequest, authentication);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/admin/allposts")
     public ResponseEntity<List<BlogPostResponse>> getAllBlogPosts(
             @RequestParam(defaultValue = "0") Integer pageNo,
@@ -39,13 +39,13 @@ public class BlogPostController {
         );
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping("/admin/updatepost/{postId}")
     public ResponseEntity<String> updatePost(@PathVariable Long postId, @RequestBody BlogPostResponse blogPostUpdate){
         return blogPostService.updatePost(blogPostUpdate, postId);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping("/admin/deletepost/{postId}")
     public ResponseEntity<String> deletePost(@PathVariable Long postId){
         return blogPostService.deletePost(postId);

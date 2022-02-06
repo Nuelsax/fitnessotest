@@ -1,5 +1,6 @@
 package com.decagon.fitnessoapp.model.user;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -56,6 +57,7 @@ public class Person {
 
     @NotNull
     @Column(name = "date_of_birth", nullable = false)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
     private Date dateOfBirth;
 
     private String image;

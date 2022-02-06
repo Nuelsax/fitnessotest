@@ -19,5 +19,6 @@ public class ProductRequestDto {
     private Integer durationInHoursPerDay;
     private Integer durationInDays;
     private Integer quantity;
+    private Long stock; //fixme
 }
 

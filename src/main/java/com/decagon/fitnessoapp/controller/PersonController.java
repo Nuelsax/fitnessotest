@@ -31,7 +31,7 @@ public class PersonController {
             return ResponseEntity.ok().body( personService.updateUserDetails(updatePersonDetails));
         }
 
-        @PreAuthorize("hasRole('PREMIUM') or hasRole('ADMIN')")
+        @PreAuthorize("hasRole('ROLE_PREMIUM') or hasRole('ROLE_ADMIN')")
         @PutMapping("/profile/edit/password")
         public  ResponseEntity<ChangePasswordResponse> editUserPassword(@RequestBody ChangePasswordRequest changePassword) {
             return ResponseEntity.ok().body(personService.updateCurrentPassword(changePassword));
@@ -50,13 +50,15 @@ public class PersonController {
         }
 
 
-//        @PreAuthorize("hasRole('ADMIN')")
+        
+        @PreAuthorize("hasRole('ROLE_ADMIN')")
         @PutMapping("/trainer/register")
         public ResponseEntity<?> addTrainer (@Valid @RequestBody PersonRequest personRequest){
         return ResponseEntity.ok(personService.addTrainer(personRequest));
         }
 
-//        @PreAuthorize("hasRole('ADMIN')")
+
+        @PreAuthorize("hasRole('ROLE_ADMIN')")
         @DeleteMapping("/trainer/delete/{id}")
         public ResponseEntity<String> removeTrainer (@Valid @PathVariable ("id") Long id){
         return personService.removeTrainer(id);
