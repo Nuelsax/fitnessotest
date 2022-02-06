@@ -49,8 +49,8 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     public Cart addToCart(Long productId, int quantity, PersonDetails authentication) {
         Optional<TangibleProduct> tangibleProduct = tangibleProductRepository.findById(productId);
         Optional<IntangibleProduct> intangibleProduct = intangibleProductRepository.findById(productId);
-        TangibleProduct product = mapper.convertValue(tangibleProduct, TangibleProduct.class);
-        IntangibleProduct service = mapper.convertValue(intangibleProduct, IntangibleProduct.class);
+        TangibleProduct product = mapper.convertValue(tangibleProduct.get(), TangibleProduct.class);
+        IntangibleProduct service = mapper.convertValue(intangibleProduct.get(), IntangibleProduct.class);
 
         Person person = personRepository.findPersonByUserName(authentication.getUsername())
                 .orElseThrow(() -> new UsernameNotFoundException("User Name does not Exist"));

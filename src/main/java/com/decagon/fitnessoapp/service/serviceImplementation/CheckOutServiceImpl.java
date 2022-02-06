@@ -8,9 +8,7 @@ import com.decagon.fitnessoapp.model.product.Cart;
 import com.decagon.fitnessoapp.model.user.Address;
 import com.decagon.fitnessoapp.model.user.PaymentCard;
 import com.decagon.fitnessoapp.model.user.Person;
-import com.decagon.fitnessoapp.repository.CheckOutRepository;
-import com.decagon.fitnessoapp.repository.PersonRepository;
-import com.decagon.fitnessoapp.repository.ShoppingCartRepository;
+import com.decagon.fitnessoapp.repository.*;
 import com.decagon.fitnessoapp.service.CheckOutService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,6 +25,9 @@ public class CheckOutServiceImpl implements CheckOutService {
 
     private final CheckOutRepository checkOutRepository;
     private final PersonRepository personRepository;
+    private final PaymentCardRepository paymentCardRepository;
+    private final AddressRepository addressRepository;
+    private final CouponCodeRepository couponCodeRepository;
     private final ModelMapper modelMapper;
     private final ShoppingCartRepository shoppingCartRepository;
 
@@ -46,10 +47,15 @@ public class CheckOutServiceImpl implements CheckOutService {
                 billingAddress.setPerson(personExists.get());
                 shippingAddress.setPerson(personExists.get());
                 paymentCard.setPerson(personExists.get());
+                paymentCard.setAccountName(personExists.get().getFirstName());
                 modelMapper.map(checkOutRequest.getPaymentRequest(), paymentCard);
                 modelMapper.map(checkOutRequest.getBillingAddress(), billingAddress);
                 modelMapper.map(checkOutRequest.getShippingAddress(), shippingAddress);
                 modelMapper.map(checkOutRequest.getDiscountRequest(), couponCode);
+                paymentCardRepository.save(paymentCard);
+                addressRepository.save(billingAddress);
+                addressRepository.save(shippingAddress);
+                couponCodeRepository.save(couponCode);
                 checkOut.setTotalPrice(checkOutRequest.getOrderSummary().getTotal());
                 checkOut.setBillingAddress(billingAddress);
                 checkOut.setShippingAddress(shippingAddress);

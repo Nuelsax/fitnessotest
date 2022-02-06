@@ -10,13 +10,13 @@ import javax.validation.constraints.NotNull;
 public class CheckOutRequest {
     @NotEmpty
     private String email;
-    @NotEmpty
+    @NotNull
     private Long shoppingCartId;
     private AddressRequest shippingAddress;
     private AddressRequest billingAddress;
     private PaymentRequest paymentRequest;
     private DiscountRequest discountRequest;
-    @NotEmpty
+    @NotNull
     private SHIPPING_METHOD shippingMethod;
     @NotNull
     private OrderSummaryRequest orderSummary;
