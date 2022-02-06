@@ -45,7 +45,7 @@ public class ProductController {
         return productService.getProduct(productId);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/allproducts/{size}/{number}")
     public ResponseEntity<Page<TangibleProduct>> getAllProduct(@PathVariable (name = "size") int pageSize,@PathVariable (name = "number") int pageNumber){
         return productService.getAllProduct(pageSize, pageNumber);
