@@ -39,9 +39,5 @@ public class Cart {
    @JoinColumn(name = "person_id", referencedColumnName = "id")
    private Person person;
 
-    //Todo: dont think this is neccessary
-    @NotNull
-    @Column(nullable = false)
-    private Integer quantity;
 
 }
