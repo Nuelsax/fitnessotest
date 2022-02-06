@@ -45,7 +45,8 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                .formLogin();
+                .formLogin()
+                .disable();
 
         http.addFilterBefore(jwtRequestFilters, UsernamePasswordAuthenticationFilter.class);
     }
