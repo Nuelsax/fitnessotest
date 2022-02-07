@@ -54,12 +54,12 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
 
         if(tangibleProductRepository.findById(productId).isPresent()) {
             int quantity = cart.getTangibleProduct().get(product.getProductName());
-            if(status == CHANGE_QUANTITY.INCREASE && quantity <= 10) {
+            if (status == CHANGE_QUANTITY.INCREASE && quantity <= 10) {
                 cart.getTangibleProduct().put(product.getProductName(), ++quantity);
             } else if (status == CHANGE_QUANTITY.DECREASE && quantity > 0) {
                 cart.getTangibleProduct().put(product.getProductName(), --quantity);
             }
-        } else if(intangibleProductRepository.findById(productId).isPresent()) {
+        } else if (intangibleProductRepository.findById(productId).isPresent()) {
             int quantity = cart.getIntangibleProduct().get(service.getProductName());
             if(status == CHANGE_QUANTITY.INCREASE && quantity <= 10) {
                 cart.getIntangibleProduct().put(service.getProductName(), ++quantity);
