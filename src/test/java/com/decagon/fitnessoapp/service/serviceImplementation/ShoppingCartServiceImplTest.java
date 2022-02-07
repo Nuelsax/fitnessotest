@@ -68,8 +68,7 @@ class ShoppingCartServiceImplTest {
         IntangibleProduct intangibleProduct = new IntangibleProduct();
         intangibleProduct.setCategory("Category");
         intangibleProduct.setDescription("The characteristics of someone or something");
-        intangibleProduct.setDurationInDays(1);
-        intangibleProduct.setDurationInHoursPerDay(1);
+        intangibleProduct.setMonthlySubscription(1);
         intangibleProduct.setId(123L);
         intangibleProduct.setImage("Image");
         intangibleProduct.setPrice(BigDecimal.valueOf(42L));

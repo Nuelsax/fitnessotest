@@ -84,6 +84,8 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
         } else return cart;
     }
 
+
+
     @Override
     public Cart removeFromCart (Long productId, PersonDetails personDetails){
         TangibleProduct product = mapper.convertValue(tangibleProductRepository.findById(productId), TangibleProduct.class);
@@ -104,6 +106,16 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
             throw new IllegalStateException("You do not have item in cart");
         }
         return cart;
+    }
+
+    @Override
+    public Cart getCartById(Long productId) {
+        return shoppingCartRepository.getById(productId);
+    }
+
+    @Override
+    public List<Cart> viewCartItems() {
+        return shoppingCartRepository.findAll();
     }
 }
 

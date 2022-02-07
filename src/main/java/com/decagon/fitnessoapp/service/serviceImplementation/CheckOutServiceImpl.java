@@ -53,7 +53,7 @@ public class CheckOutServiceImpl implements CheckOutService {
                 checkOut.setTotalPrice(checkOutRequest.getOrderSummary().getTotal());
                 checkOut.setBillingAddress(billingAddress);
                 checkOut.setShippingAddress(shippingAddress);
-                checkOut.setShoppingItems(shoppingItemExist.get());
+                checkOut.setShoppingCart(shoppingItemExist.get());
                 checkOut.setShippingMethod(checkOutRequest.getShippingMethod());
                 checkOut.setCouponCode(couponCode);
                 checkOut.setPaymentCard(paymentCard);

@@ -23,6 +23,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -94,8 +95,8 @@ class OrderServiceImplTest {
         order.setPerson(person);
         order.setShippingAddress(address);
         order.setShippingMethod(SHIPPING_METHOD.FLAT_RATE);
-        order.setCarts(new ArrayList<>());
-        order.setTotalPrice(10.0);
+        //order.setCarts(new ArrayList<>());
+        order.setTotalPrice(BigDecimal.valueOf(10.0));
 
     }
 
