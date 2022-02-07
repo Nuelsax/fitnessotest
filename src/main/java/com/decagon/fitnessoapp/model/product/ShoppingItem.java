@@ -18,13 +18,9 @@ public class ShoppingItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-//    @OneToMany(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "intangible_product_id", referencedColumnName = "id")
     @OneToOne
     private IntangibleProduct intangibleProducts;
 
-//    @OneToMany(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "tangible_product_id", referencedColumnName = "id")
     @OneToOne
     private TangibleProduct tangibleProducts;
 

@@ -17,6 +17,7 @@ public class OrderResponse {
     private List<ShoppingItem> shoppingItems;
     private Double totalPrice;
     private Address shippingAddress;
+    private Long personId;
     private String orderStatus;
     private SHIPPING_METHOD shippingMethod;
 }

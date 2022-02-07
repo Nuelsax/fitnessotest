@@ -5,24 +5,23 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
 @Entity
-public class CouponCode {
+public class Image {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull
-    @Column(name = "coupon_code", nullable = false)
-    private String couponCode;
+    @Column(name = "image_url", nullable = false)
+    private String imageUrl;
 
-    @NotNull
-    @Column(name = "discount_percent", nullable = false)
-    private float discountPercent;
+    @Column(name = "image_name", nullable = false)
+    private String imageName;
 
+    @Column(name= "product_name",nullable = false)
+    private String productName;
 }

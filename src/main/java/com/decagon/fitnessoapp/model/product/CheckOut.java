@@ -54,7 +54,6 @@ public class CheckOut {
     @JoinColumn(name = "payment_card", referencedColumnName = "id", nullable = false)
     private PaymentCard paymentCard;
 
-
     @CreationTimestamp
     @Column(nullable = false)
     private Timestamp orderDate;
