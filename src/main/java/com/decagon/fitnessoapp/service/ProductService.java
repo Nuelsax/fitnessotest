@@ -10,17 +10,17 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 
 public interface ProductService {
-    ResponseEntity<ProductResponseDto> addProduct(ProductRequestDto requestDto);
+    ProductResponseDto addProduct(ProductRequestDto requestDto);
 
-    ResponseEntity<ProductResponseDto> deleteProduct(Long id);
+    ProductResponseDto deleteProduct(Long productId);
 
-    ResponseEntity<Page<TangibleProduct>> getAllProduct(int pageSize, int pageNumber);
+    Page<TangibleProduct> getAllProduct(int pageSize, int pageNumber);
 
-    ResponseEntity<Page<IntangibleProduct>> getAllServices(int pageSize, int pageNumber);
+    Page<IntangibleProduct> getAllServices(int pageSize, int pageNumber);
 
-    ResponseEntity<ProductResponseDto> updateProduct(Long id,  ProductRequestDto requestDto);
+    ProductResponseDto updateProduct(Long productId, ProductRequestDto requestDto);
 
-    ResponseEntity<ProductResponseDto> getProduct(Long id);
+    ProductResponseDto getProduct(Long productId);
 
     ResponseEntity<ProductResponseDto> viewProductDetails(Long id, String productType);
 

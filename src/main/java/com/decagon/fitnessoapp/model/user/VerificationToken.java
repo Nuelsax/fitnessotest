@@ -38,7 +38,7 @@ public class VerificationToken {
     @Column(name = "confirmed_at")
     private LocalDateTime confirmedAt;
 
-    @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.REFRESH})
+    @ManyToOne
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "person_id", referencedColumnName = "id", nullable = false)
     private Person person;

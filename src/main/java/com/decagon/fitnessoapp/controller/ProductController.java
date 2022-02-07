@@ -24,37 +24,36 @@ public class ProductController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/add")
     public ResponseEntity<ProductResponseDto> addProduct(@RequestBody ProductRequestDto requestDto) {
-        return productService.addProduct(requestDto);
+        return ResponseEntity.ok().body(productService.addProduct(requestDto));
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping("/delete/{productId}")
     public ResponseEntity<ProductResponseDto> deleteProduct(@PathVariable Long productId){
-        return productService.deleteProduct(productId);
+        return ResponseEntity.ok().body(productService.deleteProduct(productId));
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping("/update/{id}")
     public ResponseEntity<ProductResponseDto> updateProduct(@PathVariable (name = "id") Long productId, @RequestBody ProductRequestDto requestDto){
-        return productService.updateProduct(productId, requestDto);
+        return ResponseEntity.ok().body(productService.updateProduct(productId, requestDto));
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/{productId}")
     public ResponseEntity<ProductResponseDto> getProduct(@PathVariable Long productId){
-        return productService.getProduct(productId);
+        return ResponseEntity.ok().body(productService.getProduct(productId));
     }
-
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/allproducts/{size}/{number}")
     public ResponseEntity<Page<TangibleProduct>> getAllProduct(@PathVariable (name = "size") int pageSize,@PathVariable (name = "number") int pageNumber){
-        return productService.getAllProduct(pageSize, pageNumber);
+        return ResponseEntity.ok().body(productService.getAllProduct(pageSize, pageNumber));
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/allservices/{size}/{number}")
     public ResponseEntity<Page<IntangibleProduct>> getAllServices(@PathVariable (name = "size") int pageSize, @PathVariable (name = "number") int pageNumber){
-        return productService.getAllServices(pageSize, pageNumber);
+        return ResponseEntity.ok().body(productService.getAllServices(pageSize, pageNumber));
     }
 
     @GetMapping("/viewproductdetails/{productId}/{ProductType}")
