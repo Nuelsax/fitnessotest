@@ -1,5 +1,7 @@
 package com.decagon.fitnessoapp.controller;
 
+import com.decagon.fitnessoapp.model.product.CHANGE_QUANTITY;
+import com.decagon.fitnessoapp.model.product.ORDER_STATUS;
 import com.decagon.fitnessoapp.security.JwtUtils;
 import com.decagon.fitnessoapp.service.ShoppingCartService;
 import com.decagon.fitnessoapp.service.serviceImplementation.PersonDetails;
@@ -19,19 +21,22 @@ public class ShoppingCartController {
     private final PersonDetailsService userService;
     private final JwtUtils jwtTokenUtils;
 
-   @PutMapping("/add/{productId}/{quantity}")
-    public ResponseEntity<?> addItemToCart(@PathVariable(value = "productId") Long productId, @PathVariable(value = "quantity") int quantity, HttpServletRequest request) throws Exception {
+   @PutMapping("/add/{productId}/{status}")
+    public ResponseEntity<?> addItemToCart(@PathVariable(value = "productId") Long productId, @PathVariable(value = "status") CHANGE_QUANTITY status, HttpServletRequest request) throws Exception {
        final String requestHeader = request.getHeader("Authorization");
        String jwt = requestHeader.substring(7);
        String username = jwtTokenUtils.extractUsername(jwt);
        final PersonDetails personDetails = userService.loadUserByUsername(username);
 
-       return ResponseEntity.ok(shoppingCartService.addToCart(productId, quantity, personDetails));
+       return ResponseEntity.ok(shoppingCartService.addToCart(productId, status, personDetails));
    }
 
    @DeleteMapping("/{productId}")
-    public ResponseEntity<?> removeItemFromCart(@PathVariable(value = "productId") Long productId){
-       return ResponseEntity.ok(
-               shoppingCartService.removeProductAsShoppingItem(productId));
+    public ResponseEntity<?> removeItemFromCart(@PathVariable(value = "productId") Long productId, HttpServletRequest request) throws Exception {
+        final String requestHeader = request.getHeader("Authorization");
+        String jwt = requestHeader.substring(7);
+        String username = jwtTokenUtils.extractUsername(jwt);
+        final PersonDetails personDetails = userService.loadUserByUsername(username);
+       return ResponseEntity.ok(shoppingCartService.removeFromCart(productId, personDetails));
    }
 }

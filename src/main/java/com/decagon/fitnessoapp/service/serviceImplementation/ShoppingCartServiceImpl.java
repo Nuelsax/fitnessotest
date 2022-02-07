@@ -46,7 +46,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     }
 
     @Override
-    public Cart addToCart(Long productId, int quantity, PersonDetails authentication) {
+    public Cart addToCart(Long productId, CHANGE_QUANTITY status, PersonDetails authentication) {
         Optional<TangibleProduct> tangibleProduct = tangibleProductRepository.findById(productId);
         Optional<IntangibleProduct> intangibleProduct = intangibleProductRepository.findById(productId);
         TangibleProduct product = mapper.convertValue(tangibleProduct, TangibleProduct.class);
@@ -55,15 +55,27 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
         Person person = personRepository.findPersonByUserName(authentication.getUsername())
                 .orElseThrow(() -> new UsernameNotFoundException("User Name does not Exist"));
         Cart cart = getCarts(person);
+
         if(tangibleProduct.isPresent()) {
-            cart.getTangibleProduct().put(product.getProductName(), quantity);
+            int quantity = cart.getTangibleProduct().get(product.getProductName());
+            if(status == CHANGE_QUANTITY.INCREASE && quantity <= 10) {
+                cart.getTangibleProduct().put(product.getProductName(), ++quantity);
+            } else if (status == CHANGE_QUANTITY.DECREASE && quantity > 0) {
+                cart.getTangibleProduct().put(product.getProductName(), --quantity);
+            }
         } else if(intangibleProduct.isPresent()) {
-            cart.getIntangibleProduct().put(service.getProductName(), quantity);
+            int quantity = cart.getIntangibleProduct().get(service.getProductName());
+            if(status == CHANGE_QUANTITY.INCREASE && quantity <= 10) {
+                cart.getIntangibleProduct().put(service.getProductName(), ++quantity);
+            } else if (status == CHANGE_QUANTITY.DECREASE && quantity > 0) {
+                cart.getIntangibleProduct().put(service.getProductName(), --quantity);
+            }
         } else {
             throw new IllegalStateException("Product with id " + productId + " does not exist");
         }
         return shoppingCartRepository.save(cart);
     }
+
 
     @NotNull
     private Cart getCarts(Person person) {
@@ -75,14 +87,28 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
         } else return cart;
     }
 
-        @Override
-        public ResponseEntity<String> removeProductAsShoppingItem (Long productId){
-            boolean exists = shoppingCartRepository.findById(productId).isPresent();
-            if (!exists) {
-                throw new IllegalStateException("Product with id " + productId + " does not exist");
-            }
-            shoppingCartRepository.deleteById(productId);
-            return ResponseEntity.ok("Product: " + productId + " has been deleted successfully");
+    @Override
+    public Cart removeFromCart (Long productId, PersonDetails authentication){
+        Optional<TangibleProduct> tangibleProduct = tangibleProductRepository.findById(productId);
+        Optional<IntangibleProduct> intangibleProduct = intangibleProductRepository.findById(productId);
+        TangibleProduct product = mapper.convertValue(tangibleProduct, TangibleProduct.class);
+        IntangibleProduct service = mapper.convertValue(intangibleProduct, IntangibleProduct.class);
+
+        Person person = personRepository.findPersonByUserName(authentication.getUsername())
+                .orElseThrow(() -> new UsernameNotFoundException("User Name does not Exist"));
+
+        Cart cart = shoppingCartRepository.findByPerson(person).orElse(null);
+        if (cart == null) {
+            throw new IllegalStateException("You have no item in cart");
         }
+        if(tangibleProduct.isPresent()) {
+            Integer pv = cart.getTangibleProduct().remove(product.getProductName());
+        } else if(intangibleProduct.isPresent()) {
+            Integer sv = cart.getIntangibleProduct().remove(service.getProductName());
+        } else {
+            throw new IllegalStateException("You do not have item in cart");
+        }
+        return cart;
+    }
 }
 
