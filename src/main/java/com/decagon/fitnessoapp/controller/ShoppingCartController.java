@@ -39,4 +39,14 @@ public class ShoppingCartController {
         final PersonDetails personDetails = userService.loadUserByUsername(username);
        return ResponseEntity.ok(shoppingCartService.removeFromCart(productId, personDetails));
    }
+
+   @GetMapping("/viewCartItems/{id}")
+   public ResponseEntity<?> getCartById(@PathVariable(value = "id") Long productId){
+       return ResponseEntity.ok(shoppingCartService.getCartById(productId));
+   }
+
+    @GetMapping("/viewCartItems")
+    public ResponseEntity<?> viewCartItems(){
+        return ResponseEntity.ok(shoppingCartService.viewCartItems());
+    }
 }
