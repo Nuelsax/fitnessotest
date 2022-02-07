@@ -88,13 +88,13 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     }
 
     @Override
-    public Cart removeFromCart (Long productId, PersonDetails authentication){
+    public Cart removeFromCart (Long productId, PersonDetails personDetails){
         Optional<TangibleProduct> tangibleProduct = tangibleProductRepository.findById(productId);
         Optional<IntangibleProduct> intangibleProduct = intangibleProductRepository.findById(productId);
         TangibleProduct product = mapper.convertValue(tangibleProduct, TangibleProduct.class);
         IntangibleProduct service = mapper.convertValue(intangibleProduct, IntangibleProduct.class);
 
-        Person person = personRepository.findPersonByUserName(authentication.getUsername())
+        Person person = personRepository.findPersonByUserName(personDetails.getUsername())
                 .orElseThrow(() -> new UsernameNotFoundException("User Name does not Exist"));
 
         Cart cart = shoppingCartRepository.findByPerson(person).orElse(null);
