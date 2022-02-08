@@ -5,6 +5,7 @@ import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.decagon.fitnessoapp.model.product.CHANGE_QUANTITY;
 import com.decagon.fitnessoapp.model.product.IntangibleProduct;
 import com.decagon.fitnessoapp.model.product.TangibleProduct;
 import com.decagon.fitnessoapp.repository.IntangibleProductRepository;
@@ -67,8 +68,7 @@ class ShoppingCartServiceImplTest {
         IntangibleProduct intangibleProduct = new IntangibleProduct();
         intangibleProduct.setCategory("Category");
         intangibleProduct.setDescription("The characteristics of someone or something");
-        intangibleProduct.setDurationInDays(1);
-        intangibleProduct.setDurationInHoursPerDay(1);
+        intangibleProduct.setMonthlySubscription(1);
         intangibleProduct.setId(123L);
         intangibleProduct.setImage("Image");
         intangibleProduct.setPrice(BigDecimal.valueOf(42L));
@@ -78,7 +78,7 @@ class ShoppingCartServiceImplTest {
         Optional<IntangibleProduct> ofResult1 = Optional.of(intangibleProduct);
         when(this.intangibleProductRepository.findById((Long) any())).thenReturn(ofResult1);
         assertThrows(IllegalStateException.class,
-                () -> this.shoppingCartServiceImpl.addToCart(123L, 2, this.personDetails));
+                () -> this.shoppingCartServiceImpl.addToCart(123L, CHANGE_QUANTITY.INCREASE, this.personDetails));
         verify(this.tangibleProductRepository).findById((Long) any());
         verify(this.objectMapper).convertValue((Object) any(), (Class<Object>) any());
         verify(this.intangibleProductRepository).findById((Long) any());
