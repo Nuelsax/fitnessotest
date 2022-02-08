@@ -1,5 +1,6 @@
 package com.decagon.fitnessoapp.service.serviceImplementation;
 
+import com.decagon.fitnessoapp.dto.CartResponse;
 import com.decagon.fitnessoapp.model.product.*;
 import com.decagon.fitnessoapp.model.user.Person;
 import com.decagon.fitnessoapp.repository.IntangibleProductRepository;
@@ -109,13 +110,13 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     }
 
     @Override
-    public Cart getCartById(Long productId) {
-        return shoppingCartRepository.getById(productId);
+    public CartResponse getCartById(Long productId) {
+        return CartResponse.builder().cartItem(shoppingCartRepository.getById(productId)).build();
     }
 
     @Override
-    public List<Cart> viewCartItems() {
-        return shoppingCartRepository.findAll();
+    public CartResponse viewCartItems() {
+        return CartResponse.builder().carts(shoppingCartRepository.findAll()).build();
     }
 }
 

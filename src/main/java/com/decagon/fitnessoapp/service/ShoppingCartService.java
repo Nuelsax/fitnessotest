@@ -1,5 +1,6 @@
 package com.decagon.fitnessoapp.service;
 
+import com.decagon.fitnessoapp.dto.CartResponse;
 import com.decagon.fitnessoapp.model.product.CHANGE_QUANTITY;
 import com.decagon.fitnessoapp.model.product.Cart;
 import com.decagon.fitnessoapp.service.serviceImplementation.PersonDetails;
@@ -13,7 +14,6 @@ public interface ShoppingCartService {
 
      Cart removeFromCart(Long productId, PersonDetails authentication);
 
-     Cart getCartById(Long productId);
-
-     List<Cart> viewCartItems();
+     CartResponse getCartById(Long productId);
+     CartResponse viewCartItems();
 }
