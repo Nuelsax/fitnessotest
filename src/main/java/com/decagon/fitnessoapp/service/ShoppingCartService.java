@@ -1,12 +1,21 @@
 package com.decagon.fitnessoapp.service;
 
-import com.decagon.fitnessoapp.model.product.Cart;
-import com.decagon.fitnessoapp.service.serviceImplementation.PersonDetails;
+import com.decagon.fitnessoapp.dto.ShoppingItemResponse;
+import com.decagon.fitnessoapp.model.product.ShoppingItem;
 import org.springframework.http.ResponseEntity;
+
+import java.util.List;
+import java.util.Optional;
 
 public interface ShoppingCartService {
 
-     Cart addToCart(Long productId, int quantity, PersonDetails authentication) throws Exception;
+
+     ResponseEntity<ShoppingItem> addProductAsShoppingItem(Long productId, int quantity);
 
      ResponseEntity<String> removeProductAsShoppingItem(Long productId);
+
+     List<ShoppingItem> viewCartItems();
+
+     ShoppingItemResponse getCartById(Long productId);
+
 }

@@ -1,88 +1,72 @@
 package com.decagon.fitnessoapp.service.serviceImplementation;
 
-import com.decagon.fitnessoapp.model.product.*;
-import com.decagon.fitnessoapp.model.user.Person;
+import com.decagon.fitnessoapp.dto.ShoppingItemResponse;
+import com.decagon.fitnessoapp.exception.CustomServiceExceptions;
+import com.decagon.fitnessoapp.model.product.ShoppingItem;
 import com.decagon.fitnessoapp.repository.IntangibleProductRepository;
-import com.decagon.fitnessoapp.repository.PersonRepository;
 import com.decagon.fitnessoapp.repository.ShoppingCartRepository;
 import com.decagon.fitnessoapp.repository.TangibleProductRepository;
 import com.decagon.fitnessoapp.service.ShoppingCartService;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.NoArgsConstructor;
-import org.jetbrains.annotations.NotNull;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
+import org.modelmapper.ModelMapper;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
 
 
 @Service
-@NoArgsConstructor
+@AllArgsConstructor
 public class ShoppingCartServiceImpl implements ShoppingCartService {
 
-    private ShoppingCartRepository shoppingCartRepository;
+    private final ShoppingCartRepository shoppingCartRepository;
 
-    private TangibleProductRepository tangibleProductRepository;
+    private final TangibleProductRepository tangibleProductRepository;
 
-    private IntangibleProductRepository intangibleProductRepository;
+    private final IntangibleProductRepository intangibleProductRepository;
 
-    private PersonRepository personRepository;
+    private final ModelMapper modelMapper;
 
-    private ObjectMapper mapper;
 
-    @Autowired
-    public ShoppingCartServiceImpl(ShoppingCartRepository shoppingCartRepository,
-                                   TangibleProductRepository tangibleProductRepository,
-                                   IntangibleProductRepository intangibleProductRepository,
-                                   PersonRepository personRepository,
-                                   ObjectMapper mapper) {
-        this.shoppingCartRepository = shoppingCartRepository;
-        this.tangibleProductRepository = tangibleProductRepository;
-        this.intangibleProductRepository = intangibleProductRepository;
-        this.personRepository = personRepository;
-        this.mapper = mapper;
+    @Override
+    public ResponseEntity<ShoppingItem> addProductAsShoppingItem(Long productId, int quantity) {
+        boolean isTangibleProduct = tangibleProductRepository.findById(productId).isPresent();
+        boolean isInTangibleProduct = intangibleProductRepository.findById(productId).isPresent();
+
+        ShoppingItem savedItem = null;
+        if (isTangibleProduct || isInTangibleProduct) {
+            ShoppingItem shoppingItem = new ShoppingItem(intangibleProductRepository.getById(productId),tangibleProductRepository.getById(productId), quantity);
+
+            savedItem = shoppingCartRepository.save(shoppingItem);
+        }
+        return ResponseEntity.ok().body(savedItem);
     }
 
     @Override
-    public Cart addToCart(Long productId, int quantity, PersonDetails authentication) {
-        Optional<TangibleProduct> tangibleProduct = tangibleProductRepository.findById(productId);
-        Optional<IntangibleProduct> intangibleProduct = intangibleProductRepository.findById(productId);
-        TangibleProduct product = mapper.convertValue(tangibleProduct.get(), TangibleProduct.class);
-        IntangibleProduct service = mapper.convertValue(intangibleProduct.get(), IntangibleProduct.class);
+    public ResponseEntity<String> removeProductAsShoppingItem(Long productId) {
+        boolean exists = shoppingCartRepository.findById(productId).isPresent();
 
-        Person person = personRepository.findPersonByUserName(authentication.getUsername())
-                .orElseThrow(() -> new UsernameNotFoundException("User Name does not Exist"));
-        Cart cart = getCarts(person);
-        if(tangibleProduct.isPresent()) {
-            cart.getTangibleProduct().put(product.getProductName(), quantity);
-        } else if(intangibleProduct.isPresent()) {
-            cart.getIntangibleProduct().put(service.getProductName(), quantity);
-        } else {
-            throw new IllegalStateException("Product with id " + productId + " does not exist");
+        if (!exists) {
+            throw new IllegalStateException("Product with id "+ productId + " does not exist");
         }
-        return shoppingCartRepository.save(cart);
+
+        shoppingCartRepository.deleteById(productId);
+
+        return ResponseEntity.ok("Product: " + productId + " has been deleted successfully");
     }
 
-    @NotNull
-    private Cart getCarts(Person person) {
-        Cart cart = shoppingCartRepository.findByPerson(person).orElse(null);
-        Cart newCart = new Cart();
-        if (cart == null) {
-            newCart.setPerson(person);
-            return newCart;
-        } else return cart;
+    @Override
+    public List<ShoppingItem> viewCartItems() {
+        return shoppingCartRepository.findAll();
     }
 
-        @Override
-        public ResponseEntity<String> removeProductAsShoppingItem (Long productId){
-            boolean exists = shoppingCartRepository.findById(productId).isPresent();
-            if (!exists) {
-                throw new IllegalStateException("Product with id " + productId + " does not exist");
-            }
-            shoppingCartRepository.deleteById(productId);
-            return ResponseEntity.ok("Product: " + productId + " has been deleted successfully");
-        }
+    @Override
+    public ShoppingItemResponse getCartById(Long productId) {
+        ShoppingItem shoppingItem = shoppingCartRepository.findById(productId).orElseThrow(()-> new CustomServiceExceptions("The product does not exist " + productId + " "));
+        return modelMapper.map(shoppingItem, ShoppingItemResponse.class);
+    }
+
 }
 
