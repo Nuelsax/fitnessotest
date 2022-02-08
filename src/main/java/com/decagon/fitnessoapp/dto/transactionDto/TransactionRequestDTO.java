@@ -8,7 +8,7 @@ import java.util.Map;
 
 @Data
 @Builder
-public class InitializeTransactionRequestDTO {
+public class TransactionRequestDTO {
 
     private String amount;
     private String email;
