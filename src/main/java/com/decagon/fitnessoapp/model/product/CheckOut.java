@@ -60,6 +60,8 @@ public class CheckOut {
 
     private String couponCode;
 
+    private String referenceNumber;
+
     @Column(nullable = false)
     private SHIPPING_METHOD shippingMethod;
 

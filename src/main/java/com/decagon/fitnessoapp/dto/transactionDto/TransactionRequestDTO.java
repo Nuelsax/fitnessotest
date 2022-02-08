@@ -2,14 +2,15 @@ package com.decagon.fitnessoapp.dto.transactionDto;
 
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 import java.util.Map;
 
 @Data
+@NoArgsConstructor
 @Builder
 public class TransactionRequestDTO {
-
     private String amount;
     private String email;
     private String reference;

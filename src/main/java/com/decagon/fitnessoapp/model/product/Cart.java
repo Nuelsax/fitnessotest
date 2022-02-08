@@ -36,5 +36,7 @@ public class Cart {
    @JoinColumn(name = "person_id", referencedColumnName = "id")
    private Person person;
 
+   private String cartReference;
+
 
 }
