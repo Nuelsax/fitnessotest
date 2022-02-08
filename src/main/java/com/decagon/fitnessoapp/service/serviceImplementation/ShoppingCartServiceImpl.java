@@ -54,18 +54,24 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
         Cart cart = getCarts(personDetails);
 
         if(tangibleProductRepository.findById(productId).isPresent()) {
+            cart.getTangibleProduct().putIfAbsent(product.getProductName(), 0);
             int quantity = cart.getTangibleProduct().get(product.getProductName());
             if (status == CHANGE_QUANTITY.INCREASE && quantity <= 10) {
                 cart.getTangibleProduct().put(product.getProductName(), ++quantity);
             } else if (status == CHANGE_QUANTITY.DECREASE && quantity > 0) {
                 cart.getTangibleProduct().put(product.getProductName(), --quantity);
+            } else {
+                cart.getTangibleProduct().put(product.getProductName(), 1);
             }
         } else if (intangibleProductRepository.findById(productId).isPresent()) {
+            cart.getIntangibleProduct().putIfAbsent(service.getProductName(), 0);
             int quantity = cart.getIntangibleProduct().get(service.getProductName());
             if(status == CHANGE_QUANTITY.INCREASE && quantity <= 10) {
                 cart.getIntangibleProduct().put(service.getProductName(), ++quantity);
             } else if (status == CHANGE_QUANTITY.DECREASE && quantity > 0) {
                 cart.getIntangibleProduct().put(service.getProductName(), --quantity);
+            } else {
+                cart.getIntangibleProduct().put(service.getProductName(), 1);
             }
         } else {
             throw new IllegalStateException("Product with id " + productId + " does not exist");
