@@ -58,8 +58,7 @@ public class CheckOut {
     @Column(nullable = false)
     private Timestamp orderDate;
 
-    @OneToOne
-    private CouponCode couponCode;
+    private String couponCode;
 
     @Column(nullable = false)
     private SHIPPING_METHOD shippingMethod;
