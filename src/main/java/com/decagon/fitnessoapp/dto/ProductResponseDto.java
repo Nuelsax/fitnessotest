@@ -17,7 +17,6 @@ public class ProductResponseDto {
     private Long stock;
     private String ProductType;
     private String image;
-    private Integer durationInHoursPerDay;
-    private Integer durationInDays;
+    private Integer monthlySubscription;
     private Integer quantity;
 }

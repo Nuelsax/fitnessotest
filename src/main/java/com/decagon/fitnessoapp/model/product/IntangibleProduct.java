@@ -21,10 +21,8 @@ public class IntangibleProduct extends Product{
     }
 
     @Column(name = "duration_in_hours_per_day", nullable = false)
-    private Integer durationInHoursPerDay;
+    private Integer monthlySubscription;
 
-    @Column(name = "duration_in_days", nullable = false)
-    private Integer durationInDays;
 
 
 }

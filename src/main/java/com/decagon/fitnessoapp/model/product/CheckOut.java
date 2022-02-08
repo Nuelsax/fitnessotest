@@ -32,7 +32,7 @@ public class CheckOut {
     @NotNull
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "shoppingCart_id", referencedColumnName = "id", nullable = false)
-    private Cart shoppingItems;
+    private Cart shoppingCart;
 
     @NotNull
     @Column(name = "total_price", nullable = false)
@@ -63,4 +63,9 @@ public class CheckOut {
 
     @Column(nullable = false)
     private SHIPPING_METHOD shippingMethod;
+
+    @Column(name = "order_status")
+    @Enumerated(EnumType.STRING)
+    private ORDER_STATUS orderStatus;
+
 }
