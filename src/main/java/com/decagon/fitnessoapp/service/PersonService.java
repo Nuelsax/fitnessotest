@@ -13,6 +13,10 @@ public interface PersonService {
 
     PersonResponse register(PersonRequest personRequest) throws MailjetSocketTimeoutException, MailjetException;
 
+    PersonResponse addTrainer(PersonRequest personRequest);
+
+    ResponseEntity<String> removeTrainer(Long id);
+
     void sendingEmail(PersonRequest personRequest) throws MailjetSocketTimeoutException, MailjetException;
 
     ChangePasswordResponse updateCurrentPassword(ChangePasswordRequest changePasswordRequest);
@@ -25,4 +29,5 @@ public interface PersonService {
             MailjetException;
 
     String buildEmail(String name, String link);
+
 }

@@ -5,6 +5,8 @@ import com.decagon.fitnessoapp.dto.*;
 import com.decagon.fitnessoapp.exception.CustomServiceExceptions;
 import com.decagon.fitnessoapp.exception.PersonNotFoundException;
 import com.decagon.fitnessoapp.model.user.Person;
+import com.decagon.fitnessoapp.model.user.ROLE_DETAIL;
+import com.decagon.fitnessoapp.model.user.Role;
 import com.decagon.fitnessoapp.repository.PersonRepository;
 import com.decagon.fitnessoapp.security.JwtUtils;
 import com.decagon.fitnessoapp.service.PersonService;
@@ -15,6 +17,7 @@ import net.bytebuddy.utility.RandomString;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -99,6 +102,30 @@ public class PersonServiceImpl implements PersonService {
     }
 
     @Override
+    public PersonResponse addTrainer(PersonRequest personRequest){
+        Person person = personRepository.findByEmail(personRequest.getEmail())
+                .orElseThrow(()-> new PersonNotFoundException("Email does not exist"));
+
+        if(person.getEmail() != null &&  person.getRoleDetail() != ROLE_DETAIL.TRAINER && person.getRoleDetail() != ROLE_DETAIL.ADMIN){
+            person.setRoleDetail(ROLE_DETAIL.TRAINER);
+        }
+        personRepository.save(person);
+
+        return modelMapper.map(person, PersonResponse.class);
+
+    }
+
+    @Override
+    public ResponseEntity<String> removeTrainer(Long id) {
+        Person person = personRepository.getById(id);
+        if (person.getRoleDetail() == ROLE_DETAIL.TRAINER) {
+            personRepository.delete(person);
+            return ResponseEntity.ok("Response: Trainer deleted successfully");
+        }
+         return ResponseEntity.ok("Response: User not a Trainer");
+    }
+
+    @Override
     public void sendingEmail(PersonRequest personRequest) throws MailjetSocketTimeoutException, MailjetException {
         Person person = personRepository.findByEmail(personRequest.getEmail())
                 .orElseThrow(() -> new CustomServiceExceptions("Email not registered"));
@@ -107,6 +134,8 @@ public class PersonServiceImpl implements PersonService {
         String subject = "Confirm your email";
         emailSender.sendMessage(subject, person.getEmail(), buildEmail(person.getFirstName(), link));
     }
+
+
 
     @Override
     public ResponseEntity<AuthResponse> loginUser(AuthRequest req) throws Exception {
