@@ -4,9 +4,9 @@ package com.decagon.fitnessoapp.utils;
 public class Api_Uri {
 
     public static String [] PUBLIC_URIs = {
-            "/v2/api-docs", "/configuration/**", "/swagger*/**","/swagger-ui/**", "/webjars/**",
+            "/v2/api-docs", "/configuration/**", "/swagger*/**", "/swagger-ui/**", "/webjars/**",
             "/address/**", "/person/login", "/person/register", "/person/admin/register", "/product/**", "/order/**", "/articles/blogposts/**"
-            , "/product/search"
+            , "/product/search", "/carts/add/**"
 
             /*
             {
@@ -21,7 +21,5 @@ public class Api_Uri {
   "quantity": 3
 }
              */
-            "/v2/api-docs", "/configuration/**", "/swagger*/**","/swagger-ui/**", "/webjars/**", "/person/**", "/address/**",
-            "/product/**", "/carts/add/**"
     };
 }

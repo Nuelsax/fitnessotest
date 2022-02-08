@@ -1,5 +1,6 @@
 package com.decagon.fitnessoapp.controller;
 
+import com.decagon.fitnessoapp.dto.CartResponse;
 import com.decagon.fitnessoapp.model.product.CHANGE_QUANTITY;
 import com.decagon.fitnessoapp.model.product.ORDER_STATUS;
 import com.decagon.fitnessoapp.security.JwtUtils;
@@ -41,12 +42,12 @@ public class ShoppingCartController {
    }
 
    @GetMapping("/viewCartItems/{id}")
-   public ResponseEntity<?> getCartById(@PathVariable(value = "id") Long productId){
+   public ResponseEntity<CartResponse> getCartById(@PathVariable(value = "id") Long productId){
        return ResponseEntity.ok(shoppingCartService.getCartById(productId));
    }
 
     @GetMapping("/viewCartItems")
-    public ResponseEntity<?> viewCartItems(){
+    public ResponseEntity<CartResponse> viewCartItems(){
         return ResponseEntity.ok(shoppingCartService.viewCartItems());
     }
 }
