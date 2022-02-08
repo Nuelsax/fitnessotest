@@ -9,7 +9,6 @@ import java.util.Map;
 
 @Data
 @NoArgsConstructor
-@Builder
 public class TransactionRequestDTO {
     private String amount;
     private String email;

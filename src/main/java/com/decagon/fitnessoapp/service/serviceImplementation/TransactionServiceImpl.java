@@ -26,21 +26,21 @@ import java.util.Optional;
 @Service
 @AllArgsConstructor
 public class TransactionServiceImpl implements TransactionService {
+    private final CheckOutRepository checkOutRepository;
     private final RestTemplate restTemplate;
-    private final CheckOutService checkOutService;
 
-    @Value("${website.address}")
-    private String website;
-    @Value("${server.port}")
-    private Integer port;
+//    @Value("${website.address}")
+//    private String website = "localhost";
+//    @Value("${server.port}")
+//    private Integer port = 9067;
 
     @Override
     public TransactionResponseDTO initializeTransaction(String email, BigDecimal totalPrice,
                                                         String referenceNumber, Long cardNumber){
 
         TransactionRequestDTO transactionRequestDTO = new TransactionRequestDTO();
-        final String successfulTransaction = "http://" + website + ":" + port + "/transaction/success";
-        final String failedTransaction = "http://" + website + ":" + port + "/transaction/fail";
+        final String successfulTransaction = "http://" + "localhost" + ":" + "9067" + "/transaction/success";
+        final String failedTransaction = "http://" + "localhost" + ":" + "9067" + "/transaction/fail";
         final String url = "https://api.paystack.co/transaction/initialize";
         String key = API.API_KEY_PAYMENT;
 
@@ -77,10 +77,10 @@ public class TransactionServiceImpl implements TransactionService {
 
     public PaymentResponse printStatus(TransVerificationResponse transaction, String referenceNumber){
         if(transaction.getData().getStatus().equals("success")){
-            CheckOut checkOut = checkOutService.findByReferenceNumber(referenceNumber);
+            CheckOut checkOut = checkOutRepository.findByReferenceNumber(referenceNumber).orElse(null);
             if(checkOut != null) {
                 checkOut.setOrderStatus(ORDER_STATUS.COMPLETED);
-                checkOutService.updateCheckOut(checkOut);
+                checkOutRepository.save(checkOut);
                 return PaymentResponse.builder().message("Payment was Successful").status("OK").build();
             }
             return PaymentResponse.builder().message("Unable to find the check out").status("ERROR").build();

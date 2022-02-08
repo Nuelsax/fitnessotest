@@ -6,7 +6,7 @@ public class Api_Uri {
     public static String [] PUBLIC_URIs = {
             "/v2/api-docs", "/configuration/**", "/swagger*/**","/swagger-ui/**", "/webjars/**",
             "/address/**", "/person/login", "/person/register", "/person/admin/register", "/product/**", "/order/**", "/articles/blogposts/**"
-            , "/product/search",  "/checkout/**"
+            , "/product/search",  "/checkout/**", "/carts/**", "/transaction/**"
 
             /*
             {
