@@ -8,7 +8,6 @@ import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.UUID;
 
-
 @Data
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)

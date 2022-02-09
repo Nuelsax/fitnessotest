@@ -59,7 +59,7 @@ public class ProductController {
     @GetMapping("/viewproductdetails/{productId}/{ProductType}")
     public ResponseEntity<ProductResponseDto> viewProductDetail(@PathVariable("productId") Long productId,
                                                                   @PathVariable("ProductType") String productType){
-        ProductResponseDto productResponseDto = productService.viewProductDetails(productId, productType).getBody();
+        ProductResponseDto productResponseDto = productService.viewProductDetails(productId, productType);
         productResponseDto.setStock(null);
         return ResponseEntity.ok().body(productResponseDto);
     }
@@ -68,7 +68,7 @@ public class ProductController {
     @GetMapping("/admin/viewproductdetails/{Id}/{producttype}")
     public ResponseEntity<ProductResponseDto> viewProductDetailForAdmin(@PathVariable("Id") Long productId,
                                                                   @PathVariable("producttype") String productType){
-        return productService.viewProductDetails(productId, productType);
+        return ResponseEntity.ok().body(productService.viewProductDetails(productId, productType));
     }
 
     @GetMapping("/viewproducts/{pageNumber}")

@@ -1,6 +1,6 @@
 package com.decagon.fitnessoapp.service.serviceImplementation;
 
-import com.decagon.fitnessoapp.dto.CartResponse;
+import com.decagon.fitnessoapp.dto.ShoppingItemResponse;
 import com.decagon.fitnessoapp.model.product.*;
 import com.decagon.fitnessoapp.model.user.Person;
 import com.decagon.fitnessoapp.repository.IntangibleProductRepository;
@@ -11,8 +11,8 @@ import com.decagon.fitnessoapp.service.ShoppingCartService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.NoArgsConstructor;
 import org.jetbrains.annotations.NotNull;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -33,21 +33,26 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
 
     private ObjectMapper mapper;
 
+    private ModelMapper modelMapper;
+
     @Autowired
-    public ShoppingCartServiceImpl(ShoppingCartRepository shoppingCartRepository,
-                                   TangibleProductRepository tangibleProductRepository,
-                                   IntangibleProductRepository intangibleProductRepository,
-                                   PersonRepository personRepository,
-                                   ObjectMapper mapper) {
+    public ShoppingCartServiceImpl(ShoppingCartRepository shoppingCartRepository, TangibleProductRepository tangibleProductRepository,
+                                   IntangibleProductRepository intangibleProductRepository, PersonRepository personRepository,
+                                   ObjectMapper mapper, ModelMapper modelMapper) {
         this.shoppingCartRepository = shoppingCartRepository;
         this.tangibleProductRepository = tangibleProductRepository;
         this.intangibleProductRepository = intangibleProductRepository;
         this.personRepository = personRepository;
         this.mapper = mapper;
+        this.modelMapper = modelMapper;
     }
 
+
+
+
     @Override
-    public Cart addToCart(Long productId, CHANGE_QUANTITY status, PersonDetails personDetails) {
+    public ShoppingItemResponse addToCart(Long productId, CHANGE_QUANTITY status, PersonDetails personDetails) {
+        ShoppingItemResponse responseDto = new ShoppingItemResponse();
         TangibleProduct product = mapper.convertValue(tangibleProductRepository.findById(productId), TangibleProduct.class);
         IntangibleProduct service = mapper.convertValue(intangibleProductRepository.findById(productId), IntangibleProduct.class);
 
@@ -76,7 +81,11 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
         } else {
             throw new IllegalStateException("Product with id " + productId + " does not exist");
         }
-        return shoppingCartRepository.save(cart);
+        shoppingCartRepository.save(cart);
+        responseDto.setId(cart.getPerson().getId());
+        responseDto.setIntangibleProduct(cart.getIntangibleProduct());
+        responseDto.setTangibleProduct(cart.getTangibleProduct());
+        return responseDto;
     }
 
     @NotNull
@@ -94,7 +103,8 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
 
 
     @Override
-    public Cart removeFromCart (Long productId, PersonDetails personDetails){
+    public ShoppingItemResponse removeFromCart (Long productId, PersonDetails personDetails){
+        ShoppingItemResponse responseDto = new ShoppingItemResponse();
         TangibleProduct product = mapper.convertValue(tangibleProductRepository.findById(productId), TangibleProduct.class);
         IntangibleProduct service = mapper.convertValue(intangibleProductRepository.findById(productId), IntangibleProduct.class);
 
@@ -112,17 +122,21 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
         } else {
             throw new IllegalStateException("You do not have item in cart");
         }
-        return cart;
+
+        responseDto.setId(cart.getPerson().getId());
+        responseDto.setIntangibleProduct(cart.getIntangibleProduct());
+        responseDto.setTangibleProduct(cart.getTangibleProduct());
+        return responseDto;
     }
 
     @Override
-    public CartResponse getCartById(Long productId) {
-        return CartResponse.builder().cartItem(shoppingCartRepository.getById(productId)).build();
+    public Cart getCartById(Long productId) {
+        return shoppingCartRepository.getById(productId);
     }
 
     @Override
-    public CartResponse viewCartItems() {
-        return CartResponse.builder().carts(shoppingCartRepository.findAll()).build();
+    public List<Cart> viewCartItems() {
+        return shoppingCartRepository.findAll();
     }
 }
 

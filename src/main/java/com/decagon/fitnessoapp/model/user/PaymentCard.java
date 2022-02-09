@@ -17,9 +17,6 @@ public class PaymentCard {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "account_name", nullable = false)
-    private String accountName;
-
     @NotNull
 //    @Column(name = "card_number", unique = true, nullable = false)
     @Column(name = "card_number", nullable = false)

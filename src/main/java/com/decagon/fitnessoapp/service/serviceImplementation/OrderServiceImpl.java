@@ -36,15 +36,20 @@ public class OrderServiceImpl implements OrderService {
 
 
     @Override
-    public ResponseEntity<OrderResponse> getOrder(Authentication authentication) {
+    public OrderResponse getOrder(Authentication authentication) {
 
         Person person = personRepository.findPersonByUserName(authentication.getName())
                 .orElseThrow(()-> new UsernameNotFoundException("Check getOrder at OrderServiceImpl: User Name does not Exist"));
         Order order = orderRepository.findOrderByPerson_Id(person.getId())
                 .orElseThrow(()-> new NullPointerException("Order does not Exist"));
         OrderResponse orderResponse = new OrderResponse();
-        modelMapper.map(order, orderResponse);
-        return ResponseEntity.ok().body(orderResponse);
+        if (order != null){
+            orderResponse.setPersonId(person.getId());
+            modelMapper.map(order, orderResponse);
+            return orderResponse;
+        }else {
+            throw  new NullPointerException("No Order Found");
+        }
     }
 
     @Override
