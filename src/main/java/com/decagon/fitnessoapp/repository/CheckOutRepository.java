@@ -9,6 +9,6 @@ import java.util.Optional;
 @Repository
 public interface CheckOutRepository extends JpaRepository<CheckOut, Long> {
     Optional<CheckOut> findByReferenceNumber(String referenceNumber);
-    Optional<CheckOut> findCheckOutByShoppingCartId(Long cartId);
-
+//    Optional<CheckOut> findCheckOutByShoppingCartId(Long cartId);
+    Optional<CheckOut> findCheckOutByShoppingCartUniqueId(String shoppingCartId);
 }

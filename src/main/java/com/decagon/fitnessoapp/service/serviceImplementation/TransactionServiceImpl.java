@@ -11,6 +11,7 @@ import com.decagon.fitnessoapp.repository.CheckOutRepository;
 import com.decagon.fitnessoapp.service.CheckOutService;
 import com.decagon.fitnessoapp.service.TransactionService;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -25,6 +26,7 @@ import java.util.Optional;
 
 @Service
 @AllArgsConstructor
+@Slf4j
 public class TransactionServiceImpl implements TransactionService {
     private final CheckOutRepository checkOutRepository;
     private final RestTemplate restTemplate;
@@ -42,8 +44,12 @@ public class TransactionServiceImpl implements TransactionService {
         final String successfulTransaction = "http://" + "localhost" + ":" + "9067" + "/transaction/success";
         final String failedTransaction = "http://" + "localhost" + ":" + "9067" + "/transaction/fail";
         final String url = "https://api.paystack.co/transaction/initialize";
-        String key = API.API_KEY_PAYMENT;
+        final String key = API.API_KEY_PAYMENT;
+        log.info(totalPrice.toString());
 
+        transactionRequestDTO.setEmail(email);
+        transactionRequestDTO.setTransaction_charge(1);
+        transactionRequestDTO.setAmount(totalPrice.toString());
         transactionRequestDTO.setReference(referenceNumber);
         transactionRequestDTO.setCallback_url(successfulTransaction);
         transactionRequestDTO.setMetadata(Map.of("cancel_action", failedTransaction,
@@ -55,7 +61,8 @@ public class TransactionServiceImpl implements TransactionService {
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("Authorization", "Bearer " + key);
         HttpEntity<TransactionRequestDTO> entity =
-                new HttpEntity<>(transactionRequestDTO,headers);
+                new HttpEntity<>(transactionRequestDTO, headers);
+
         ResponseEntity<TransactionResponseDTO> response =
                 restTemplate.postForEntity(url, entity,TransactionResponseDTO.class);
         return response.getBody();

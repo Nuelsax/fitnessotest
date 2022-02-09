@@ -10,8 +10,9 @@ import javax.validation.constraints.NotNull;
 public class CheckOutRequest {
     @NotEmpty
     private String email;
-    @NotNull
+//    @NotNull
     private Long shoppingCartId;
+    private String shoppingCartUniqueId;
     private AddressRequest shippingAddress;
     private AddressRequest billingAddress;
     private PaymentRequest paymentRequest;

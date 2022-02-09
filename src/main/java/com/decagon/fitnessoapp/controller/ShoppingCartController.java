@@ -26,7 +26,6 @@ public class ShoppingCartController {
     public ResponseEntity<?> addItemToCart(@PathVariable(value = "productId") Long productId, @PathVariable(value = "status") CHANGE_QUANTITY status, HttpServletRequest request) throws Exception {
        final String requestHeader = request.getHeader("Authorization");
        String jwt = requestHeader.substring(7);
-       System.out.println(jwt);
        String username = jwtTokenUtils.extractUsername(jwt);
        final PersonDetails personDetails = userService.loadUserByUsername(username);
 

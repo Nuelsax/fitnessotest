@@ -29,10 +29,11 @@ public class CheckOut {
     @JoinColumn(name = "person_id", referencedColumnName = "id", nullable = false)
     private Person person;
 
-    @NotNull
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "shoppingCart_id", referencedColumnName = "id", nullable = false)
-    private Cart shoppingCart;
+//    @NotNull
+//    @OneToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "shoppingCart_id", referencedColumnName = "id", nullable = false)
+//    private Cart shoppingCart;
+    private String shoppingCartUniqueId;
 
     @NotNull
     @Column(name = "total_price", nullable = false)
@@ -63,6 +64,7 @@ public class CheckOut {
     private String referenceNumber;
 
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private SHIPPING_METHOD shippingMethod;
 
     @Column(name = "order_status")
