@@ -43,8 +43,13 @@ public class OrderServiceImpl implements OrderService {
         Order order = orderRepository.findOrderByPerson_Id(person.getId())
                 .orElseThrow(()-> new NullPointerException("Order does not Exist"));
         OrderResponse orderResponse = new OrderResponse();
-        modelMapper.map(order, orderResponse);
-        return ResponseEntity.ok().body(orderResponse);
+        if (order != null){
+            orderResponse.setPersonId(person.getId());
+            modelMapper.map(order, orderResponse);
+            return ResponseEntity.ok().body(orderResponse);
+        }else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @Override

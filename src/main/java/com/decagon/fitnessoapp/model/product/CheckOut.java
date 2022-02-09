@@ -17,7 +17,7 @@ import java.sql.Timestamp;
 @NoArgsConstructor
 @Data
 @Entity
-@Table(name = "orders")
+@Table(name = "check_out")
 public class CheckOut {
 
     @Id
@@ -52,7 +52,6 @@ public class CheckOut {
     @OneToOne
     @JoinColumn(name = "payment_card", referencedColumnName = "id", nullable = false)
     private PaymentCard paymentCard;
-
 
     @CreationTimestamp
     @Column(nullable = false)
