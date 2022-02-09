@@ -21,9 +21,11 @@ public class CloudinaryConfig {
         cloudinary = new Cloudinary(config);
 
         File file = new File(name);
-        Map uploadResult = cloudinary.uploader().upload(file, ObjectUtils.emptyMap());
-
-        return uploadResult.get("url").toString();
+        if(file.exists()){
+            Map uploadResult = cloudinary.uploader().upload(file, ObjectUtils.emptyMap());
+            return uploadResult.get("url").toString();
+        }
+        return "null";
     }
 
 }

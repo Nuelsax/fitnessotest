@@ -95,13 +95,9 @@ public class PersonServiceImpl implements PersonService {
         person.setPassword(encodedPassword);
         String token = RandomString.make(64);
         person.setResetPasswordToken(token);
-        try {
-            CloudinaryConfig cloudinaryConfig = new CloudinaryConfig();
-            String url = cloudinaryConfig.createImage(person.getImage());
-            person.setImage(url);
-        } catch (IOException e ) {
-            e.printStackTrace();
-        }
+        CloudinaryConfig cloudinaryConfig = new CloudinaryConfig();
+        String url = cloudinaryConfig.createImage(person.getImage());
+        person.setImage(url);
         personRepository.save(person);
         sendingEmail(personRequest);
         PersonResponse personResponse = new PersonResponse();
