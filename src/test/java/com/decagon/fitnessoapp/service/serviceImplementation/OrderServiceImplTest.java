@@ -109,13 +109,10 @@ class OrderServiceImplTest {
         Optional<Order> ofResult1 = Optional.of(order);
         when(this.orderRepository.findOrderByPerson_Id((Long) any())).thenReturn(ofResult1);
         doNothing().when(this.modelMapper).map((Object) any(), (Object) any());
-        ResponseEntity<OrderResponse> actualOrder = this.orderServiceImpl
+        OrderResponse actualOrder = this.orderServiceImpl
                 .getOrder(new TestingAuthenticationToken("Principal", "Credentials"));
         assertEquals("<200 OK OK,OrderResponse(Id=null, shoppingItems=null, totalPrice=null, shippingAddress=null,"
                 + " orderStatus=null, shippingMethod=null),[]>", actualOrder.toString());
-        assertTrue(actualOrder.getHeaders().isEmpty());
-        assertTrue(actualOrder.hasBody());
-        assertEquals(HttpStatus.OK, actualOrder.getStatusCode());
         verify(this.personRepository).findPersonByUserName((String) any());
         verify(this.orderRepository).findOrderByPerson_Id((Long) any());
         verify(this.modelMapper).map((Object) any(), (Object) any());

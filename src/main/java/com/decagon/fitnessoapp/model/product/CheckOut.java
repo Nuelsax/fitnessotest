@@ -17,7 +17,7 @@ import java.sql.Timestamp;
 @NoArgsConstructor
 @Data
 @Entity
-@Table(name = "orders")
+@Table(name = "check_out")
 public class CheckOut {
 
     @Id
@@ -53,7 +53,6 @@ public class CheckOut {
     @JoinColumn(name = "payment_card", referencedColumnName = "id", nullable = false)
     private PaymentCard paymentCard;
 
-
     @CreationTimestamp
     @Column(nullable = false)
     private Timestamp orderDate;
@@ -62,6 +61,7 @@ public class CheckOut {
     private CouponCode couponCode;
 
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private SHIPPING_METHOD shippingMethod;
 
     @Column(name = "order_status")

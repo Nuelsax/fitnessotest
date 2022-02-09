@@ -1,6 +1,7 @@
 package com.decagon.fitnessoapp.service.serviceImplementation;
 
 import com.decagon.fitnessoapp.Email.EmailService;
+import com.decagon.fitnessoapp.config.cloudinary.CloudinaryConfig;
 import com.decagon.fitnessoapp.dto.*;
 import com.decagon.fitnessoapp.exception.CustomServiceExceptions;
 import com.decagon.fitnessoapp.exception.PersonNotFoundException;
@@ -28,6 +29,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -68,7 +70,7 @@ public class PersonServiceImpl implements PersonService {
     }
 
     @Override
-    public PersonResponse register(PersonRequest personRequest) throws MailjetSocketTimeoutException, MailjetException {
+    public PersonResponse register(PersonRequest personRequest) throws MailjetSocketTimeoutException, MailjetException, IOException {
         boolean isValidEmail = emailValidator.test(personRequest.getEmail());
         if(!isValidEmail){
             throw new CustomServiceExceptions("Not a valid email");
@@ -93,6 +95,9 @@ public class PersonServiceImpl implements PersonService {
         person.setPassword(encodedPassword);
         String token = RandomString.make(64);
         person.setResetPasswordToken(token);
+        CloudinaryConfig cloudinaryConfig = new CloudinaryConfig();
+        String url = cloudinaryConfig.createImage(person.getImage());
+        person.setImage(url);
         personRepository.save(person);
         sendingEmail(personRequest);
 

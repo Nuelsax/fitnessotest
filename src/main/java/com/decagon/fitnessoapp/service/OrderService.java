@@ -10,7 +10,7 @@ import org.springframework.security.core.Authentication;
 import java.util.List;
 
 public interface OrderService {
-    ResponseEntity<OrderResponse> getOrder(Authentication authentication);
+    OrderResponse getOrder(Authentication authentication);
 
     Page<OrderResponse> getAllOrders(int pageNo);
 

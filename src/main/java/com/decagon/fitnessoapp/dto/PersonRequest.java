@@ -2,6 +2,7 @@ package com.decagon.fitnessoapp.dto;
 
 import com.decagon.fitnessoapp.model.user.ROLE_DETAIL;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.validation.constraints.Email;
@@ -37,6 +38,7 @@ public class PersonRequest {
 
     private String gender;
 
+    @ApiModelProperty(hidden = true)
     private ROLE_DETAIL roleDetail;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
