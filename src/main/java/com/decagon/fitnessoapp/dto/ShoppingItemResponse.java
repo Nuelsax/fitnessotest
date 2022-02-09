@@ -9,14 +9,15 @@ import lombok.NoArgsConstructor;
 import javax.persistence.Column;
 import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
+import java.util.HashMap;
+import java.util.Map;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class ShoppingItemResponse {
-    private IntangibleProduct intangibleProducts;
+    private Map<String, Integer> intangibleProduct = new HashMap<String, Integer>();
+    private Map<String, Integer> tangibleProduct = new HashMap<String, Integer>();
+    private Long id;
 
-    private TangibleProduct tangibleProducts;
-
-    private Integer quantity;
 }

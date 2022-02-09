@@ -12,13 +12,12 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
-import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
 @Entity
-@Table(name = "orders")
+@Table(name = "check_out")
 public class CheckOut {
 
     @Id
@@ -33,7 +32,7 @@ public class CheckOut {
     @NotNull
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "shoppingCart_id", referencedColumnName = "id", nullable = false)
-    private ShoppingItem shoppingItems;
+    private Cart shoppingCart;
 
     @NotNull
     @Column(name = "total_price", nullable = false)
@@ -54,7 +53,6 @@ public class CheckOut {
     @JoinColumn(name = "payment_card", referencedColumnName = "id", nullable = false)
     private PaymentCard paymentCard;
 
-
     @CreationTimestamp
     @Column(nullable = false)
     private Timestamp orderDate;
@@ -63,5 +61,11 @@ public class CheckOut {
     private CouponCode couponCode;
 
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private SHIPPING_METHOD shippingMethod;
+
+    @Column(name = "order_status")
+    @Enumerated(EnumType.STRING)
+    private ORDER_STATUS orderStatus;
+
 }

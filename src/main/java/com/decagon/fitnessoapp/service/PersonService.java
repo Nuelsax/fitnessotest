@@ -5,13 +5,15 @@ import com.mailjet.client.errors.MailjetException;
 import com.mailjet.client.errors.MailjetSocketTimeoutException;
 import org.springframework.http.ResponseEntity;
 
+import java.io.IOException;
+
 public interface PersonService {
 
     ResponseEntity<AuthResponse> loginUser(AuthRequest req) throws Exception;
 
     UpdatePersonResponse updateUserDetails(UpdatePersonRequest updatePersonRequest);
 
-    PersonResponse register(PersonRequest personRequest) throws MailjetSocketTimeoutException, MailjetException;
+    PersonResponse register(PersonRequest personRequest) throws MailjetSocketTimeoutException, MailjetException, IOException;
 
     PersonResponse addTrainer(PersonRequest personRequest);
 

@@ -2,10 +2,9 @@ package com.decagon.fitnessoapp.service.serviceImplementation;
 
 import com.decagon.fitnessoapp.dto.CheckOutRequest;
 import com.decagon.fitnessoapp.dto.CheckOutResponse;
-import com.decagon.fitnessoapp.exception.CustomServiceExceptions;
 import com.decagon.fitnessoapp.model.product.CheckOut;
 import com.decagon.fitnessoapp.model.product.CouponCode;
-import com.decagon.fitnessoapp.model.product.ShoppingItem;
+import com.decagon.fitnessoapp.model.product.Cart;
 import com.decagon.fitnessoapp.model.user.Address;
 import com.decagon.fitnessoapp.model.user.PaymentCard;
 import com.decagon.fitnessoapp.model.user.Person;
@@ -40,7 +39,7 @@ public class CheckOutServiceImpl implements CheckOutService {
         PaymentCard paymentCard = new PaymentCard();
         CouponCode couponCode = new CouponCode();
         Optional<Person> personExists = personRepository.findByEmail(checkOutRequest.getEmail());
-        Optional<ShoppingItem> shoppingItemExist = shoppingCartRepository.findById(checkOutRequest.getShoppingCartId());
+        Optional<Cart> shoppingItemExist = shoppingCartRepository.findById(checkOutRequest.getShoppingCartId());
         if(personExists.isPresent()){
             if(shoppingItemExist.isPresent()){
                 checkOut.setPerson(personExists.get());
@@ -54,7 +53,7 @@ public class CheckOutServiceImpl implements CheckOutService {
                 checkOut.setTotalPrice(checkOutRequest.getOrderSummary().getTotal());
                 checkOut.setBillingAddress(billingAddress);
                 checkOut.setShippingAddress(shippingAddress);
-                checkOut.setShoppingItems(shoppingItemExist.get());
+                checkOut.setShoppingCart(shoppingItemExist.get());
                 checkOut.setShippingMethod(checkOutRequest.getShippingMethod());
                 checkOut.setCouponCode(couponCode);
                 checkOut.setPaymentCard(paymentCard);

@@ -36,7 +36,7 @@ public class ProductServiceImpl implements com.decagon.fitnessoapp.service.Produ
     }
 
     @Override
-    public ResponseEntity<ProductResponseDto> viewProductDetails(Long id, String productType) {
+    public ProductResponseDto viewProductDetails(Long id, String productType) {
         ProductResponseDto productDetailsResponse = new ProductResponseDto();
 
         if(productType.equals("PRODUCT")){
@@ -53,10 +53,8 @@ public class ProductServiceImpl implements com.decagon.fitnessoapp.service.Produ
                 productDetailsResponse.setImage("Sold Out");
             }
 
-        }else {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        return ResponseEntity.ok().body(productDetailsResponse);
+        return productDetailsResponse;
     }
 
     @Override
@@ -70,8 +68,7 @@ public class ProductServiceImpl implements com.decagon.fitnessoapp.service.Produ
         productDto.setDescription(requestDto.getDescription().toUpperCase());
         productDto.setProductType(requestDto.getProductType());
         productDto.setImage(requestDto.getImage());
-        productDto.setDurationInHoursPerDay(requestDto.getDurationInHoursPerDay());
-        productDto.setDurationInDays(requestDto.getDurationInDays());
+        productDto.setMonthlySubscription(requestDto.getMonthlySubscription());
         productDto.setQuantity(requestDto.getQuantity());
         productDto.setStock(requestDto.getStock());
 

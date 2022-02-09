@@ -22,7 +22,7 @@ public interface ProductService {
 
     ProductResponseDto getProduct(Long productId);
 
-    ResponseEntity<ProductResponseDto> viewProductDetails(Long id, String productType);
+    ProductResponseDto viewProductDetails(Long id, String productType);
 
     Page<UserProductDto> getAllProducts(int pageNumber);
 
