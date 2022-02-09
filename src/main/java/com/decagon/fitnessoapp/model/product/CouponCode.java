@@ -29,4 +29,7 @@ public class CouponCode {
     @JoinColumn(name = "order_id", referencedColumnName = "id", nullable = false)
     private Order order;
 
+    @Column(name = "validity", nullable = false)
+    private boolean valid = false;
+
 }
