@@ -61,6 +61,7 @@ public class CheckOut {
     private CouponCode couponCode;
 
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private SHIPPING_METHOD shippingMethod;
 
     @Column(name = "order_status")

@@ -15,6 +15,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -38,13 +39,13 @@ public class PersonController {
         }
 
         @PostMapping("/register")
-        public ResponseEntity<?> register (@Valid @RequestBody PersonRequest personRequest) throws MailjetSocketTimeoutException, MailjetException {
+        public ResponseEntity<?> register (@Valid @RequestBody PersonRequest personRequest) throws MailjetSocketTimeoutException, MailjetException, IOException {
             personRequest.setRoleDetail(ROLE_DETAIL.PREMIUM);
             return ResponseEntity.ok(personService.register(personRequest));
         }
 
         @PostMapping("/admin/register")
-        public ResponseEntity<?> registerAdmin (@Valid @RequestBody PersonRequest personRequest) throws MailjetSocketTimeoutException, MailjetException {
+        public ResponseEntity<?> registerAdmin (@Valid @RequestBody PersonRequest personRequest) throws MailjetSocketTimeoutException, MailjetException, IOException {
             personRequest.setRoleDetail(ROLE_DETAIL.ADMIN);
             return ResponseEntity.ok(personService.register(personRequest));
         }
