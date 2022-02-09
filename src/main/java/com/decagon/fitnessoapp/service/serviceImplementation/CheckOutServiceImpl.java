@@ -18,10 +18,8 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -34,8 +32,7 @@ public class CheckOutServiceImpl implements CheckOutService {
     private final AddressRepository addressRepository;
     private final CouponCodeRepository couponCodeRepository;
     private final ModelMapper modelMapper;
-//    private final ShoppingCartRepository shoppingCartRepository;
-    private final TestCartRepository shoppingCartRepository;
+    private final ShoppingCartRepository shoppingCartRepository;
     private final TransactionService transactionService;
 
 
@@ -48,8 +45,7 @@ public class CheckOutServiceImpl implements CheckOutService {
         Optional<CouponCode> couponCode = couponCodeRepository.
                 findByCouponCode(checkOutRequest.getDiscountRequest().getCouponCode());
         Optional<Person> personExists = personRepository.findByEmail(checkOutRequest.getEmail());
-//        Optional<Cart> shoppingItemExist = shoppingCartRepository.findById(checkOutRequest.getShoppingCartId());
-        List<TestCart> shoppingItemExist = shoppingCartRepository.findAllByUniqueCartId(checkOutRequest.getShoppingCartUniqueId());
+        List<Cart> shoppingItemExist = shoppingCartRepository.findAllByUniqueCartId(checkOutRequest.getShoppingCartUniqueId());
         if(personExists.isPresent()){
             if(!shoppingItemExist.isEmpty()){
                 if(shoppingItemExist.get(0).getCartReference() == null) {
@@ -57,23 +53,19 @@ public class CheckOutServiceImpl implements CheckOutService {
                     billingAddress.setPerson(personExists.get());
                     shippingAddress.setPerson(personExists.get());
                     paymentCard.setPerson(personExists.get());
-                    paymentCard.setAccountName(personExists.get().getFirstName());
+//                    paymentCard.setAccountName(personExists.get().getFirstName());
                     modelMapper.map(checkOutRequest.getPaymentRequest(), paymentCard);
                     modelMapper.map(checkOutRequest.getBillingAddress(), billingAddress);
                     modelMapper.map(checkOutRequest.getShippingAddress(), shippingAddress);
                     paymentCardRepository.save(paymentCard);
                     addressRepository.save(billingAddress);
                     addressRepository.save(shippingAddress);
-//                    shoppingItemExist.get().setCartReference(RandomString.make(10));
                     final String randomString = RandomString.make(10);
                     shoppingItemExist.forEach((cart) -> cart.setCartReference(randomString));
-//                    shoppingCartRepository.save(shoppingItemExist.get());
                     shoppingCartRepository.saveAll(shoppingItemExist);
                     checkOut.setTotalPrice(checkOutRequest.getOrderSummary().getTotal());
                     checkOut.setBillingAddress(billingAddress);
                     checkOut.setShippingAddress(shippingAddress);
-//                    checkOut.setShoppingCart(shoppingItemExist.get());
-//                    checkOut.setShoppingCart(shoppingItemExist.get().getId());
                     checkOut.setShoppingCartUniqueId(shoppingItemExist.get(0).getUniqueCartId());
                     checkOut.setShippingMethod(checkOutRequest.getShippingMethod());
                     if (couponCode.isPresent() && couponCode.get().getExpiresAt().isBefore(LocalDateTime.now())) {
@@ -96,9 +88,6 @@ public class CheckOutServiceImpl implements CheckOutService {
                             .timestamp(LocalDateTime.now()).build();
                 }
 
-
-//                Optional<CheckOut> checkOutResend = checkOutRepository.
-//                        findCheckOutByShoppingCartId(checkOutRequest.getShoppingCartId());
 
                 final String referenceNumber = "fitnesso-app-" + RandomString.make(16);
                 Optional<CheckOut> checkOutResend = checkOutRepository.
