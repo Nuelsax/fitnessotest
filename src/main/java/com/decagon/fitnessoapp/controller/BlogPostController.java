@@ -2,6 +2,8 @@ package com.decagon.fitnessoapp.controller;
 
 import com.decagon.fitnessoapp.dto.BlogPostResponse;
 import com.decagon.fitnessoapp.dto.BlogRequest;
+import com.decagon.fitnessoapp.dto.BlogResponse;
+import com.decagon.fitnessoapp.dto.BlogUpdateRequest;
 import com.decagon.fitnessoapp.model.blog.BlogPost;
 import com.decagon.fitnessoapp.service.BlogPostService;
 import lombok.AllArgsConstructor;
@@ -21,10 +23,11 @@ import java.util.List;
 public class BlogPostController {
 
     private final BlogPostService blogPostService;
+
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/admin/post")
-    public ResponseEntity<String> createPost(@RequestBody BlogRequest blogRequest, Authentication authentication) {
-        return blogPostService.addBlogPost(blogRequest, authentication);
+    public ResponseEntity<BlogResponse> createPost(@RequestBody BlogRequest blogRequest, Authentication authentication) {
+        return ResponseEntity.ok().body(blogPostService.addBlogPost(blogRequest, authentication));
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
@@ -33,22 +36,19 @@ public class BlogPostController {
             @RequestParam(defaultValue = "0") Integer pageNo,
             @RequestParam(defaultValue = "10") Integer pageSize,
             @RequestParam(defaultValue = "id") String sortBy) {
-        List<BlogPostResponse> blogPostResponses = blogPostService.getAllPosts(pageNo, pageSize, sortBy);
-        return new ResponseEntity<>(
-                blogPostResponses, new HttpHeaders(), HttpStatus.OK
-        );
+        return ResponseEntity.ok().body(blogPostService.getAllPosts(pageNo, pageSize, sortBy));
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping("/admin/updatepost/{postId}")
-    public ResponseEntity<String> updatePost(@PathVariable Long postId, @RequestBody BlogPostResponse blogPostUpdate){
-        return blogPostService.updatePost(blogPostUpdate, postId);
+    public ResponseEntity<BlogResponse> updatePost(@PathVariable Long postId, @RequestBody BlogUpdateRequest blogUpdateRequest){
+        return ResponseEntity.ok().body(blogPostService.updatePost(blogUpdateRequest, postId));
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping("/admin/deletepost/{postId}")
-    public ResponseEntity<String> deletePost(@PathVariable Long postId){
-        return blogPostService.deletePost(postId);
+    public ResponseEntity<BlogResponse> deletePost(@PathVariable Long postId){
+        return ResponseEntity.ok().body(blogPostService.deletePost(postId));
     }
 
     @GetMapping("/blogposts/{number}")
