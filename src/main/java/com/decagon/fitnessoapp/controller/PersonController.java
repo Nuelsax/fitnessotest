@@ -50,8 +50,6 @@ public class PersonController {
             return ResponseEntity.ok(personService.register(personRequest));
         }
 
-
-        
         @PreAuthorize("hasRole('ROLE_ADMIN')")
         @PutMapping("/trainer/register")
         public ResponseEntity<?> addTrainer (@Valid @RequestBody PersonRequest personRequest){

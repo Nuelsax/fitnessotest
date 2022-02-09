@@ -17,19 +17,19 @@ public class ImagesController {
 
     private final ImagesService imagesService;
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/add")
     public ResponseEntity<ImagesResponseDto> createImage(@RequestBody ImagesRequestDto requestDto) throws IOException {
         return ResponseEntity.ok().body(imagesService.addImage(requestDto));
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/getimage")
     public ResponseEntity<ImagesResponseDto> retrieveImage(@RequestParam("productname") String productName)  {
         return ResponseEntity.ok().body(imagesService.getImage(productName));
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/getallimage")
     public ResponseEntity<?> retrieveAllImages(@RequestParam("productname") String productName)  {
         return ResponseEntity.ok().body(imagesService.getAllImage(productName));

@@ -39,12 +39,10 @@ class ProductServiceImplTest {
 
     @Test
     void testViewProductDetails() {
-        ResponseEntity<ProductResponseDto> actualViewProductDetailsResult = this.productServiceImpl.viewProductDetails(123L,
+        ProductResponseDto actualViewProductDetailsResult = this.productServiceImpl.viewProductDetails(123L,
                 "Product Type");
-        assertNull(actualViewProductDetailsResult.getBody());
+        assertNull(actualViewProductDetailsResult);
         assertEquals("<400 BAD_REQUEST Bad Request,[]>", actualViewProductDetailsResult.toString());
-        assertEquals(HttpStatus.BAD_REQUEST, actualViewProductDetailsResult.getStatusCode());
-        assertTrue(actualViewProductDetailsResult.getHeaders().isEmpty());
     }
 
     @Test

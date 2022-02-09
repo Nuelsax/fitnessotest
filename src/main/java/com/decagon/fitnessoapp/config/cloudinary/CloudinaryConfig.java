@@ -20,10 +20,9 @@ public class CloudinaryConfig {
         config.put("api_secret", "I0Ljecy2RdYulnkH8IODSJDUYIo");
         cloudinary = new Cloudinary(config);
 
-        File file = new File("images/"+name);
+        File file = new File(name);
         Map uploadResult = cloudinary.uploader().upload(file, ObjectUtils.emptyMap());
 
-        System.out.println(uploadResult.get("url"));
         return uploadResult.get("url").toString();
     }
 

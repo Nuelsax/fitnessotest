@@ -33,9 +33,12 @@ public class ImagesServiceImpl implements ImagesService {
 
         CloudinaryConfig cloudinaryConfig = new CloudinaryConfig();
         String url = cloudinaryConfig.createImage(requestDto.getImageName());
+        String[] path = requestDto.getImageName().split("/");
+        String name = path[path.length-1];
+        System.out.println(name);
 
         image.setImageUrl(url);
-        image.setImageName(requestDto.getImageName());
+        image.setImageName(name);
         image.setProductName(requestDto.getProductName());
 
         imagesRepository.save(image);

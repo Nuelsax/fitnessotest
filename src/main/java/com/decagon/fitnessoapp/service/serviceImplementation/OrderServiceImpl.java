@@ -36,7 +36,7 @@ public class OrderServiceImpl implements OrderService {
 
 
     @Override
-    public ResponseEntity<OrderResponse> getOrder(Authentication authentication) {
+    public OrderResponse getOrder(Authentication authentication) {
 
         Person person = personRepository.findPersonByUserName(authentication.getName())
                 .orElseThrow(()-> new UsernameNotFoundException("Check getOrder at OrderServiceImpl: User Name does not Exist"));
@@ -46,9 +46,9 @@ public class OrderServiceImpl implements OrderService {
         if (order != null){
             orderResponse.setPersonId(person.getId());
             modelMapper.map(order, orderResponse);
-            return ResponseEntity.ok().body(orderResponse);
+            return orderResponse;
         }else {
-            return ResponseEntity.notFound().build();
+            throw  new NullPointerException("No Order Found");
         }
     }
 

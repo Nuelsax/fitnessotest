@@ -25,7 +25,7 @@ public class OrderController {
     @GetMapping("/viewOrder")
     public ResponseEntity<OrderResponse> viewOrder(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        return orderService.getOrder(authentication);
+        return ResponseEntity.ok().body(orderService.getOrder(authentication));
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
