@@ -1,5 +1,6 @@
 package com.decagon.fitnessoapp.controller;
 
+import com.decagon.fitnessoapp.dto.ShoppingItemResponse;
 import com.decagon.fitnessoapp.model.product.CHANGE_QUANTITY;
 import com.decagon.fitnessoapp.model.product.ORDER_STATUS;
 import com.decagon.fitnessoapp.security.JwtUtils;
