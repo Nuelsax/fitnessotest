@@ -17,14 +17,14 @@ import java.sql.Timestamp;
 @NoArgsConstructor
 @Data
 @Entity
-@Table(name = "order")
+@Table(name = "orders")
 public class Order {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "order_status")
+    @Column(name = "orders_status")
     @Enumerated(EnumType.STRING)
     private ORDER_STATUS orderStatus;
 
