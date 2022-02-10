@@ -12,6 +12,7 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 @Data
 @Entity
+@Table(name = "address")
 public class Address {
 
     @Id

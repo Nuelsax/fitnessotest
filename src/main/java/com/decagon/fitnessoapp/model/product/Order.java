@@ -24,12 +24,14 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "order_status")
+    @Enumerated(EnumType.STRING)
+    private ORDER_STATUS orderStatus;
+
     @NotNull
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "check_out_id", referencedColumnName = "id", nullable = false)
     private CheckOut checkOut;
 
-    @Column(name = "order_status")
-    @Enumerated(EnumType.STRING)
-    private ORDER_STATUS orderStatus;
+
 }

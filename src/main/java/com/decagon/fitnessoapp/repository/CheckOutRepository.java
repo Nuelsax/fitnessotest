@@ -15,5 +15,4 @@ public interface CheckOutRepository extends JpaRepository<CheckOut, Long> {
 //    Optional<CheckOut> findCheckOutByShoppingCartId(Long cartId);
     Optional<CheckOut> findCheckOutByShoppingCartUniqueId(String shoppingCartId);
 
-    List<CheckOut> findAllByPersonAndOrderStatus(Person person, ORDER_STATUS status);
 }

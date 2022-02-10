@@ -78,7 +78,7 @@ public class OrderServiceImpl implements OrderService {
         int pageSize = 10;
         int skipCount = (pageNo - 1) * pageSize;
 
-        List<OrderResponse> orderList = orderRepository.findAllByCheckOutOrderStatus(status)
+        List<OrderResponse> orderList = orderRepository.findAllByOrderStatus(status)
                 .stream()
                 .map(x -> modelMapper.map(x, OrderResponse.class))
                 .collect(Collectors.toList())
