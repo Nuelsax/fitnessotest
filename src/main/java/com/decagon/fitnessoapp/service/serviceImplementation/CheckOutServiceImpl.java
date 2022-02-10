@@ -2,6 +2,7 @@ package com.decagon.fitnessoapp.service.serviceImplementation;
 
 import com.decagon.fitnessoapp.dto.CheckOutRequest;
 import com.decagon.fitnessoapp.dto.CheckOutResponse;
+import com.decagon.fitnessoapp.dto.OrderResponse;
 import com.decagon.fitnessoapp.dto.transactionDto.TransactionResponseDTO;
 import com.decagon.fitnessoapp.model.product.*;
 import com.decagon.fitnessoapp.model.user.Address;
@@ -14,12 +15,17 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.bytebuddy.utility.RandomString;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.*;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -76,7 +82,7 @@ public class CheckOutServiceImpl implements CheckOutService {
                     }
                     checkOut.setPaymentCard(paymentCard);
                     final String referenceNumber = "fitnesso-app-" + RandomString.make(16);
-                    checkOut.setOrderStatus(ORDER_STATUS.PENDING);
+                    checkOut.setTransactionStatus(TRANSACTION_STATUS.PENDING);
                     checkOut.setReferenceNumber(referenceNumber);
                     checkOutRepository.save(checkOut);
                     System.out.println(checkOut.getTotalPrice());
@@ -92,7 +98,7 @@ public class CheckOutServiceImpl implements CheckOutService {
                 final String referenceNumber = "fitnesso-app-" + RandomString.make(16);
                 Optional<CheckOut> checkOutResend = checkOutRepository.
                         findCheckOutByShoppingCartUniqueId(checkOutRequest.getShoppingCartUniqueId());
-                if(checkOutResend.isPresent() && checkOutResend.get().getOrderStatus().equals(ORDER_STATUS.PENDING)){
+                if(checkOutResend.isPresent() && checkOutResend.get().getTransactionStatus().equals(TRANSACTION_STATUS.PENDING)){
                     checkOutResend.get().setReferenceNumber(referenceNumber);
                     updateCheckOut(checkOutResend.get());
                     TransactionResponseDTO response = transactionService.initializeTransaction(
@@ -105,7 +111,7 @@ public class CheckOutServiceImpl implements CheckOutService {
                             .message("Complete your Payment").link(response.getData().getAuthorization_url())
                             .timestamp(LocalDateTime.now()).build();
                 }
-                else if (checkOutResend.isPresent() && checkOutResend.get().getOrderStatus().equals(ORDER_STATUS.COMPLETED)){
+                else if (checkOutResend.isPresent() && checkOutResend.get().getTransactionStatus().equals(TRANSACTION_STATUS.COMPLETED)){
                     return CheckOutResponse.builder()
                             .message("Shopping Items have been fully paid").timestamp(LocalDateTime.now()).build();
                 }
@@ -127,8 +133,8 @@ public class CheckOutServiceImpl implements CheckOutService {
     }
 
 
-
     public CheckOut updateCheckOut(CheckOut checkOut){
         return checkOutRepository.save(checkOut);
     }
+
 }

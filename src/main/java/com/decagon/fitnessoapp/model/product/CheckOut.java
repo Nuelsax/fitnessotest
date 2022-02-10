@@ -66,6 +66,10 @@ public class CheckOut {
     @Enumerated(EnumType.STRING)
     private SHIPPING_METHOD shippingMethod;
 
+    @Column(name = "transaction_status")
+    @Enumerated(EnumType.STRING)
+    private TRANSACTION_STATUS transactionStatus;
+
     @Column(name = "order_status")
     @Enumerated(EnumType.STRING)
     private ORDER_STATUS orderStatus;

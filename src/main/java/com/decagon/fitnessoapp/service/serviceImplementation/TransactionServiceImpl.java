@@ -7,22 +7,21 @@ import com.decagon.fitnessoapp.dto.transactionDto.response.PaymentResponse;
 import com.decagon.fitnessoapp.dto.transactionDto.response.TransVerificationResponse;
 import com.decagon.fitnessoapp.model.product.CheckOut;
 import com.decagon.fitnessoapp.model.product.ORDER_STATUS;
+import com.decagon.fitnessoapp.model.product.Order;
+import com.decagon.fitnessoapp.model.product.TRANSACTION_STATUS;
 import com.decagon.fitnessoapp.repository.CheckOutRepository;
-import com.decagon.fitnessoapp.service.CheckOutService;
+import com.decagon.fitnessoapp.repository.OrderRepository;
 import com.decagon.fitnessoapp.service.TransactionService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -30,6 +29,7 @@ import java.util.Optional;
 public class TransactionServiceImpl implements TransactionService {
     private final CheckOutRepository checkOutRepository;
     private final RestTemplate restTemplate;
+    private final OrderRepository orderRepository;
 
 //    @Value("${website.address}")
 //    private String website = "localhost";
@@ -86,8 +86,12 @@ public class TransactionServiceImpl implements TransactionService {
         if(transaction.getData().getStatus().equals("success")){
             CheckOut checkOut = checkOutRepository.findByReferenceNumber(referenceNumber).orElse(null);
             if(checkOut != null) {
-                checkOut.setOrderStatus(ORDER_STATUS.COMPLETED);
+                checkOut.setTransactionStatus(TRANSACTION_STATUS.COMPLETED);
+                checkOut.setOrderStatus(ORDER_STATUS.PENDING);
                 checkOutRepository.save(checkOut);
+                Order order = new Order();
+                order.setCheckOut(checkOut);
+                orderRepository.save(order);
                 return PaymentResponse.builder().message("Payment was Successful").status("OK").build();
             }
             return PaymentResponse.builder().message("Unable to find the check out").status("ERROR").build();

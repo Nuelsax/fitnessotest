@@ -26,48 +26,7 @@ public class Order {
 
     @NotNull
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "cart_id", referencedColumnName = "id", nullable = false)
-    private Cart carts;
-
-    @NotNull
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "person_id", referencedColumnName = "id", nullable = false)
-    private Person person;
-
-    @NotNull
-    @Column(name = "total_price", nullable = false)
-    private BigDecimal totalPrice;
-
-    @NotNull
-    @OneToOne
-    @JoinColumn(name = "shipping_address_id", referencedColumnName = "id", nullable = false)
-    private Address shippingAddress;
-
-    @NotNull
-    @OneToOne
-    @JoinColumn(name = "billing_address_id", referencedColumnName = "id", nullable = false)
-    private Address billingAddress;
-
-    @NotNull
-    @OneToOne
-    @JoinColumn(name = "payment_card", referencedColumnName = "id", nullable = false)
-    private PaymentCard paymentCard;
-
-
-    @CreationTimestamp
-    @Column(nullable = false)
-    private Timestamp orderDate;
-
-    @OneToOne
-    private CouponCode couponCode;
-
-    @Column(nullable = false)
-    private SHIPPING_METHOD shippingMethod;
-
-    @Column(name = "order_status")
-    @Enumerated(EnumType.STRING)
-    private ORDER_STATUS orderStatus;
-
-
+    @JoinColumn(name = "check_out_id", referencedColumnName = "id", nullable = false)
+    private CheckOut checkOut;
 
 }

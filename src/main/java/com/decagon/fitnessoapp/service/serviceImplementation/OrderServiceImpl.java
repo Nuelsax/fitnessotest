@@ -1,17 +1,17 @@
 package com.decagon.fitnessoapp.service.serviceImplementation;
 
 import com.decagon.fitnessoapp.dto.OrderResponse;
-import com.decagon.fitnessoapp.dto.UserProductDto;
+import com.decagon.fitnessoapp.model.product.Cart;
 import com.decagon.fitnessoapp.model.product.ORDER_STATUS;
 import com.decagon.fitnessoapp.model.product.Order;
 import com.decagon.fitnessoapp.model.user.Person;
 import com.decagon.fitnessoapp.repository.OrderRepository;
 import com.decagon.fitnessoapp.repository.PersonRepository;
+import com.decagon.fitnessoapp.repository.ShoppingCartRepository;
 import com.decagon.fitnessoapp.service.OrderService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -25,13 +25,15 @@ public class OrderServiceImpl implements OrderService {
     private final OrderRepository orderRepository;
     private final PersonRepository personRepository;
     private final ModelMapper modelMapper;
+    private final ShoppingCartRepository shoppingCartRepository;
 
     @Autowired
     public OrderServiceImpl(OrderRepository orderRepository, PersonRepository personRepository,
-                            ModelMapper modelMapper) {
+                            ModelMapper modelMapper, ShoppingCartRepository shoppingCartRepository) {
         this.orderRepository = orderRepository;
         this.personRepository = personRepository;
         this.modelMapper = modelMapper;
+        this.shoppingCartRepository = shoppingCartRepository;
     }
 
 
@@ -40,11 +42,10 @@ public class OrderServiceImpl implements OrderService {
 
         Person person = personRepository.findPersonByUserName(authentication.getName())
                 .orElseThrow(()-> new UsernameNotFoundException("Check getOrder at OrderServiceImpl: User Name does not Exist"));
-        Order order = orderRepository.findOrderByPerson_Id(person.getId())
-                .orElseThrow(()-> new NullPointerException("Order does not Exist"));
+        List<Order> order = orderRepository.findAllByCheckOut_Person(person);
         OrderResponse orderResponse = new OrderResponse();
-        if (order != null){
-            orderResponse.setPersonId(person.getId());
+        if (!order.isEmpty()){
+            orderResponse.setPerson(person);
             modelMapper.map(order, orderResponse);
             return orderResponse;
         }else {
@@ -76,7 +77,7 @@ public class OrderServiceImpl implements OrderService {
         int pageSize = 10;
         int skipCount = (pageNo - 1) * pageSize;
 
-        List<OrderResponse> orderList = orderRepository.findAllByOrderStatus(status)
+        List<OrderResponse> orderList = orderRepository.findAllByCheckOutOrderStatus(status)
                 .stream()
                 .map(x -> modelMapper.map(x, OrderResponse.class))
                 .collect(Collectors.toList())
