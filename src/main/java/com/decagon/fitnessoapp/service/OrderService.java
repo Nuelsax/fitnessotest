@@ -15,4 +15,8 @@ public interface OrderService {
     List<OrderResponse> getAlOrders(Integer pageNo);
 
     Page<OrderResponse> getOrdersByStatus(ORDER_STATUS status, int pageNo);
+
+    OrderResponse cancelOrder(Long orderId);
+
+    OrderResponse completeOrder(Long orderId);
 }

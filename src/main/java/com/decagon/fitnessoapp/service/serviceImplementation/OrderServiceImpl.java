@@ -124,4 +124,19 @@ public class OrderServiceImpl implements OrderService {
 
         return new PageImpl<>(orderList, orderPage, orderList.size());
     }
+
+    @Override
+    public OrderResponse cancelOrder(Long orderId) {
+        Order order = orderRepository.findById(orderId).orElseThrow(() -> new IllegalArgumentException("Invalid order Id"));
+        order.setOrderStatus(ORDER_STATUS.CANCELLED);
+        orderRepository.save(order);
+        return modelMapper.map(order, OrderResponse.class);
+    }
+    @Override
+    public OrderResponse completeOrder(Long orderId) {
+        Order order = orderRepository.findById(orderId).orElseThrow(() -> new IllegalArgumentException("Invalid order Id"));
+        order.setOrderStatus(ORDER_STATUS.COMPLETED);
+        orderRepository.save(order);
+        return modelMapper.map(order, OrderResponse.class);
+    }
 }

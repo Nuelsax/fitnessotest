@@ -51,4 +51,16 @@ public class OrderController {
         final Page<OrderResponse> ordersByStatus = orderService.getOrdersByStatus(status, pageNo);
         return ResponseEntity.ok(ordersByStatus);
     }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PutMapping("/admin/cancelOrder/{id}")
+    public ResponseEntity<OrderResponse> cancelOrder(@PathVariable(value = "id") Long orderId) {
+        return ResponseEntity.ok().body(orderService.cancelOrder(orderId));
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PutMapping("/admin/completeOrder/{id}")
+    public ResponseEntity<OrderResponse> completeOrder(@PathVariable(value = "id") Long orderId) {
+        return ResponseEntity.ok().body(orderService.completeOrder(orderId));
+    }
 }
