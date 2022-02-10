@@ -14,6 +14,8 @@ import com.decagon.fitnessoapp.repository.OrderRepository;
 import com.decagon.fitnessoapp.service.TransactionService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -24,17 +26,23 @@ import java.util.Map;
 import java.util.Objects;
 
 @Service
-@AllArgsConstructor
 @Slf4j
 public class TransactionServiceImpl implements TransactionService {
     private final CheckOutRepository checkOutRepository;
     private final RestTemplate restTemplate;
     private final OrderRepository orderRepository;
 
-//    @Value("${website.address}")
-//    private String website = "localhost";
-//    @Value("${server.port}")
-//    private Integer port = 9067;
+    @Value("${website.address}")
+    private String website;
+    @Value("${server.port}")
+    private Integer port;
+
+    @Autowired
+    public TransactionServiceImpl(CheckOutRepository checkOutRepository, RestTemplate restTemplate, OrderRepository orderRepository) {
+        this.checkOutRepository = checkOutRepository;
+        this.restTemplate = restTemplate;
+        this.orderRepository = orderRepository;
+    }
 
     @Override
     public TransactionResponseDTO initializeTransaction(String email, BigDecimal totalPrice,
@@ -87,10 +95,10 @@ public class TransactionServiceImpl implements TransactionService {
             CheckOut checkOut = checkOutRepository.findByReferenceNumber(referenceNumber).orElse(null);
             if(checkOut != null) {
                 checkOut.setTransactionStatus(TRANSACTION_STATUS.COMPLETED);
-                checkOut.setOrderStatus(ORDER_STATUS.PENDING);
                 checkOutRepository.save(checkOut);
                 Order order = new Order();
                 order.setCheckOut(checkOut);
+                order.setOrderStatus(ORDER_STATUS.PENDING);
                 orderRepository.save(order);
                 return PaymentResponse.builder().message("Payment was Successful").status("OK").build();
             }

@@ -60,7 +60,7 @@ public class OrderServiceImpl implements OrderService {
 
         List<OrderResponse> orderList = orderRepository.findAll()
                 .stream()
-                .map(x -> modelMapper.map(x, OrderResponse.class))
+                .map(x -> modelMapper.map(x.getCheckOut(), OrderResponse.class))
                 .collect(Collectors.toList())
                 .stream()
                 .skip(skipCount)
@@ -68,6 +68,7 @@ public class OrderServiceImpl implements OrderService {
                 .collect(Collectors.toList());
 
         Pageable orderPage = PageRequest.of(pageNo, pageSize, Sort.by("productName").ascending());
+        System.out.println(orderList);
 
         return new PageImpl<>(orderList, orderPage, orderList.size());
     }

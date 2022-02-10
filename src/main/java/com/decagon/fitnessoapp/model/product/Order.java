@@ -17,7 +17,7 @@ import java.sql.Timestamp;
 @NoArgsConstructor
 @Data
 @Entity
-@Table(name = "orders")
+@Table(name = "order")
 public class Order {
 
     @Id
@@ -29,4 +29,7 @@ public class Order {
     @JoinColumn(name = "check_out_id", referencedColumnName = "id", nullable = false)
     private CheckOut checkOut;
 
+    @Column(name = "order_status")
+    @Enumerated(EnumType.STRING)
+    private ORDER_STATUS orderStatus;
 }
