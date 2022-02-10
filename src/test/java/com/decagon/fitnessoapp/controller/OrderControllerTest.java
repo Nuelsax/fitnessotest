@@ -30,7 +30,7 @@ class OrderControllerTest {
     @MockBean
     private OrderService orderService;
 
-    @Test
+    /*@Test
     void testViewAllOrders() throws Exception {
         when(this.orderService.getAllOrders(anyInt())).thenReturn(new PageImpl<>(new ArrayList<>()));
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.get("/order/admin/viewOrders/{pageNo}", 1);
@@ -39,7 +39,7 @@ class OrderControllerTest {
                 .perform(requestBuilder)
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType("application/json"));
-    }
+    }*/
 
     @Test
     void testViewOrdersByStatus() throws Exception {

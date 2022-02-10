@@ -16,6 +16,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -53,7 +54,8 @@ public class OrderServiceImpl implements OrderService {
         }
     }
 
-    @Override
+
+   /* @Override
     public Page<OrderResponse> getAllOrders(int pageNo) {
         int pageSize = 10;
         int skipCount = (pageNo - 1) * pageSize;
@@ -68,9 +70,40 @@ public class OrderServiceImpl implements OrderService {
 //                .collect(Collectors.toList());
 
         Pageable orderPage = PageRequest.of(pageNo, pageSize, Sort.by("productName").ascending());
-        System.out.println(orderRepository.findAll());
+        System.out.println(orderList);
 
         return new PageImpl<>(orderList, orderPage, orderList.size());
+    }*/
+
+    @Override
+    public List<OrderResponse> getAlOrders(Integer pageNo) {
+        int pageSize = 10;
+        String sortBy = "id";
+        Pageable orderPage = PageRequest.of(pageNo, pageSize, Sort.by(sortBy).descending());
+        Page<Order> pagedOrders = orderRepository.findAll(orderPage);
+        List<OrderResponse> listOfOrders = new ArrayList<>();
+        if(pagedOrders.hasContent()){
+            for (Order order : pagedOrders) {
+                OrderResponse orderResponse = new OrderResponse();
+                orderResponse.setOrderDate(order.getCheckOut().getOrderDate());
+                orderResponse.setOrderStatus(order.getOrderStatus());
+                orderResponse.setBillingAddress(order.getCheckOut().getBillingAddress());
+                orderResponse.setCartList(null);
+                orderResponse.setCouponCode(order.getCheckOut().getCouponCode());
+                orderResponse.setPerson(order.getCheckOut().getPerson());
+                orderResponse.setBillingAddress(order.getCheckOut().getBillingAddress());
+                orderResponse.setTotalPrice(order.getCheckOut().getTotalPrice());
+                orderResponse.setPaymentCard(order.getCheckOut().getPaymentCard());
+                orderResponse.setReferenceNumber(order.getCheckOut().getReferenceNumber());
+                orderResponse.setShippingMethod(order.getCheckOut().getShippingMethod());
+                orderResponse.setTransactionStatus(order.getCheckOut().getTransactionStatus());
+                orderResponse.setCartList(shoppingCartRepository
+                        .findAllByUniqueCartId(order.getCheckOut().getShoppingCartUniqueId()));
+                listOfOrders.add(orderResponse);
+            }
+        }
+        return listOfOrders;
+
     }
 
     @Override
