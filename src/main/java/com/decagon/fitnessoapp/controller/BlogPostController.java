@@ -1,8 +1,10 @@
 package com.decagon.fitnessoapp.controller;
 
+import com.decagon.fitnessoapp.dto.BlogContext;
 import com.decagon.fitnessoapp.dto.BlogPostResponse;
 import com.decagon.fitnessoapp.dto.BlogRequest;
 import com.decagon.fitnessoapp.model.blog.BlogPost;
+import com.decagon.fitnessoapp.model.user.Author;
 import com.decagon.fitnessoapp.service.BlogPostService;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -21,10 +23,27 @@ import java.util.List;
 public class BlogPostController {
 
     private final BlogPostService blogPostService;
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    /*@PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/admin/post")
     public ResponseEntity<String> createPost(@RequestBody BlogRequest blogRequest, Authentication authentication) {
         return blogPostService.addBlogPost(blogRequest, authentication);
+    }*/
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PostMapping("/admin/post")
+    public ResponseEntity<?> addBlogPost(@RequestBody BlogContext blogContext) {
+        // Create Dto that takse in params for blogpost and author
+        BlogPost blogPost = new BlogPost();
+        Author author = new Author();
+        author.setAuthorName(blogContext.getAuthorName());
+        author.setBiography(blogContext.getBiography());
+        author.setContact(blogContext.getContact());
+        author.setImage(blogContext.getImage());
+        blogPost.setAuthor(author);
+        blogPost.setContent(blogContext.getContent());
+        blogPost.setTitle(blogContext.getTitle());
+        blogPostService.addBlogPost(blogPost);
+        return new ResponseEntity<>(blogPost, HttpStatus.CREATED);
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")

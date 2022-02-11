@@ -95,7 +95,7 @@ public class BlogPostServiceImpl implements BlogPostService {
 
     }
 
-    @Override
+    /*@Override
     public ResponseEntity<String> addBlogPost(BlogRequest blogRequest, Authentication authentication) {
         BlogPost newBlogPost = new BlogPost();
         Author author = authorRepository.findById(blogRequest.getAuthorId()).orElseThrow(()->
@@ -108,5 +108,9 @@ public class BlogPostServiceImpl implements BlogPostService {
         newBlogPost.setPerson(admin);
         this.blogPostRepository.save(newBlogPost);
         return ResponseEntity.ok().body("Post saved successfully");
+    }*/
+    @Override
+    public void addBlogPost(BlogPost blogPost) {
+        blogPostRepository.save(blogPost);
     }
 }
