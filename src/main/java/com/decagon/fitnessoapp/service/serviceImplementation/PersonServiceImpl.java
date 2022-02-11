@@ -100,7 +100,6 @@ public class PersonServiceImpl implements PersonService {
 //        person.setImage(url);
         personRepository.save(person);
         sendingEmail(personRequest);
-
         PersonResponse personResponse = new PersonResponse();
         modelMapper.map(person, personResponse);
         return personResponse;
