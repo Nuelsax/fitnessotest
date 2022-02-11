@@ -4,11 +4,9 @@ import com.decagon.fitnessoapp.dto.BlogPostResponse;
 import com.decagon.fitnessoapp.dto.BlogRequest;
 import com.decagon.fitnessoapp.dto.BlogResponse;
 import com.decagon.fitnessoapp.dto.BlogUpdateRequest;
-import com.decagon.fitnessoapp.model.blog.BlogPost;
 import com.decagon.fitnessoapp.service.BlogPostService;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -52,7 +50,7 @@ public class BlogPostController {
     }
 
     @GetMapping("/blogposts/{number}")
-    public ResponseEntity<?> getBlogPosts(@PathVariable (name = "number") int pageNumber) {
+    public ResponseEntity<Page<BlogPostResponse>> getBlogPosts(@PathVariable (name = "number") int pageNumber) {
         final Page<BlogPostResponse> blogPosts = blogPostService.getAllBlogPosts(pageNumber);
         return new ResponseEntity<>(blogPosts, HttpStatus.OK);
     }
