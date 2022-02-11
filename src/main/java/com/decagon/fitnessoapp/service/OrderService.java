@@ -8,9 +8,16 @@ import org.springframework.security.core.Authentication;
 import java.util.List;
 
 public interface OrderService {
-    OrderResponse getOrder(Authentication authentication);
+   // OrderResponse getOrder(Authentication authentication);
 
-    List<OrderResponse> getAllOrders(int pageNo);
+    //Page<OrderResponse> getAllOrders(int pageNo);
+    List<OrderResponse> getAllOrderByPerson(Authentication authentication);
+
+    List<OrderResponse> getAlOrders(Integer pageNo);
 
     Page<OrderResponse> getOrdersByStatus(ORDER_STATUS status, int pageNo);
+
+    OrderResponse cancelOrder(Long orderId);
+
+    OrderResponse completeOrder(Long orderId);
 }

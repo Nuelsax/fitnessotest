@@ -12,6 +12,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -33,6 +34,7 @@ public class CheckOut {
 //    @OneToOne(fetch = FetchType.LAZY)
 //    @JoinColumn(name = "shoppingCart_id", referencedColumnName = "id", nullable = false)
 //    private Cart shoppingCart;
+//    @OneToMany
     private String shoppingCartUniqueId;
 
     @NotNull

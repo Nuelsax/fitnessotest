@@ -18,7 +18,7 @@ import javax.validation.Valid;
 @AllArgsConstructor
 public class CheckOutController {
     private final CheckOutService checkOutService;
-
+// TODO: Review checkout relationship with cart. Cart is suppose to proceed to checkout
     @PostMapping
     public ResponseEntity<CheckOutResponse> saveCheckout(@RequestBody @Valid CheckOutRequest checkOutRequest){
         return new ResponseEntity<>(checkOutService.save(checkOutRequest), HttpStatus.CREATED);
