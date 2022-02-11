@@ -31,17 +31,11 @@ public class OrderController {
         return ResponseEntity.ok().body(orderService.getAllOrderByPerson(authentication));
     }
 
-   /* @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @GetMapping("/admin/viewOrders/{pageNo}")
-    public ResponseEntity<List<OrderResponse>> viewAllOrders(@PathVariable(value = "pageNo") int pageNo) {
-        final List<OrderResponse> allOrders = orderService.getAllOrders(pageNo);
-        return ResponseEntity.ok(allOrders);
-    }*/
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/admin/viewOrders/{pageNo}")
     public ResponseEntity<List<OrderResponse>> getAllOrders(@PathVariable String pageNo) {
-        List<OrderResponse> orderResponses = orderService.getAlOrders(Integer.parseInt(pageNo));
+        List<OrderResponse> orderResponses = orderService.getAllOrders(Integer.parseInt(pageNo));
         return new ResponseEntity<>(
                 orderResponses, new HttpHeaders(), HttpStatus.OK
         );

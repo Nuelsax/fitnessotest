@@ -28,6 +28,7 @@ public class OrderResponse {
     private String firstName;
     private String lastName;
     private String email;
+    private String shoppingCartUniqueId;
     private List<Cart> cartList;
     private BigDecimal totalPrice;
     private Address shippingAddress;

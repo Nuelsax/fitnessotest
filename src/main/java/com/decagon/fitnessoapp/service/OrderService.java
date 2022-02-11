@@ -13,7 +13,7 @@ public interface OrderService {
     //Page<OrderResponse> getAllOrders(int pageNo);
     List<OrderResponse> getAllOrderByPerson(Authentication authentication);
 
-    List<OrderResponse> getAlOrders(Integer pageNo);
+    List<OrderResponse> getAllOrders(Integer pageNo);
 
     Page<OrderResponse> getOrdersByStatus(ORDER_STATUS status, int pageNo);
 

@@ -1,7 +1,6 @@
 package com.decagon.fitnessoapp.service.serviceImplementation;
 
 import com.decagon.fitnessoapp.dto.OrderResponse;
-import com.decagon.fitnessoapp.model.product.Cart;
 import com.decagon.fitnessoapp.model.product.ORDER_STATUS;
 import com.decagon.fitnessoapp.model.product.Order;
 import com.decagon.fitnessoapp.model.user.Person;
@@ -39,97 +38,36 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public List<OrderResponse> getAllOrderByPerson(Authentication authentication) {
-
         Person person = personRepository.findPersonByUserName(authentication.getName())
                 .orElseThrow(()-> new UsernameNotFoundException("Check getOrder at OrderServiceImpl: User Name does not Exist"));
-        List<Order> orders = orderRepository.findAllByCheckOut_Person(person);
-        List<OrderResponse> listOfOrders = new ArrayList<>();
-        if(!orders.isEmpty()){
-            for (Order orderlist : orders) {
-                OrderResponse orderResponse = new OrderResponse();
-                orderResponse.setOrderDate(orderlist.getCheckOut().getOrderDate());
-                orderResponse.setOrderStatus(orderlist.getOrderStatus());
-                orderResponse.setBillingAddress(orderlist.getCheckOut().getBillingAddress());
-                orderResponse.setCouponCode(orderlist.getCheckOut().getCouponCode());
-                orderResponse.setEmail(orderlist.getCheckOut().getPerson().getEmail());
-                orderResponse.setFirstName(orderlist.getCheckOut().getPerson().getFirstName());
-                orderResponse.setLastName(orderlist.getCheckOut().getPerson().getLastName());
-                orderResponse.setBillingAddress(orderlist.getCheckOut().getBillingAddress());
-                orderResponse.setTotalPrice(orderlist.getCheckOut().getTotalPrice());
-//                orderResponse.setPaymentCard(orderlist.getCheckOut().getPaymentCard());
-                orderResponse.setReferenceNumber(orderlist.getCheckOut().getReferenceNumber());
-                orderResponse.setShippingMethod(orderlist.getCheckOut().getShippingMethod());
-                orderResponse.setTransactionStatus(orderlist.getCheckOut().getTransactionStatus());
-                orderResponse.setCartList(shoppingCartRepository
-                        .findAllByUniqueCartId(orderlist.getCheckOut().getShoppingCartUniqueId()));
-                listOfOrders.add(orderResponse);
-            }
-        }
+        List<OrderResponse> orders = orderRepository.findAllByCheckOut_Person(person)
+                .stream()
+                .map(x -> modelMapper.map(x.getCheckOut(), OrderResponse.class))
+                .collect(Collectors.toList());
+
+                orders.forEach(y -> y.setCartList(shoppingCartRepository
+                        .findAllByUniqueCartId(y.getShoppingCartUniqueId())));
+        return orders;
     }
 
-//    @Override
-//    public List<OrderResponse> getAllOrders(int pageSize) {
-//        int pageNo = 0;
-//        String sortBy = "id";
-//        Pageable orderPage = PageRequest.of(pageNo, pageSize, Sort.by(sortBy).descending());
-//
-//        List<OrderResponse> orderList = orderRepository.findAll(orderPage).getContent()
 
-   /* @Override
-    public Page<OrderResponse> getAllOrders(int pageNo) {
+
+    @Override
+    public List<OrderResponse> getAllOrders(Integer pageNo) {
         int pageSize = 10;
-        int skipCount = (pageNo - 1) * pageSize;
+        String sortBy = "id";
+        Pageable orderPage = PageRequest.of(pageNo, pageSize, Sort.by(sortBy).descending());
 
         List<OrderResponse> orderList = orderRepository.findAll()
                 .stream()
                 .map(x -> modelMapper.map(x.getCheckOut(), OrderResponse.class))
                 .collect(Collectors.toList());
-//                .stream()
-//                .map(x -> modelMapper.map(x.getCheckOut(), OrderResponse.class))
-//                .collect(Collectors.toList());
-//            orderList
-//                    .forEach(y -> y.setCartList(shoppingCartRepository
-//                            .findAllByUniqueCartId(y.getShoppingCartUniqueId())));
-//        return orderList;
-//    }
-
-        Pageable orderPage = PageRequest.of(pageNo, pageSize, Sort.by("productName").ascending());
-        System.out.println(orderList);
-
-        return new PageImpl<>(orderList, orderPage, orderList.size());
-    }*/
-
-    @Override
-    public List<OrderResponse> getAlOrders(Integer pageNo) {
-        int pageSize = 10;
-        String sortBy = "id";
-        Pageable orderPage = PageRequest.of(pageNo, pageSize, Sort.by(sortBy).descending());
-        Page<Order> pagedOrders = orderRepository.findAll(orderPage);
-        List<OrderResponse> listOfOrders = new ArrayList<>();
-        if(pagedOrders.hasContent()){
-            for (Order order : pagedOrders.getContent()) {
-                OrderResponse orderResponse = new OrderResponse();
-                orderResponse.setOrderDate(order.getCheckOut().getOrderDate());
-                orderResponse.setOrderStatus(order.getOrderStatus());
-                orderResponse.setBillingAddress(order.getCheckOut().getBillingAddress());
-                orderResponse.setCouponCode(order.getCheckOut().getCouponCode());
-                orderResponse.setEmail(order.getCheckOut().getPerson().getEmail());
-                orderResponse.setFirstName(order.getCheckOut().getPerson().getFirstName());
-                orderResponse.setLastName(order.getCheckOut().getPerson().getLastName());
-                orderResponse.setBillingAddress(order.getCheckOut().getBillingAddress());
-                orderResponse.setTotalPrice(order.getCheckOut().getTotalPrice());
-//                orderResponse.setPaymentCard(order.getCheckOut().getPaymentCard());
-                orderResponse.setReferenceNumber(order.getCheckOut().getReferenceNumber());
-                orderResponse.setShippingMethod(order.getCheckOut().getShippingMethod());
-                orderResponse.setTransactionStatus(order.getCheckOut().getTransactionStatus());
-                orderResponse.setCartList(shoppingCartRepository
-                        .findAllByUniqueCartId(order.getCheckOut().getShoppingCartUniqueId()));
-                listOfOrders.add(orderResponse);
-            }
-        }
-        return listOfOrders;
-
+            orderList
+                    .forEach(y -> y.setCartList(shoppingCartRepository
+                            .findAllByUniqueCartId(y.getShoppingCartUniqueId())));
+        return orderList;
     }
+
 
     @Override
     public Page<OrderResponse> getOrdersByStatus(ORDER_STATUS status, int pageNo) {
@@ -145,7 +83,7 @@ public class OrderServiceImpl implements OrderService {
                 .limit(pageSize)
                 .collect(Collectors.toList());
 
-        Pageable orderPage = PageRequest.of(pageNo, pageSize, Sort.by("productName").ascending());
+        Pageable orderPage = PageRequest.of(pageNo, pageSize, Sort.by("id").ascending());
 
         return new PageImpl<>(orderList, orderPage, orderList.size());
     }
