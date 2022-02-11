@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/order")
 @AllArgsConstructor
@@ -30,8 +32,8 @@ public class OrderController {
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/admin/viewOrders/{pageNo}")
-    public ResponseEntity<Page<OrderResponse>> viewAllOrders(@PathVariable(value = "pageNo") int pageNo) {
-        final Page<OrderResponse> allOrders = orderService.getAllOrders(pageNo);
+    public ResponseEntity<List<OrderResponse>> viewAllOrders(@PathVariable(value = "pageNo") int pageNo) {
+        final List<OrderResponse> allOrders = orderService.getAllOrders(pageNo);
         return ResponseEntity.ok(allOrders);
     }
 
