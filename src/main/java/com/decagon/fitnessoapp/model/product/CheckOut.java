@@ -30,11 +30,6 @@ public class CheckOut {
     @JoinColumn(name = "person_id", referencedColumnName = "id", nullable = false)
     private Person person;
 
-//    @NotNull
-//    @OneToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "shoppingCart_id", referencedColumnName = "id", nullable = false)
-//    private Cart shoppingCart;
-//    @OneToMany
     private String shoppingCartUniqueId;
 
     @NotNull

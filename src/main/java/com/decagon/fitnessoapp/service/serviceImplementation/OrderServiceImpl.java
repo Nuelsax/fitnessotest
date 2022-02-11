@@ -41,8 +41,18 @@ public class OrderServiceImpl implements OrderService {
         Person person = personRepository.findPersonByUserName(authentication.getName())
                 .orElseThrow(()-> new UsernameNotFoundException("Check getOrder at OrderServiceImpl: User Name does not Exist"));
         List<OrderResponse> orders = orderRepository.findAllByCheckOut_Person(person)
-                .stream()
-                .map(x -> modelMapper.map(x.getCheckOut(), OrderResponse.class))
+                .stream().map(x -> {
+                    OrderResponse res = new OrderResponse();
+                    res.setOrderStatus(x.getOrderStatus());
+                    modelMapper.map(x.getCheckOut(), res);
+                    return res;
+                })
+                .peek(y -> {
+                    y.setEmail(person.getEmail());
+                    y.setFirstName(person.getFirstName());
+                    y.setLastName(person.getLastName());
+                    y.setPerson(null);
+                })
                 .collect(Collectors.toList());
 
                 orders.forEach(y -> y.setCartList(shoppingCartRepository
@@ -58,12 +68,21 @@ public class OrderServiceImpl implements OrderService {
         String sortBy = "id";
         Pageable orderPage = PageRequest.of(pageNo, pageSize, Sort.by(sortBy).descending());
 
-        List<OrderResponse> orderList = orderRepository.findAll()
-                .stream()
-                .map(x -> modelMapper.map(x.getCheckOut(), OrderResponse.class))
-                .collect(Collectors.toList());
-            orderList
-                    .forEach(y -> y.setCartList(shoppingCartRepository
+        List<OrderResponse> orderList = orderRepository.findAll(orderPage).getContent()
+                .stream().map(x -> {
+                    OrderResponse res = new OrderResponse();
+                    res.setOrderStatus(x.getOrderStatus());
+                    modelMapper.map(x.getCheckOut(), res);
+                    return res;
+                })
+                .peek(y -> {
+                    y.setEmail(y.getPerson().getEmail());
+                    y.setFirstName(y.getPerson().getFirstName());
+                    y.setLastName(y.getPerson().getLastName());
+                    y.setPerson(null);
+                }).collect(Collectors.toList());
+
+            orderList.forEach(y -> y.setCartList(shoppingCartRepository
                             .findAllByUniqueCartId(y.getShoppingCartUniqueId())));
         return orderList;
     }
@@ -75,8 +94,18 @@ public class OrderServiceImpl implements OrderService {
         int skipCount = (pageNo - 1) * pageSize;
 
         List<OrderResponse> orderList = orderRepository.findAllByOrderStatus(status)
-                .stream()
-                .map(x -> modelMapper.map(x, OrderResponse.class))
+                .stream().map(x -> {
+                    OrderResponse res = new OrderResponse();
+                    res.setOrderStatus(x.getOrderStatus());
+                    modelMapper.map(x.getCheckOut(), res);
+                    return res;
+                })
+                .peek(y -> {
+                    y.setEmail(y.getPerson().getEmail());
+                    y.setFirstName(y.getPerson().getFirstName());
+                    y.setLastName(y.getPerson().getLastName());
+                    y.setPerson(null);
+                })
                 .collect(Collectors.toList())
                 .stream()
                 .skip(skipCount)

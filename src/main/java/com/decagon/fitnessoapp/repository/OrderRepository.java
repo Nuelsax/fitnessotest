@@ -13,6 +13,5 @@ import java.util.Optional;
 public interface OrderRepository extends JpaRepository<Order, Long> {
 
     List<Order> findAllByCheckOut_Person(Person person);
-//    List<Order> findAll();
     List<Order> findAllByOrderStatus(ORDER_STATUS orderStatus);
 }
