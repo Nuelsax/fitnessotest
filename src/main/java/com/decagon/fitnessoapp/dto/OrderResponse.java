@@ -23,12 +23,13 @@ import java.util.List;
 @AllArgsConstructor
 public class OrderResponse {
 
-    private Person person;
+    private String firstName;
+    private String lastName;
+    private String email;
     private List<Cart> cartList;
     private BigDecimal totalPrice;
     private Address shippingAddress;
     private Address billingAddress;
-    private PaymentCard paymentCard;
     private Timestamp orderDate;
     private String couponCode;
     private String referenceNumber;

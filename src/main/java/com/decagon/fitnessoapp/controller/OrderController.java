@@ -24,9 +24,9 @@ public class OrderController {
 
     @PreAuthorize("hasAnyRole('ROLE_PREMIUM', 'ROLE_ADMIN')")
     @GetMapping("/viewOrder")
-    public ResponseEntity<OrderResponse> viewOrder(){
+    public ResponseEntity<List<OrderResponse>> viewOrder(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        return ResponseEntity.ok().body(orderService.getOrder(authentication));
+        return ResponseEntity.ok().body(orderService.getAllOrderByPerson(authentication));
     }
 
    /* @PreAuthorize("hasRole('ROLE_ADMIN')")
@@ -38,8 +38,8 @@ public class OrderController {
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/admin/viewOrders/{pageNo}")
-    public ResponseEntity<List<OrderResponse>> getAllOrders(@RequestParam(defaultValue = "0") Integer pageNo) {
-        List<OrderResponse> orderResponses = orderService.getAlOrders(pageNo);
+    public ResponseEntity<List<OrderResponse>> getAllOrders(@PathVariable String pageNo) {
+        List<OrderResponse> orderResponses = orderService.getAlOrders(Integer.parseInt(pageNo));
         return new ResponseEntity<>(
                 orderResponses, new HttpHeaders(), HttpStatus.OK
         );
