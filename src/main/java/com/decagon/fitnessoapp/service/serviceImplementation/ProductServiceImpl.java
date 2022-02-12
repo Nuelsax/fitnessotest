@@ -1,5 +1,6 @@
 package com.decagon.fitnessoapp.service.serviceImplementation;
 
+import com.decagon.fitnessoapp.config.cloudinary.CloudinaryConfig;
 import com.decagon.fitnessoapp.dto.ProductRequestDto;
 import com.decagon.fitnessoapp.dto.ProductResponseDto;
 import com.decagon.fitnessoapp.dto.UserProductDto;
@@ -7,6 +8,8 @@ import com.decagon.fitnessoapp.model.product.IntangibleProduct;
 import com.decagon.fitnessoapp.model.product.TangibleProduct;
 import com.decagon.fitnessoapp.repository.IntangibleProductRepository;
 import com.decagon.fitnessoapp.repository.TangibleProductRepository;
+
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Optional;
 import org.modelmapper.ModelMapper;
@@ -58,16 +61,19 @@ public class ProductServiceImpl implements com.decagon.fitnessoapp.service.Produ
     }
 
     @Override
-    public ProductResponseDto addProduct(ProductRequestDto requestDto) {
+    public ProductResponseDto addProduct(ProductRequestDto requestDto) throws IOException {
         ProductResponseDto responseDto;
         ProductRequestDto productDto = new ProductRequestDto();
+
+        CloudinaryConfig cloudinaryConfig = new CloudinaryConfig();
+        String url = cloudinaryConfig.createImage(requestDto.getImage());
 
         productDto.setCategory(requestDto.getCategory().toUpperCase());
         productDto.setProductName(requestDto.getProductName().toUpperCase());
         productDto.setPrice(requestDto.getPrice());
         productDto.setDescription(requestDto.getDescription().toUpperCase());
         productDto.setProductType(requestDto.getProductType());
-        productDto.setImage(requestDto.getImage());
+        productDto.setImage(url);
         productDto.setMonthlySubscription(requestDto.getMonthlySubscription());
         productDto.setQuantity(requestDto.getQuantity());
         productDto.setStock(requestDto.getStock());

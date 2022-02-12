@@ -5,12 +5,14 @@ import com.decagon.fitnessoapp.dto.ProductResponseDto;
 import com.decagon.fitnessoapp.dto.UserProductDto;
 import com.decagon.fitnessoapp.model.product.IntangibleProduct;
 import com.decagon.fitnessoapp.model.product.TangibleProduct;
+
+import java.io.IOException;
 import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 
 public interface ProductService {
-    ProductResponseDto addProduct(ProductRequestDto requestDto);
+    ProductResponseDto addProduct(ProductRequestDto requestDto) throws IOException;
 
     ProductResponseDto deleteProduct(Long productId);
 

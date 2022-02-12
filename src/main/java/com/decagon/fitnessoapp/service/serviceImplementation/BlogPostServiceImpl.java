@@ -1,6 +1,8 @@
 package com.decagon.fitnessoapp.service.serviceImplementation;
 
-import com.decagon.fitnessoapp.dto.*;
+import com.decagon.fitnessoapp.dto.BlogPostResponse;
+import com.decagon.fitnessoapp.dto.BlogRequest;
+import com.decagon.fitnessoapp.dto.OrderResponse;
 import com.decagon.fitnessoapp.exception.CustomServiceExceptions;
 import com.decagon.fitnessoapp.exception.PersonNotFoundException;
 import com.decagon.fitnessoapp.model.blog.BlogPost;
@@ -71,32 +73,30 @@ public class BlogPostServiceImpl implements BlogPostService {
     }
 
     @Override
-    public BlogResponse updatePost(BlogUpdateRequest blogUpdateRequest, Long id){
+    public ResponseEntity<String> updatePost(BlogPostResponse blogPostUpdated, Long id){
         BlogPost blogPost = blogPostRepository.findBlogPostsById(id).orElseThrow(
                 ()-> new CustomServiceExceptions("Post Not Found"));
-        blogPost.setTitle(blogUpdateRequest.getTitle());
-        blogPost.setContent(blogUpdateRequest.getContent());
+        blogPost.setId(blogPostUpdated.getId());
+        blogPost.setTitle(blogPostUpdated.getTitle());
+        blogPost.getPerson().setImage(blogPostUpdated.getImage());
+        blogPost.setContent(blogPostUpdated.getContent());
+        blogPost.getAuthor().setAuthorName(blogPostUpdated.getAuthorName());
         blogPostRepository.save(blogPost);
-        BlogResponse blogResponse = new BlogResponse();
-        blogResponse.setMessage("Post Updated Successfully.");
-        return blogResponse;
+        return ResponseEntity.ok().body("Post updated successfully");
 
     }
 
     @Override
-    public BlogResponse deletePost(Long id) {
+    public ResponseEntity<String> deletePost(Long id) {
         BlogPost blogPost = blogPostRepository.findBlogPostsById(id).orElseThrow(
                 ()-> new CustomServiceExceptions("Post Not Found"));
         blogPostRepository.delete(blogPost);
-
-        BlogResponse blogResponse = new BlogResponse();
-        blogResponse.setMessage("Post deleted successfully.");
-        return blogResponse;
+        return ResponseEntity.ok().body("Post deleted successfully");
 
     }
 
-    @Override
-    public BlogResponse addBlogPost(BlogRequest blogRequest, Authentication authentication) {
+    /*@Override
+    public ResponseEntity<String> addBlogPost(BlogRequest blogRequest, Authentication authentication) {
         BlogPost newBlogPost = new BlogPost();
         Author author = authorRepository.findById(blogRequest.getAuthorId()).orElseThrow(()->
                 new CustomServiceExceptions("Author Not Found"));
@@ -107,9 +107,10 @@ public class BlogPostServiceImpl implements BlogPostService {
         newBlogPost.setAuthor(author);
         newBlogPost.setPerson(admin);
         this.blogPostRepository.save(newBlogPost);
-
-        BlogResponse blogResponse = new BlogResponse();
-        blogResponse.setMessage("Post saved successfully.");
-        return blogResponse;
+        return ResponseEntity.ok().body("Post saved successfully");
+    }*/
+    @Override
+    public void addBlogPost(BlogPost blogPost) {
+        blogPostRepository.save(blogPost);
     }
 }
