@@ -49,8 +49,8 @@ public class TransactionServiceImpl implements TransactionService {
                                                         String referenceNumber, Long cardNumber){
 
         TransactionRequestDTO transactionRequestDTO = new TransactionRequestDTO();
-        final String successfulTransaction = "http://" + "localhost" + ":" + "9067" + "/transaction/success";
-        final String failedTransaction = "http://" + "localhost" + ":" + "9067" + "/transaction/fail";
+        final String successfulTransaction = "http://" + website + ":" + port + "/transaction/success";
+        final String failedTransaction = "http://" + website + ":" + port + "/transaction/fail";
         final String url = "https://api.paystack.co/transaction/initialize";
         final String key = API.API_KEY_PAYMENT;
         log.info(totalPrice.toString());
