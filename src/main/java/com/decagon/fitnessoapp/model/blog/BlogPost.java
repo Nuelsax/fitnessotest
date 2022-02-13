@@ -1,8 +1,6 @@
 package com.decagon.fitnessoapp.model.blog;
 
-import com.decagon.fitnessoapp.model.user.Author;
 import com.decagon.fitnessoapp.model.user.Person;
-import com.sun.istack.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -32,10 +30,21 @@ public class BlogPost {
     @com.sun.istack.NotNull
     private String content;
 
-    @NotNull
+    /*@NotNull
     @ManyToOne(fetch=FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "author_id", referencedColumnName = "id")
-    private Author author;
+    private Author author;*/
+    @com.sun.istack.NotNull
+    private String authorName;
+
+    @com.sun.istack.NotNull
+    private String image;
+
+    @com.sun.istack.NotNull
+    private String contact;
+
+    @com.sun.istack.NotNull
+    private String biography;
 
     // Added
     @CreationTimestamp

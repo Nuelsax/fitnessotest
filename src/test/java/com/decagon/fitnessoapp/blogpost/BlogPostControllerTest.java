@@ -35,8 +35,8 @@ public class BlogPostControllerTest {
         BlogPostResponse blogPostUpdate = new BlogPostResponse();
         Long postId = 1L;
         String str = "Post updated successfully";
-        when(blogPostServiceImpl.updatePost(blogPostUpdate, postId)).thenReturn(new ResponseEntity<>(str, HttpStatus.OK));
-        ResponseEntity<String> response = blogPostController.updatePost(postId, blogPostUpdate);
+        when(blogPostServiceImpl.updatePost(blogPostUpdate, authentication)).thenReturn(new ResponseEntity<>(str, HttpStatus.OK));
+        ResponseEntity<String> response = blogPostController.updatePost(blogPostUpdate);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(str, response.getBody());
     }

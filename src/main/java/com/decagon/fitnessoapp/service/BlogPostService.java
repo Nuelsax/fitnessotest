@@ -1,7 +1,7 @@
 package com.decagon.fitnessoapp.service;
 
+import com.decagon.fitnessoapp.dto.BlogContext;
 import com.decagon.fitnessoapp.dto.BlogPostResponse;
-import com.decagon.fitnessoapp.dto.BlogRequest;
 import com.decagon.fitnessoapp.model.blog.BlogPost;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -17,11 +17,9 @@ public interface BlogPostService {
 
     Page<BlogPostResponse> getAllBlogPosts(int pageNo);
 
-    ResponseEntity<String> updatePost(BlogPostResponse blogPostUpdated, Long id);
-   // ResponseEntity<String> addBlogPost(BlogRequest blogRequest, Authentication authentication);
+    ResponseEntity<String> updatePost(BlogPostResponse blogPostUpdated, Authentication authentication);
 
-    void addBlogPost(BlogPost blogPost);
-
+    BlogPostResponse addBlogPost(BlogContext blogContext, Authentication authentication);
 
 
 }

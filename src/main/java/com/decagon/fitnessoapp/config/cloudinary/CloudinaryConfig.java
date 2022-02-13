@@ -15,9 +15,9 @@ public class CloudinaryConfig {
     public String createImage(String name) throws IOException {
         Cloudinary cloudinary;
         Map<String, Object> config = new HashMap<>();
-        config.put("cloud_name", "fitnesso");
+        /*config.put("cloud_name", "fitnesso");
         config.put("api_key", "276229173867457");
-        config.put("api_secret", "I0Ljecy2RdYulnkH8IODSJDUYIo");
+        config.put("api_secret", "I0Ljecy2RdYulnkH8IODSJDUYIo");*/
         cloudinary = new Cloudinary(config);
 
         File file = new File(name);
