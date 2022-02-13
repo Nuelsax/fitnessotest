@@ -15,15 +15,20 @@ public class CloudinaryConfig {
     public String createImage(String name) throws IOException {
         Cloudinary cloudinary;
         Map<String, Object> config = new HashMap<>();
-        config.put("cloud_name", "fitnesso");
+        /*config.put("cloud_name", "fitnesso");
         config.put("api_key", "276229173867457");
-        config.put("api_secret", "I0Ljecy2RdYulnkH8IODSJDUYIo");
+        config.put("api_secret", "I0Ljecy2RdYulnkH8IODSJDUYIo");*/
         cloudinary = new Cloudinary(config);
 
         File file = new File(name);
-        Map uploadResult = cloudinary.uploader().upload(file, ObjectUtils.emptyMap());
+        if(file.exists()){
+            Map uploadResult = cloudinary.uploader().upload(file, ObjectUtils.emptyMap());
+            System.out.println(uploadResult.get("url").toString());
+            return uploadResult.get("url").toString();
 
-        return uploadResult.get("url").toString();
+        }
+
+        return "null";
     }
 
 }

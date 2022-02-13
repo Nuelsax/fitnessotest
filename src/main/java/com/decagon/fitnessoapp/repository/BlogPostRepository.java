@@ -10,4 +10,7 @@ import java.util.Optional;
 public interface BlogPostRepository extends JpaRepository<BlogPost, Long> {
 
     Optional<BlogPost> findBlogPostsById(Long id);
+
+    void deleteById(Long id);
+
 }

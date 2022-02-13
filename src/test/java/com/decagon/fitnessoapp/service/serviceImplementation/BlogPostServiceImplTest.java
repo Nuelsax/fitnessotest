@@ -1,8 +1,6 @@
 package com.decagon.fitnessoapp.service.serviceImplementation;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -79,11 +77,13 @@ class BlogPostServiceImplTest {
         person.setVerifyEmail(true);
 
         BlogPost blogPost = new BlogPost();
-        blogPost.setAuthor(author);
+        blogPost.setAuthorName("Anene");
         blogPost.setContent("A long time ago in a far away land...his name is Merlin");
         blogPost.setId(123L);
         blogPost.setPerson(person);
         blogPost.setTitle("Lengends of the Seeker");
+        blogPost.setImage("imagine");
+        blogPost.setBiography("Being in the business for years");
 
         ArrayList<BlogPost> blogPostList = new ArrayList<>();
         blogPostList.add(blogPost);

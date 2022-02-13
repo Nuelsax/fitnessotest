@@ -12,7 +12,6 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
-import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -25,50 +24,14 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "cart_id", referencedColumnName = "id", nullable = false)
-    private Cart carts;
-
-    @NotNull
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "person_id", referencedColumnName = "id", nullable = false)
-    private Person person;
-
-    @NotNull
-    @Column(name = "total_price", nullable = false)
-    private BigDecimal totalPrice;
-
-    @NotNull
-    @OneToOne
-    @JoinColumn(name = "shipping_address_id", referencedColumnName = "id", nullable = false)
-    private Address shippingAddress;
-
-    @NotNull
-    @OneToOne
-    @JoinColumn(name = "billing_address_id", referencedColumnName = "id", nullable = false)
-    private Address billingAddress;
-
-    @NotNull
-    @OneToOne
-    @JoinColumn(name = "payment_card", referencedColumnName = "id", nullable = false)
-    private PaymentCard paymentCard;
-
-
-    @CreationTimestamp
-    @Column(nullable = false)
-    private Timestamp orderDate;
-
-    @OneToOne
-    private CouponCode couponCode;
-
-    @Column(nullable = false)
-    private SHIPPING_METHOD shippingMethod;
-
-    @Column(name = "order_status")
+    @Column(name = "orders_status")
     @Enumerated(EnumType.STRING)
     private ORDER_STATUS orderStatus;
 
+    @NotNull
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "check_out_id", referencedColumnName = "id", nullable = false)
+    private CheckOut checkOut;
 
 
 }

@@ -18,7 +18,8 @@ public class PaymentCard {
     private Long id;
 
     @NotNull
-    @Column(name = "card_number", unique = true, nullable = false)
+//    @Column(name = "card_number", unique = true, nullable = false)
+    @Column(name = "card_number", nullable = false)
     private Long cardNumber;
 
     @Column(name = "expiring_date", nullable = false)

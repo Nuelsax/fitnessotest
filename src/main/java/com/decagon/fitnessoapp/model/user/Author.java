@@ -22,11 +22,11 @@ public class Author {
 
     private String image;
 
-    @NotNull
-    @Column(nullable = false)
+   /* @NotNull
+    @Column(nullable = false)*/
     private String contact;
 
-    @NotNull
-    @Column(nullable = false)
+   /* @NotNull
+    @Column(nullable = false)*/
     private String biography;
 }

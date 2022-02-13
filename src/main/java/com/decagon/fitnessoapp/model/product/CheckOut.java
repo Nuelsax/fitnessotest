@@ -12,6 +12,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -29,10 +30,7 @@ public class CheckOut {
     @JoinColumn(name = "person_id", referencedColumnName = "id", nullable = false)
     private Person person;
 
-    @NotNull
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "shoppingCart_id", referencedColumnName = "id", nullable = false)
-    private Cart shoppingCart;
+    private String shoppingCartUniqueId;
 
     @NotNull
     @Column(name = "total_price", nullable = false)
@@ -57,15 +55,16 @@ public class CheckOut {
     @Column(nullable = false)
     private Timestamp orderDate;
 
-    @OneToOne
-    private CouponCode couponCode;
+    private String couponCode;
+
+    private String referenceNumber;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private SHIPPING_METHOD shippingMethod;
 
-    @Column(name = "order_status")
+    @Column(name = "transaction_status")
     @Enumerated(EnumType.STRING)
-    private ORDER_STATUS orderStatus;
+    private TRANSACTION_STATUS transactionStatus;
 
 }

@@ -7,8 +7,6 @@ import javax.persistence.*;
 import java.util.HashMap;
 import java.util.Map;
 
-
-//@AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
@@ -20,21 +18,13 @@ public class Cart {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ElementCollection(fetch = FetchType.EAGER)
-    @MapKeyColumn(name="product")
-    @Column(name="quantity")
-    @CollectionTable(name="intangible", joinColumns=@JoinColumn(name = "intangible_product_id"))
-    private Map<String, Integer> intangibleProduct = new HashMap<String, Integer>();
+    private String uniqueCartId;
 
-    @ElementCollection(fetch = FetchType.EAGER)
-    @MapKeyColumn(name="product")
-    @Column(name="quantity")
-    @CollectionTable(name="tangible", joinColumns=@JoinColumn(name = "tangible_product_id"))
-    private Map<String, Integer> tangibleProduct = new HashMap<String, Integer>();
+    private Long productId;
 
-   @OneToOne
-   @JoinColumn(name = "person_id", referencedColumnName = "id")
-   private Person person;
+    private Integer quantity;
 
+    private Long personId;
 
+    private String cartReference;
 }
